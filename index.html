@@ -579,17 +579,17 @@
                                     </div>
                                     <div className="flex flex-col gap-3">
                                         {activeApps.filter(app => app.stage === sIdx).map(app => (
-                                            <div key={app.id} className="bg-saas-card p-4 rounded-xl border border-saas-border hover:border-saas-primary/50 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-saas-primary/10 transition-all cursor-pointer group">
+                                            <div key={app.id} className="bg-[#FFF5EB] p-4 rounded-xl border border-orange-200 hover:border-orange-400 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(251,146,60,0.25)] transition-all cursor-pointer group">
                                                 <div className="flex items-start gap-2 mb-3">
-                                                    <i data-lucide={app.stage === 0 ? 'send' : app.stage === 1 ? 'eye' : app.stage === 2 ? 'video' : app.stage === 3 ? 'check' : 'award'} className="w-4 h-4 text-saas-secondary flex-shrink-0 mt-0.5"></i>
+                                                    <i data-lucide={app.stage === 0 ? 'send' : app.stage === 1 ? 'eye' : app.stage === 2 ? 'video' : app.stage === 3 ? 'check' : 'award'} className="w-4 h-4 text-orange-500 flex-shrink-0 mt-0.5"></i>
                                                     <div className="flex-1 min-w-0">
-                                                        <h4 className="font-sora font-bold text-saas-text text-sm mb-0.5 group-hover:text-saas-secondary transition-colors truncate">{app.name}</h4>
-                                                        <p className="text-[10px] text-saas-muted truncate">{app.title}</p>
+                                                        <h4 className="font-sora font-bold text-gray-900 text-sm mb-0.5 group-hover:text-orange-600 transition-colors truncate">{app.name}</h4>
+                                                        <p className="text-[10px] text-gray-600 font-medium truncate">{app.title}</p>
                                                     </div>
                                                 </div>
                                                 <div className="flex flex-wrap gap-1.5">
                                                     {app.tags?.map((tag, tIdx) => (
-                                                        <span key={tIdx} className={`px-2 py-0.5 rounded-md text-[9px] font-bold transition-all ${tag === 'Active' || tag === 'Offered' ? 'bg-saas-success-light text-saas-success' : tag === 'Scheduled' || tag === 'Video' ? 'bg-saas-secondary-light text-saas-secondary' : 'bg-saas-bg text-saas-muted border border-saas-border'}`}>
+                                                        <span key={tIdx} className={`px-2 py-0.5 rounded-md text-[9px] font-bold transition-all ${tag === 'Active' || tag === 'Offered' ? 'bg-green-100 text-green-700' : tag === 'Scheduled' || tag === 'Video' ? 'bg-orange-100 text-orange-700' : 'bg-white text-gray-700 border border-orange-200'}`}>
                                                             {tag}
                                                         </span>
                                                     ))}
@@ -617,16 +617,16 @@
                     <div className="flex-1 overflow-y-auto px-5 py-4 flex flex-col gap-4">
                         {displayApps.length === 0 && <p className="text-saas-muted text-sm text-center py-4">No {tab.toLowerCase()} applications found.</p>}
                         {displayApps.map((app, appIdx) => (
-                            <div key={app.id} className="bg-saas-card rounded-xl p-4 border border-saas-border animate-slide-up" style={{ animationDelay: `${appIdx * 80}ms` }}>
+                            <div key={app.id} className="bg-[#FFF5EB] rounded-xl p-4 border border-orange-200 shadow-sm animate-slide-up" style={{ animationDelay: `${appIdx * 80}ms` }}>
                                 <div className="flex items-center gap-3 mb-5">
-                                    <div className={`w-10 h-10 rounded-lg bg-saas-bg border border-saas-border flex items-center justify-center font-sora font-bold text-lg ${app.rejected ? 'text-saas-error' : 'text-saas-secondary'}`}>{app.logo}</div>
+                                    <div className={`w-10 h-10 rounded-lg bg-white border border-orange-200 flex items-center justify-center font-sora font-bold text-lg shadow-sm ${app.rejected ? 'text-red-500' : 'text-orange-600'}`}>{app.logo}</div>
                                     <div className="flex-1">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <i data-lucide="user" className="w-3.5 h-3.5 text-saas-muted"></i>
-                                            <h3 className="font-sora font-bold text-sm text-saas-text">{app.name}</h3>
-                                            {app.rejected && <i data-lucide="x-circle" className="w-3.5 h-3.5 text-saas-error ml-auto"></i>}
+                                            <i data-lucide="user" className="w-3.5 h-3.5 text-orange-400"></i>
+                                            <h3 className="font-sora font-bold text-sm text-gray-900">{app.name}</h3>
+                                            {app.rejected && <i data-lucide="x-circle" className="w-3.5 h-3.5 text-red-500 ml-auto"></i>}
                                         </div>
-                                        <p className="text-xs text-saas-muted">{app.title} · {app.company}</p>
+                                        <p className="text-xs text-gray-600 font-medium">{app.title} · {app.company}</p>
                                     </div>
                                 </div>
                                 <div className="relative">
