@@ -121,6 +121,7 @@
                 { id: 'home', icon: 'home', label: 'Home' },
                 { id: 'tracking', icon: 'briefcase', label: 'Applied' },
                 { id: 'messages', icon: 'message-square', label: 'Messages' },
+                { id: 'contacts', icon: 'users', label: 'Contacts' },
                 { id: 'profile', icon: 'user', label: 'Profile' },
             ];
 
@@ -150,6 +151,7 @@
                 { id: 'activities', icon: 'activity', label: 'Activities' },
                 { id: 'performance', icon: 'bar-chart-2', label: 'Performance' },
                 { id: 'messages', icon: 'mail', label: 'Mailbox' },
+                { id: 'contacts', icon: 'users', label: 'Contacts' },
             ];
 
             return (
@@ -716,6 +718,57 @@
             );
         };
 
+        // Screen 9: Contacts
+        const Contacts = () => {
+            const contactList = [
+                { id: 1, name: 'Sarah Wilson', role: 'HR Manager @ Spotify', status: 'online', avatar: 'https://i.pravatar.cc/150?u=sarah' },
+                { id: 2, name: 'James Chen', role: 'Engineering Lead @ Google', status: 'offline', avatar: 'https://i.pravatar.cc/150?u=james' },
+                { id: 3, name: 'Elena Rodriguez', role: 'Senior Recruiter @ Amazon', status: 'online', avatar: 'https://i.pravatar.cc/150?u=elena' },
+                { id: 4, name: 'Marcus Smith', role: 'Product Manager @ Meta', status: 'online', avatar: 'https://i.pravatar.cc/150?u=marcus' },
+                { id: 5, name: 'Jessica Lee', role: 'Talent Acquisition @ Apple', status: 'offline', avatar: 'https://i.pravatar.cc/150?u=jessica' },
+            ];
+
+            return (
+                <div className="flex-1 flex flex-col pb-20 bg-white dark:bg-gray-900 transition-colors duration-300">
+                    <div className="px-6 pt-10 pb-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center">
+                        <h1 className="font-sora text-2xl font-bold text-gray-900 dark:text-white">Contacts</h1>
+                        <button className="w-10 h-10 bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center justify-center text-gray-600 dark:text-gray-400">
+                            <i data-lucide="user-plus" className="w-5 h-5"></i>
+                        </button>
+                    </div>
+                    
+                    <div className="flex-1 overflow-y-auto p-6">
+                        <div className="relative mb-6">
+                            <i data-lucide="search" className="absolute left-4 top-3.5 w-5 h-5 text-gray-400"></i>
+                            <input 
+                                type="text" 
+                                placeholder="Search contacts..." 
+                                className="w-full bg-gray-50 dark:bg-gray-800 border-none rounded-2xl py-3.5 pl-12 pr-4 text-sm focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white transition-all"
+                            />
+                        </div>
+
+                        <div className="space-y-4">
+                            {contactList.map((contact, idx) => (
+                                <div key={contact.id} className="flex items-center gap-4 p-4 bg-white dark:bg-gray-800 rounded-3xl border border-gray-50 dark:border-gray-700 hover:shadow-md transition-all animate-slide-up" style={{ animationDelay: `${idx * 100}ms` }}>
+                                    <div className="relative">
+                                        <img src={contact.avatar} className="w-12 h-12 rounded-2xl object-cover" alt={contact.name} />
+                                        <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white dark:border-gray-800 ${contact.status === 'online' ? 'bg-teal-500' : 'bg-gray-300'}`}></div>
+                                    </div>
+                                    <div className="flex-1">
+                                        <h3 className="font-sora font-bold text-sm text-gray-900 dark:text-white">{contact.name}</h3>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">{contact.role}</p>
+                                    </div>
+                                    <button className="w-10 h-10 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center">
+                                        <i data-lucide="message-circle" className="w-5 h-5"></i>
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         // Screen 6: User Profile
         const UserProfile = ({ isMobileView, setIsMobileView, isDarkMode, setIsDarkMode }) => {
             return (
@@ -927,7 +980,7 @@
             const [activeTab, setActiveTab] = useState('home');
             const [selectedJob, setSelectedJob] = useState(null);
             const [isMobileView, setIsMobileView] = useState(true);
-            const [isDarkMode, setIsDarkMode] = useState(false);
+            const [isDarkMode, setIsDarkMode] = useState(true);
             const [appliedJobs, setAppliedJobs] = useState([]);
 
             useEffect(() => {
@@ -964,6 +1017,7 @@
                                     {activeTab === 'tracking' && <ApplicationTracking appliedJobs={appliedJobs} isMobileView={isMobileView} />}
                                     {activeTab === 'activities' && <Activities />}
                                     {activeTab === 'performance' && <Performance />}
+                                    {activeTab === 'contacts' && <Contacts />}
                                     {activeTab === 'messages' && <Messages />}
                                     {activeTab === 'profile' && <UserProfile isMobileView={isMobileView} setIsMobileView={setIsMobileView} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />}
                                     
