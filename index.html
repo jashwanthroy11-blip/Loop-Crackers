@@ -1176,66 +1176,417 @@
 
         const PreparePage = ({ isMobileView }) => {
             const [selectedCategory, setSelectedCategory] = useState(null);
+            const [selectedItem, setSelectedItem] = useState(null);
+            const [showAnswer, setShowAnswer] = useState(false);
+            const [userCode, setUserCode] = useState('');
+            const [userAnswer, setUserAnswer] = useState('');
+            const [selectedLanguage, setSelectedLanguage] = useState('Python 3.10');
+            const [executionResult, setExecutionResult] = useState(null);
+            const [isExecuting, setIsExecuting] = useState(false);
 
             const content = {
                 'company': {
                     title: 'Company Specific Questions',
                     items: [
-                        { name: 'Google', questions: ['How do you scale a system for 1B users?', 'Explain MapReduce.', 'What is Bigtable?'] },
-                        { name: 'Amazon', questions: ['Describe a time you failed.', 'How do you handle a difficult teammate?', 'Explain the Leadership Principles.'] },
-                        { name: 'Spotify', questions: ['How do you optimize audio streaming?', 'What is the Spotify model?', 'Explain event-driven architecture.'] }
+                        { 
+                            name: 'Google', 
+                            questions: [
+                                { q: 'How do you scale a system for 1B users?', a: 'Scaling for 1B users involves horizontal scaling, load balancing, sharding databases, caching at multiple layers (CDN, Redis), and using microservices architecture to manage complexity and isolate failures.' },
+                                { q: 'Explain MapReduce.', a: 'MapReduce is a programming model for processing large data sets with a parallel, distributed algorithm on a cluster. The "Map" step filters and sorts data, and the "Reduce" step performs summary operations.' },
+                                { q: 'What is Bigtable?', a: 'Bigtable is a compressed, high performance, proprietary data storage system built on Google File System, Chubby Lock Service, and other Google technologies.' }
+                            ] 
+                        },
+                        { 
+                            name: 'Amazon', 
+                            questions: [
+                                { q: 'Describe a time you failed.', a: 'Focus on a specific professional instance, explain the situation, the actions you took, the failure, what you learned, and how you applied that learning to a later success.' },
+                                { q: 'How do you handle a difficult teammate?', a: 'Approach the situation with empathy, communicate directly and professionally, find common ground, and if necessary, involve a manager while focusing on project goals.' },
+                                { q: 'Explain the Leadership Principles.', a: 'Amazon has 16 principles like Customer Obsession, Ownership, and Bias for Action that guide decision-making and are core to their culture and interview process.' }
+                            ] 
+                        }
                     ]
                 },
                 'coding': {
                     title: 'Coding Questions',
                     items: [
-                        { name: 'Data Structures', questions: ['Reverse a linked list.', 'Implement a hash map.', 'Balanced binary tree check.'] },
-                        { name: 'Algorithms', questions: ['Binary search implementation.', 'Merge sort vs Quick sort.', 'Dynamic programming basics.'] },
-                        { name: 'System Design', questions: ['Design a URL shortener.', 'Design a notification system.', 'Rate limiting algorithms.'] }
+                        { 
+                            name: 'Print Length times (For Loop)', 
+                            language: 'Python 3.10',
+                            difficulty: 'Easy',
+                            description: 'Write a program that reads a string and prints the first character (index 0) of the given string on N lines, where N is the length of the string.',
+                            note: 'Use a For loop to iterate over the string length.',
+                            input: 'A single string.',
+                            output: 'N lines containing the first character.',
+                            publicTestcases: [{ input: 'abc', output: 'a\na\na' }, { input: 'hi', output: 'h\nh' }],
+                            hiddenTestcases: Array.from({length: 10}, (_, i) => ({ input: 'x'.repeat(i+1), output: 'x\n'.repeat(i+1).trim() }))
+                        },
+                        { 
+                            name: 'Sum of Array Elements', 
+                            language: 'Java 17',
+                            difficulty: 'Easy',
+                            description: 'Write a Java program to calculate the sum of all elements in an integer array.',
+                            note: 'Use a standard for loop or enhanced for loop.',
+                            input: 'An array of integers [1, 2, 3, 4, 5].',
+                            output: 'The sum of elements (15).',
+                            publicTestcases: [{ input: '[1,2,3]', output: '6' }, { input: '[10,20]', output: '30' }],
+                            hiddenTestcases: Array.from({length: 10}, (_, i) => ({ input: `[${i},${i+1}]`, output: `${i + (i+1)}` }))
+                        },
+                        { 
+                            name: 'List Comprehension Square', 
+                            language: 'Python 3.10',
+                            difficulty: 'Medium',
+                            description: 'Given a list of numbers, return a new list containing the squares of each number using list comprehension.',
+                            note: 'Use the syntax: [x**2 for x in list]',
+                            input: '[1, 2, 3]',
+                            output: '[1, 4, 9]',
+                            publicTestcases: [{ input: '[1,2]', output: '[1, 4]' }, { input: '[0,5]', output: '[0, 25]' }],
+                            hiddenTestcases: Array.from({length: 10}, (_, i) => ({ input: `[${i}]`, output: `[${i*i}]` }))
+                        }
                     ]
                 },
                 'mock': {
                     title: 'Mock Exams',
                     items: [
-                        { name: 'Aptitude Test', duration: '30 mins', questions: 20 },
-                        { name: 'Technical MCQ', duration: '45 mins', questions: 30 },
-                        { name: 'Coding Assessment', duration: '60 mins', questions: 3 }
+                        { 
+                            name: 'Technical MCQ', 
+                            duration: '45 mins', 
+                            questions: [
+                                { q: 'What is the complexity of binary search?', a: 'O(log n)' },
+                                { q: 'What does ACID stand for in databases?', a: 'Atomicity, Consistency, Isolation, Durability' }
+                            ] 
+                        }
                     ]
                 }
             };
 
+            const runSimulation = (isSubmit = false) => {
+                setIsExecuting(true);
+                setExecutionResult(null);
+
+                setTimeout(() => {
+                    const code = userCode.toLowerCase();
+                    const lines = userCode.split('\n');
+                    let error = null;
+
+                    // Simulated Logic Check
+                    if (!code.includes('input')) {
+                        error = { line: 1, msg: "SyntaxError: Missing input capture. You need to read the input string first." };
+                    } else if (!code.includes('for') && !code.includes('while')) {
+                        const inputLine = lines.findIndex(l => l.includes('input')) + 1;
+                        error = { line: inputLine + 1, msg: "LogicError: Missing loop. The problem requires repeating the output N times." };
+                    } else if (!code.includes('print')) {
+                        error = { line: lines.length, msg: "RuntimeError: No output detected. Ensure you are using print() inside the loop." };
+                    } else if (!code.includes('[0]') && !code.includes('at(0)') && !code.includes('charAt(0)')) {
+                        const loopLine = lines.findIndex(l => l.includes('for') || l.includes('while')) + 1;
+                        error = { line: loopLine + 1, msg: "LogicError: Incorrect character output. You must print only the FIRST character of the string." };
+                    }
+
+                    if (error) {
+                        setExecutionResult({
+                            type: isSubmit ? 'submit' : 'run',
+                            status: 'fail',
+                            error: error
+                        });
+                    } else {
+                        const cases = isSubmit ? selectedItem.hiddenTestcases : selectedItem.publicTestcases;
+                        setExecutionResult({
+                            type: isSubmit ? 'submit' : 'run',
+                            status: 'pass',
+                            total: cases.length,
+                            passed: cases.length
+                        });
+                    }
+                    setIsExecuting(false);
+                }, isSubmit ? 1500 : 800);
+            };
+
+            const handleBack = () => {
+                if (selectedItem) {
+                    setSelectedItem(null);
+                    setShowAnswer(false);
+                    setUserCode('');
+                    setUserAnswer('');
+                    setExecutionResult(null);
+                } else if (selectedCategory) {
+                    setSelectedCategory(null);
+                }
+            };
+
+            if (selectedItem) {
+                if (selectedCategory === 'company') {
+                    return (
+                        <div className="flex-1 overflow-y-auto bg-saas-bg p-5 animate-fade-in">
+                            <button onClick={handleBack} className="flex items-center gap-2 text-sm font-bold text-orange-600 mb-6 hover:gap-3 transition-all">
+                                <i data-lucide="arrow-left" className="w-4 h-4"></i> Back to {content[selectedCategory].title}
+                            </button>
+                            <h2 className="font-sora text-2xl font-bold text-saas-text mb-6">{selectedItem.name} Interview Questions</h2>
+                            <div className="space-y-6">
+                                {selectedItem.questions.map((item, idx) => (
+                                    <div key={idx} className="bg-white border border-saas-border rounded-xl p-5 shadow-sm">
+                                        <h3 className="font-sora font-bold text-gray-900 mb-4 flex gap-3">
+                                            <span className="w-6 h-6 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-[10px] flex-shrink-0">Q{idx+1}</span>
+                                            {item.q}
+                                        </h3>
+                                        <div className="pl-9">
+                                            {showAnswer ? (
+                                                <div className="bg-green-50 border border-green-100 rounded-lg p-4 text-xs text-green-800 leading-relaxed animate-fade-in">
+                                                    <p className="font-bold mb-2 uppercase tracking-wider text-[9px]">Suggested Answer:</p>
+                                                    {item.a}
+                                                </div>
+                                            ) : (
+                                                <button onClick={() => setShowAnswer(true)} className="text-[10px] font-bold text-orange-600 border border-orange-200 px-4 py-2 rounded-lg hover:bg-orange-50 transition-colors">
+                                                    Show Answer
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    );
+                }
+
+                if (selectedCategory === 'coding') {
+                    return (
+                        <div className="flex-1 flex flex-col bg-saas-bg h-full overflow-hidden animate-fade-in relative">
+                            <div className="bg-saas-card border-b border-saas-border px-5 py-3 flex justify-between items-center">
+                                <div className="flex items-center gap-4">
+                                    <button onClick={handleBack} className="w-8 h-8 rounded-lg bg-saas-bg border border-saas-border flex items-center justify-center text-saas-text hover:bg-saas-hover transition-colors">
+                                        <i data-lucide="chevron-left" className="w-4 h-4"></i>
+                                    </button>
+                                    <h2 className="font-sora font-bold text-sm text-saas-text">Coding Practice: {selectedItem.name}</h2>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <select 
+                                        value={selectedLanguage}
+                                        onChange={(e) => setSelectedLanguage(e.target.value)}
+                                        className="bg-saas-bg border border-saas-border rounded-lg px-3 py-1.5 text-xs text-saas-text outline-none"
+                                    >
+                                        <option>Python 3.10</option>
+                                        <option>Java 17</option>
+                                    </select>
+                                    <button 
+                                        onClick={() => runSimulation(false)}
+                                        disabled={isExecuting}
+                                        className="bg-orange-500 text-white text-xs font-bold px-4 py-1.5 rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-50 min-w-[60px]"
+                                    >
+                                        {isExecuting && executionResult?.type === 'run' ? '...' : 'Run'}
+                                    </button>
+                                    <button 
+                                        onClick={() => runSimulation(true)}
+                                        disabled={isExecuting}
+                                        className="bg-green-600 text-white text-xs font-bold px-4 py-1.5 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 min-w-[80px]"
+                                    >
+                                        {isExecuting && executionResult?.type === 'submit' ? '...' : 'Submit'}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="flex-1 flex overflow-hidden">
+                                <div className="w-1/2 overflow-y-auto p-5 border-r border-saas-border custom-scrollbar bg-white">
+                                    <div className="mb-6">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-green-100 text-green-700">{selectedItem.difficulty}</span>
+                                            <span className="text-[10px] text-saas-muted flex items-center gap-1"><i data-lucide="check-circle" className="w-3 h-3 text-green-500"></i> Active</span>
+                                        </div>
+                                        <h3 className="font-sora text-xl font-bold text-gray-900 mb-4">{selectedItem.name}</h3>
+                                        <p className="text-sm text-gray-600 leading-relaxed mb-6">{selectedItem.description}</p>
+                                        <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4 mb-6">
+                                            <div className="flex items-center gap-2 text-indigo-600 mb-2">
+                                                <i data-lucide="file-text" className="w-4 h-4"></i>
+                                                <span className="text-xs font-bold uppercase tracking-wider">Note</span>
+                                            </div>
+                                            <p className="text-xs text-indigo-800">{selectedItem.note}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-6">
+                                        <div>
+                                            <h4 className="font-bold text-xs text-gray-900 mb-2 uppercase tracking-widest border-b border-gray-100 pb-2">Input</h4>
+                                            <p className="text-xs text-gray-600">{selectedItem.input}</p>
+                                        </div>
+                                        <div>
+                                            <h4 className="font-bold text-xs text-gray-900 mb-2 uppercase tracking-widest border-b border-gray-100 pb-2">Output</h4>
+                                            <p className="text-xs text-gray-600">{selectedItem.output}</p>
+                                        </div>
+                                    </div>
+
+                                    {executionResult && (
+                                        <div className="mt-8 animate-fade-in border-t border-saas-border pt-6">
+                                            <div className="flex items-center justify-between mb-4">
+                                                <h4 className="font-bold text-xs text-gray-900 uppercase tracking-widest">
+                                                    {executionResult.type === 'run' ? 'Run Results' : 'Final Submission'}
+                                                </h4>
+                                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${executionResult.status === 'pass' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                                    {executionResult.status === 'pass' ? 'PASSED' : 'FAILED'}
+                                                </span>
+                                            </div>
+                                            
+                                            {executionResult.status === 'pass' ? (
+                                                <div className="space-y-3">
+                                                    <div className="bg-green-50 border border-green-100 rounded-xl p-4">
+                                                        <div className="flex items-center gap-2 text-green-700 mb-1 font-bold text-sm">
+                                                            <i data-lucide="check-circle-2" className="w-4 h-4"></i>
+                                                            All Test Cases Passed!
+                                                        </div>
+                                                        <p className="text-[10px] text-green-600 font-medium">Verified {executionResult.passed} / {executionResult.total} cases successfully.</p>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="bg-red-50 border border-red-100 rounded-xl p-4">
+                                                    <div className="flex items-center gap-2 text-red-700 mb-3 font-bold text-sm">
+                                                        <i data-lucide="alert-circle" className="w-4 h-4"></i>
+                                                        Wrong Answer
+                                                    </div>
+                                                    <div className="bg-white/50 rounded-lg p-3 border border-red-100">
+                                                        <p className="text-[10px] text-red-500 font-bold mb-1 uppercase tracking-wider">Error on Line {executionResult.error.line}:</p>
+                                                        <p className="text-xs text-gray-800 font-medium">{executionResult.error.msg}</p>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="w-1/2 flex flex-col bg-[#0d1117]">
+                                    <div className="flex-1 p-4 font-mono text-sm relative flex overflow-hidden">
+                                        <div className="w-10 bg-[#0d1117] flex flex-col items-center py-0 text-gray-600 select-none text-[12px] leading-6 border-r border-gray-800/50">
+                                            {Array.from({length: 30}).map((_, i) => <span key={i}>{i+1}</span>)}
+                                        </div>
+                                        <textarea 
+                                            value={userCode}
+                                            onChange={(e) => setUserCode(e.target.value)}
+                                            placeholder={`# Write your ${selectedLanguage.split(' ')[0]} code here...`}
+                                            className="flex-1 bg-transparent text-[#e6edf3] outline-none resize-none placeholder-gray-700 pl-4 leading-6 custom-scrollbar"
+                                            spellCheck="false"
+                                        />
+                                    </div>
+                                    
+                                    <div className="h-52 bg-[#0d1117] border-t border-gray-800 p-4">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <h4 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Testcases (Public)</h4>
+                                            <div className="flex gap-2">
+                                                {selectedItem.publicTestcases?.map((_, i) => (
+                                                    <button key={i} className={`text-[9px] font-bold px-3 py-1 rounded transition-colors ${i === 0 ? 'bg-gray-800 text-white' : 'text-gray-600 hover:text-gray-400'}`}>Case {i+1}</button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <p className="text-[9px] text-gray-600 font-bold uppercase mb-2">Input</p>
+                                                <div className="bg-[#161b22] rounded-lg p-3 text-xs text-gray-400 border border-gray-800 font-mono h-24 overflow-y-auto">
+                                                    {selectedItem.publicTestcases[0].input}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <p className="text-[9px] text-gray-600 font-bold uppercase mb-2">Expected Output</p>
+                                                <div className="bg-[#161b22] rounded-lg p-3 text-xs text-gray-400 border border-gray-800 font-mono h-24 overflow-y-auto whitespace-pre">
+                                                    {selectedItem.publicTestcases[0].output}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                }
+
+                if (selectedCategory === 'mock') {
+
+                if (selectedCategory === 'mock') {
+                    return (
+                        <div className="flex-1 overflow-y-auto bg-saas-bg p-5 animate-fade-in">
+                            <div className="max-w-2xl mx-auto mt-10">
+                                <button onClick={handleBack} className="flex items-center gap-2 text-sm font-bold text-orange-600 mb-6 hover:gap-3 transition-all">
+                                    <i data-lucide="arrow-left" className="w-4 h-4"></i> Back to Prepare
+                                </button>
+                                
+                                <div className="bg-white border border-saas-border rounded-2xl p-8 shadow-xl">
+                                    <div className="flex justify-between items-center mb-8">
+                                        <h2 className="font-sora text-2xl font-bold text-gray-900">{selectedItem.name}</h2>
+                                        <div className="flex items-center gap-2 bg-orange-100 text-orange-600 px-3 py-1.5 rounded-lg">
+                                            <i data-lucide="timer" className="w-4 h-4"></i>
+                                            <span className="text-xs font-bold">{selectedItem.duration}</span>
+                                        </div>
+                                    </div>
+
+                                    {selectedItem.questions.map((item, idx) => (
+                                        <div key={idx} className="mb-10 animate-slide-up" style={{ animationDelay: `${idx * 100}ms` }}>
+                                            <p className="font-sora font-bold text-gray-900 mb-4">Question {idx + 1}: {item.q}</p>
+                                            <textarea 
+                                                className="w-full h-32 bg-saas-bg border border-saas-border rounded-xl p-4 text-sm text-saas-text outline-none focus:border-orange-500 transition-all resize-none"
+                                                placeholder="Type your answer here..."
+                                                value={userAnswer}
+                                                onChange={(e) => setUserAnswer(e.target.value)}
+                                            />
+                                        </div>
+                                    ))}
+
+                                    <button className="w-full bg-orange-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-orange-200 hover:bg-orange-600 transition-all">
+                                        Submit Exam
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                }
+            }
+
             if (selectedCategory) {
                 const data = content[selectedCategory];
+                const itemsToShow = selectedCategory === 'coding' 
+                    ? data.items.filter(item => item.language === selectedLanguage)
+                    : data.items;
+                    
                 return (
                     <div className="flex-1 overflow-y-auto bg-saas-bg p-5 animate-fade-in">
-                        <button 
-                            onClick={() => setSelectedCategory(null)}
-                            className="flex items-center gap-2 text-sm font-bold text-orange-600 mb-6 hover:gap-3 transition-all"
-                        >
-                            <i data-lucide="arrow-left" className="w-4 h-4"></i> Back to Prepare
-                        </button>
-                        
-                        <h2 className="font-sora text-2xl font-bold text-saas-text mb-6">{data.title}</h2>
-                        
+                        <div className="flex justify-between items-center mb-6">
+                            <div>
+                                <button onClick={() => setSelectedCategory(null)} className="flex items-center gap-2 text-sm font-bold text-orange-600 mb-2 hover:gap-3 transition-all">
+                                    <i data-lucide="arrow-left" className="w-4 h-4"></i> Back to Prepare
+                                </button>
+                                <h2 className="font-sora text-2xl font-bold text-saas-text">{data.title}</h2>
+                            </div>
+                            {selectedCategory === 'coding' && (
+                                <select 
+                                    value={selectedLanguage}
+                                    onChange={(e) => setSelectedLanguage(e.target.value)}
+                                    className="bg-white border border-saas-border rounded-lg px-4 py-2 text-sm text-gray-700 outline-none shadow-sm focus:border-orange-500 transition-all"
+                                >
+                                    <option>Python 3.10</option>
+                                    <option>Java 17</option>
+                                </select>
+                            )}
+                        </div>
                         <div className="space-y-4">
-                            {data.items.map((item, idx) => (
+                            {itemsToShow.length === 0 ? (
+                                <div className="bg-white border border-saas-border rounded-xl p-10 text-center">
+                                    <i data-lucide="code" className="w-12 h-12 text-gray-300 mx-auto mb-4"></i>
+                                    <p className="text-gray-500 font-medium">No questions found for {selectedLanguage}.</p>
+                                </div>
+                            ) : itemsToShow.map((item, idx) => (
                                 <div key={idx} className="bg-white border border-saas-border rounded-xl p-5 shadow-sm">
                                     <h3 className="font-sora font-bold text-gray-900 mb-3">{item.name}</h3>
                                     {item.questions && Array.isArray(item.questions) ? (
-                                        <ul className="space-y-2">
+                                        <ul className="space-y-2 mb-4">
                                             {item.questions.map((q, qIdx) => (
                                                 <li key={qIdx} className="text-xs text-saas-muted flex gap-2">
-                                                    <span className="text-orange-500 font-bold">•</span> {q}
+                                                    <span className="text-orange-500 font-bold">•</span> 
+                                                    {typeof q === 'string' ? q : q.q}
                                                 </li>
                                             ))}
                                         </ul>
                                     ) : (
-                                        <div className="flex gap-4 text-xs text-saas-muted font-medium">
+                                        <div className="flex gap-4 text-xs text-saas-muted font-medium mb-4">
                                             <span className="flex items-center gap-1"><i data-lucide="timer" className="w-3.5 h-3.5"></i> {item.duration}</span>
-                                            <span className="flex items-center gap-1"><i data-lucide="file-text" className="w-3.5 h-3.5"></i> {item.questions} Questions</span>
+                                            <span className="flex items-center gap-1"><i data-lucide="file-text" className="w-3.5 h-3.5"></i> {item.questions?.length || 0} Questions</span>
                                         </div>
                                     )}
-                                    <button className="mt-4 text-[10px] font-bold text-white bg-orange-500 px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors">
+                                    <button 
+                                        onClick={() => setSelectedItem(item)}
+                                        className="text-[10px] font-bold text-white bg-orange-500 px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors"
+                                    >
                                         Start Now
                                     </button>
                                 </div>
