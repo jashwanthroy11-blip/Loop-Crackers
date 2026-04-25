@@ -97,6 +97,7 @@
             --color-error: #EF4444;
             --color-border: #334155;
         }
+        html, body { height: 100%; overflow: hidden; }
         body { background-color: #0F172A; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -108,7 +109,7 @@
 </head>
 <body class="font-sans antialiased bg-saas-bg text-saas-text flex justify-center min-h-screen">
     
-    <div id="root" class="w-full flex justify-center min-h-screen"></div>
+    <div id="root" class="w-full flex justify-center h-screen"></div>
 
     <script type="text/babel">
         const { useState, useEffect } = React;
@@ -181,7 +182,7 @@
         // Desktop Sidebar Component
         const Sidebar = ({ activeTab, setActiveTab }) => {
             const menuItems = [
-                { id: 'home', icon: 'layout-dashboard', label: 'Team dashboard' },
+                { id: 'team', icon: 'layout-dashboard', label: 'Team dashboard' },
                 { id: 'home', icon: 'briefcase', label: 'Jobs' },
                 { id: 'tracking', icon: 'clipboard-list', label: 'Job requests', badge: 3 },
                 { id: 'activities', icon: 'activity', label: 'Activities' },
@@ -236,14 +237,6 @@
                     <div className="flex items-center gap-4">
                         <button className="text-saas-muted hover:text-saas-secondary transition-colors"><i data-lucide="bell" className="w-5 h-5"></i></button>
                         <button className="text-saas-muted hover:text-saas-secondary transition-colors"><i data-lucide="settings" className="w-5 h-5"></i></button>
-                        <div className="flex items-center gap-3 pl-4 border-l border-saas-border">
-                            <div className="w-8 h-8 bg-saas-primary/20 rounded-full flex items-center justify-center font-bold text-saas-primary text-xs">ST</div>
-                            <div className="flex flex-col">
-                                <span className="text-xs font-bold text-saas-text">Sarah Thompson</span>
-                                <span className="text-[10px] text-saas-muted">Recruiter</span>
-                            </div>
-                            <i data-lucide="chevron-down" className="w-4 h-4 text-saas-muted"></i>
-                        </div>
                     </div>
                 </div>
             );
@@ -385,8 +378,11 @@
                                             <div className="w-11 h-11 rounded-lg bg-saas-bg border border-saas-border flex items-center justify-center font-sora font-bold text-lg text-saas-secondary">
                                                 {job.logo}
                                             </div>
-                                            <div>
-                                                <h3 className="font-sora font-bold text-sm text-saas-text">{job.title}</h3>
+                                            <div className="flex-1">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <i data-lucide={job.category === 'Design' ? 'palette' : job.category === 'Engineering' ? 'code' : job.category === 'Product' ? 'zap' : 'trending-up'} className="w-3.5 h-3.5 text-saas-secondary"></i>
+                                                    <h3 className="font-sora font-bold text-sm text-saas-text">{job.title}</h3>
+                                                </div>
                                                 <p className="text-xs text-saas-muted mt-0.5">{job.company} · {job.location}</p>
                                             </div>
                                         </div>
@@ -552,8 +548,13 @@
                                     <div className="flex flex-col gap-3">
                                         {activeApps.filter(app => app.stage === sIdx).map(app => (
                                             <div key={app.id} className="bg-saas-card p-4 rounded-xl border border-saas-border hover:border-saas-primary/50 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-saas-primary/10 transition-all cursor-pointer group">
-                                                <h4 className="font-sora font-bold text-saas-text text-sm mb-0.5 group-hover:text-saas-secondary transition-colors">{app.name}</h4>
-                                                <p className="text-[10px] text-saas-muted mb-3">{app.title}</p>
+                                                <div className="flex items-start gap-2 mb-3">
+                                                    <i data-lucide={app.stage === 0 ? 'send' : app.stage === 1 ? 'eye' : app.stage === 2 ? 'video' : app.stage === 3 ? 'check' : 'award'} className="w-4 h-4 text-saas-secondary flex-shrink-0 mt-0.5"></i>
+                                                    <div className="flex-1 min-w-0">
+                                                        <h4 className="font-sora font-bold text-saas-text text-sm mb-0.5 group-hover:text-saas-secondary transition-colors truncate">{app.name}</h4>
+                                                        <p className="text-[10px] text-saas-muted truncate">{app.title}</p>
+                                                    </div>
+                                                </div>
                                                 <div className="flex flex-wrap gap-1.5">
                                                     {app.tags?.map((tag, tIdx) => (
                                                         <span key={tIdx} className={`px-2 py-0.5 rounded-md text-[9px] font-bold transition-all ${tag === 'Active' || tag === 'Offered' ? 'bg-saas-success-light text-saas-success' : tag === 'Scheduled' || tag === 'Video' ? 'bg-saas-secondary-light text-saas-secondary' : 'bg-saas-bg text-saas-muted border border-saas-border'}`}>
@@ -587,9 +588,13 @@
                             <div key={app.id} className="bg-saas-card rounded-xl p-4 border border-saas-border animate-slide-up" style={{ animationDelay: `${appIdx * 80}ms` }}>
                                 <div className="flex items-center gap-3 mb-5">
                                     <div className={`w-10 h-10 rounded-lg bg-saas-bg border border-saas-border flex items-center justify-center font-sora font-bold text-lg ${app.rejected ? 'text-saas-error' : 'text-saas-secondary'}`}>{app.logo}</div>
-                                    <div>
-                                        <h3 className="font-sora font-bold text-sm text-saas-text">{app.title}</h3>
-                                        <p className="text-xs text-saas-muted">{app.company}</p>
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <i data-lucide="user" className="w-3.5 h-3.5 text-saas-muted"></i>
+                                            <h3 className="font-sora font-bold text-sm text-saas-text">{app.name}</h3>
+                                            {app.rejected && <i data-lucide="x-circle" className="w-3.5 h-3.5 text-saas-error ml-auto"></i>}
+                                        </div>
+                                        <p className="text-xs text-saas-muted">{app.title} · {app.company}</p>
                                     </div>
                                 </div>
                                 <div className="relative">
@@ -689,12 +694,18 @@
                     <div className="flex-1 overflow-y-auto">
                         {msgsList.map((m, i) => (
                             <div key={i} onClick={() => { m.unread = 0; setSelectedChat(m.id); setMsgsList([...msgsList]); }} className="flex gap-4 items-center px-5 py-4 border-b border-saas-border cursor-pointer hover:bg-saas-hover transition-colors animate-slide-up" style={{ animationDelay: `${i * 80}ms` }}>
-                                <div className="w-11 h-11 rounded-full bg-saas-primary/20 flex items-center justify-center text-saas-primary font-bold font-sora">
+                                <div className="w-11 h-11 rounded-full bg-saas-primary/20 flex items-center justify-center text-saas-primary font-bold font-sora relative">
                                     {m.initial}
+                                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-saas-secondary rounded-full border-2 border-saas-card flex items-center justify-center">
+                                        <i data-lucide="message-circle" className="w-2 h-2 text-white"></i>
+                                    </div>
                                 </div>
                                 <div className="flex-1">
                                     <div className="flex justify-between items-center mb-0.5">
-                                        <h3 className={`font-sora font-bold text-sm ${m.unread ? 'text-saas-text' : 'text-saas-muted'}`}>{m.name}</h3>
+                                        <div className="flex items-center gap-2">
+                                            <i data-lucide="user-check" className="w-3.5 h-3.5 text-saas-muted"></i>
+                                            <h3 className={`font-sora font-bold text-sm ${m.unread ? 'text-saas-text' : 'text-saas-muted'}`}>{m.name}</h3>
+                                        </div>
                                         <span className="text-xs text-saas-muted">{m.time}</span>
                                     </div>
                                     <p className={`text-sm ${m.unread ? 'text-saas-text font-medium' : 'text-saas-muted'} truncate`}>{m.text}</p>
@@ -773,8 +784,11 @@
                             {stats.map((stat, idx) => (
                                 <div key={idx} className="bg-saas-card p-4 rounded-xl border border-saas-border animate-slide-up" style={{ animationDelay: `${idx * 80}ms` }}>
                                     <div className="flex justify-between items-start mb-3">
-                                        <div className={`w-9 h-9 rounded-lg bg-saas-bg border border-saas-border flex items-center justify-center ${stat.color}`}>
-                                            <i data-lucide={stat.icon} className="w-4 h-4"></i>
+                                        <div className="flex items-center gap-2">
+                                            <div className={`w-9 h-9 rounded-lg bg-saas-bg border border-saas-border flex items-center justify-center ${stat.color}`}>
+                                                <i data-lucide={stat.icon} className="w-4 h-4"></i>
+                                            </div>
+                                            <i data-lucide="trending-up" className="w-3.5 h-3.5 text-saas-success"></i>
                                         </div>
                                         <span className="text-[10px] font-bold text-saas-success bg-saas-success-light px-2 py-0.5 rounded-md">{stat.growth}</span>
                                     </div>
@@ -831,6 +845,106 @@
             );
         };
 
+
+        // Screen 10: Desktop Right Sidebar
+        const DesktopProfileSidebar = ({ setIsMobileView, setIsDarkMode, isDarkMode }) => {
+            return (
+                <div className="w-80 bg-saas-card border-l border-saas-border flex flex-col h-full overflow-y-auto py-6">
+                    {/* Profile Header */}
+                    <div className="px-6 flex flex-col items-center border-b border-saas-border pb-6 mb-6">
+                        <div className="w-16 h-16 bg-saas-primary/20 rounded-2xl flex items-center justify-center font-sora font-bold text-2xl text-saas-primary mb-3 relative">
+                            AK
+                            <div className="absolute bottom-0 right-0 w-5 h-5 bg-saas-success rounded-lg border-2 border-saas-card flex items-center justify-center">
+                                <i data-lucide="check" className="w-2.5 h-2.5 text-white"></i>
+                            </div>
+                        </div>
+                        <h2 className="font-sora text-lg font-bold text-saas-text">Alex Kumar</h2>
+                        <p className="text-xs text-saas-muted mt-1">Senior Frontend Engineer</p>
+                    </div>
+
+                    {/* Quick Stats */}
+                    <div className="px-6 mb-6">
+                        <div className="space-y-2">
+                            <div className="flex justify-between items-center p-3 bg-saas-bg rounded-lg border border-saas-border">
+                                <div className="flex items-center gap-2">
+                                    <i data-lucide="send" className="w-4 h-4 text-saas-secondary"></i>
+                                    <span className="text-sm text-saas-muted">Applications</span>
+                                </div>
+                                <span className="font-bold text-saas-text">12</span>
+                            </div>
+                            <div className="flex justify-between items-center p-3 bg-saas-bg rounded-lg border border-saas-border">
+                                <div className="flex items-center gap-2">
+                                    <i data-lucide="video" className="w-4 h-4 text-saas-secondary"></i>
+                                    <span className="text-sm text-saas-muted">Interviews</span>
+                                </div>
+                                <span className="font-bold text-saas-text">4</span>
+                            </div>
+                            <div className="flex justify-between items-center p-3 bg-saas-bg rounded-lg border border-saas-border">
+                                <div className="flex items-center gap-2">
+                                    <i data-lucide="award" className="w-4 h-4 text-saas-secondary"></i>
+                                    <span className="text-sm text-saas-muted">Offers</span>
+                                </div>
+                                <span className="font-bold text-saas-text">1</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Top Skills */}
+                    <div className="px-6 mb-6">
+                        <h3 className="font-sora font-bold text-xs text-saas-muted uppercase tracking-wider mb-3">Skills</h3>
+                        <div className="flex flex-wrap gap-2">
+                            {['React', 'TypeScript', 'Tailwind'].map((skill, i) => (
+                                <span key={i} className="px-2.5 py-1 bg-saas-bg border border-saas-border text-saas-muted rounded-lg text-[10px] font-medium hover:border-saas-primary/50 transition-all">
+                                    {skill}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Recent Activity */}
+                    <div className="px-6 mb-6">
+                        <h3 className="font-sora font-bold text-xs text-saas-muted uppercase tracking-wider mb-3">Recent</h3>
+                        <div className="space-y-2">
+                            <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-saas-bg transition-colors cursor-pointer">
+                                <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i data-lucide="send" className="w-3.5 h-3.5 text-blue-500"></i>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-xs font-medium text-saas-text truncate">Applied at Spotify</p>
+                                    <p className="text-[10px] text-saas-muted">2 hours ago</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-saas-bg transition-colors cursor-pointer">
+                                <div className="w-8 h-8 bg-indigo-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i data-lucide="message-circle" className="w-3.5 h-3.5 text-indigo-500"></i>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-xs font-medium text-saas-text truncate">Message from Sarah</p>
+                                    <p className="text-[10px] text-saas-muted">5 hours ago</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Settings */}
+                    <div className="px-6 mt-auto border-t border-saas-border pt-6">
+                        <div className="space-y-2">
+                            <button className={`w-full flex items-center justify-between p-3 rounded-lg border transition-all ${isDarkMode ? 'bg-saas-primary text-white border-saas-primary' : 'bg-saas-bg border-saas-border text-saas-muted hover:text-saas-text'}`}>
+                                <div className="flex items-center gap-2">
+                                    <i data-lucide={isDarkMode ? 'moon' : 'sun'} className="w-4 h-4"></i>
+                                    <span className="text-xs font-medium">{isDarkMode ? 'Dark' : 'Light'}</span>
+                                </div>
+                                <i data-lucide="check" className={`w-3 h-3 ${isDarkMode ? 'opacity-100' : 'opacity-0'}`}></i>
+                            </button>
+                            <button className="w-full flex items-center gap-2 p-3 rounded-lg border border-saas-border text-saas-muted hover:text-saas-text hover:bg-saas-bg transition-all text-xs font-medium">
+                                <i data-lucide="log-out" className="w-4 h-4"></i>
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
 
         const UserProfile = ({ isMobileView, setIsMobileView, isDarkMode, setIsDarkMode }) => {
             return (
@@ -948,6 +1062,72 @@
             );
         };
 
+        // Screen 9: Team Dashboard
+        const TeamDashboard = () => {
+            const teamMembers = [
+                { id: 1, name: 'Sarah Thompson', role: 'Recruiter', status: 'active', icon: 'user', color: 'bg-blue-500', initials: 'ST', connections: 32 },
+                { id: 2, name: 'David Chen', role: 'HR Manager', status: 'active', icon: 'briefcase', color: 'bg-purple-500', initials: 'DC', connections: 28 },
+                { id: 3, name: 'Emma Rodriguez', role: 'Team Lead', status: 'inactive', icon: 'shield', color: 'bg-pink-500', initials: 'ER', connections: 45 },
+                { id: 4, name: 'James Wilson', role: 'Coordinator', status: 'active', icon: 'zap', color: 'bg-indigo-500', initials: 'JW', connections: 18 },
+                { id: 5, name: 'Lisa Anderson', role: 'Manager', status: 'active', icon: 'star', color: 'bg-yellow-500', initials: 'LA', connections: 52 },
+                { id: 6, name: 'Michael Park', role: 'Assistant', status: 'inactive', icon: 'user-plus', color: 'bg-teal-500', initials: 'MP', connections: 12 },
+            ];
+
+            return (
+                <div className="flex-1 flex flex-col bg-saas-bg">
+                    <div className="px-5 pt-8 pb-6 border-b border-saas-border sticky top-0 bg-saas-bg z-10">
+                        <h1 className="font-sora text-xl font-bold text-saas-text mb-1">Team Dashboard</h1>
+                        <p className="text-xs text-saas-muted">Manage and connect with your team members</p>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto px-5 py-5">
+                        <div className="grid grid-cols-1 gap-3">
+                            {teamMembers.map((member, idx) => (
+                                <div 
+                                    key={member.id} 
+                                    className="bg-saas-card p-4 rounded-xl border border-saas-border hover:border-saas-primary/50 hover:bg-saas-hover transition-all cursor-pointer group animate-slide-up"
+                                    style={{ animationDelay: `${idx * 60}ms` }}
+                                >
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold ${member.color} relative`}>
+                                            {member.initials}
+                                            <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-saas-card ${member.status === 'active' ? 'bg-saas-success' : 'bg-saas-muted'}`}></div>
+                                        </div>
+                                        <div className="flex-1">
+                                            <div className="flex items-center gap-2 mb-0.5">
+                                                <i data-lucide={member.icon} className="w-4 h-4 text-saas-secondary"></i>
+                                                <h3 className="font-sora font-bold text-sm text-saas-text group-hover:text-saas-secondary transition-colors">{member.name}</h3>
+                                            </div>
+                                            <p className="text-xs text-saas-muted">{member.role}</p>
+                                        </div>
+                                        <div className="flex flex-col items-end">
+                                            <div className="flex items-center gap-1">
+                                                <i data-lucide="link-2" className="w-3 h-3 text-saas-muted"></i>
+                                                <span className="text-xs text-saas-muted font-semibold">{member.connections}</span>
+                                            </div>
+                                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full mt-1 ${member.status === 'active' ? 'bg-saas-success-light text-saas-success' : 'bg-saas-bg text-saas-muted border border-saas-border'}`}>
+                                                {member.status === 'active' ? 'Active' : 'Offline'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2 pt-3 border-t border-saas-border">
+                                        <button className="flex-1 text-xs py-2 px-3 bg-saas-bg text-saas-muted rounded-lg hover:text-saas-text hover:border-saas-primary/50 border border-saas-border transition-all flex items-center justify-center gap-2">
+                                            <i data-lucide="message-circle" className="w-3 h-3"></i>
+                                            Message
+                                        </button>
+                                        <button className="flex-1 text-xs py-2 px-3 bg-saas-primary-light text-saas-primary rounded-lg hover:bg-saas-primary hover:text-white transition-all flex items-center justify-center gap-2">
+                                            <i data-lucide="user-plus" className="w-3 h-3"></i>
+                                            Connect
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         const LoginPage = ({ onLogin }) => {
             const [isLogin, setIsLogin] = useState(true);
             const [email, setEmail] = useState('');
@@ -1048,13 +1228,17 @@
             const [activeTab, setActiveTab] = useState('home');
             const [selectedJob, setSelectedJob] = useState(null);
             const [isMobileView, setIsMobileView] = useState(true);
-            const [isDarkMode, setIsDarkMode] = useState(true);
+            const [isDarkMode, setIsDarkMode] = useState(false);
             const [appliedJobs, setAppliedJobs] = useState([]);
 
             useEffect(() => {
                 lucide.createIcons();
-                // Always keep dark class applied for SaaS theme
-                document.documentElement.classList.add('dark');
+                // Apply dark class based on isDarkMode state
+                if (isDarkMode) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
 
                 const handleNav = (e) => setActiveTab(e.detail);
                 window.addEventListener('navigate', handleNav);
@@ -1062,7 +1246,7 @@
             }, [isDarkMode]);
 
             return (
-                <div className="h-full w-full relative flex bg-saas-bg overflow-hidden">
+                <div className="h-screen w-screen fixed inset-0 flex bg-saas-bg overflow-hidden">
                     {!isLoggedIn ? (
                         <LoginPage onLogin={(userData) => { setUser(userData); setIsLoggedIn(true); }} />
                     ) : (
@@ -1075,6 +1259,7 @@
                                 
                                 <div className="flex-1 overflow-y-auto relative">
                                     {activeTab === 'home' && <HomeFeed navigateToJob={setSelectedJob} />}
+                                    {activeTab === 'team' && <TeamDashboard />}
                                     {activeTab === 'tracking' && <ApplicationTracking appliedJobs={appliedJobs} isMobileView={isMobileView} />}
                                     {activeTab === 'activities' && <Activities />}
                                     {activeTab === 'performance' && <Performance />}
@@ -1086,6 +1271,10 @@
                                 
                                 {isMobileView && !selectedJob && <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />}
                             </div>
+
+                            {!isMobileView && (
+                                <DesktopProfileSidebar setIsMobileView={setIsMobileView} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+                            )}
                         </>
                     )}
                 </div>
