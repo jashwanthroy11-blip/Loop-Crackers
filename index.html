@@ -3,133 +3,758 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HireTrack - Modern Job Portal & Applicant Tracking</title>
-    <meta name="description" content="A premium job portal for employers to post jobs and track applications, and candidates to find opportunities.">
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <title>JobFlow App</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sora: ['Sora', 'sans-serif'],
+                        sans: ['DM Sans', 'sans-serif'],
+                    },
+                    keyframes: {
+                        'fade-in': {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        'slide-up': {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fade-in 0.5s ease-out forwards',
+                        'slide-up': 'slide-up 0.5s ease-out forwards',
+                    },
+                    colors: {
+                        indigo: {
+                            600: '#7C3AED',
+                        },
+                        teal: {
+                            50: '#F0FDFA',
+                            700: '#0F766E',
+                            500: '#10B981',
+                        },
+                        yellow: {
+                            400: '#FBBF24',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/font/lucide.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- React and ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <style>
+        body { background-color: #F9FAFB; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
 </head>
-<body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">
-                <i class="ph-fill ph-briefcase"></i>
-                HireTrack
-            </div>
-            <div class="nav-links">
-                <button class="nav-btn active" data-view="candidate">For Candidates</button>
-                <button class="nav-btn" data-view="employer">For Employers</button>
-            </div>
-            <div class="user-profile">
-                <img src="https://i.pravatar.cc/150?img=11" alt="Profile" class="avatar">
-            </div>
-        </div>
-    </nav>
+<body class="font-sans antialiased text-gray-900 bg-gray-100 flex justify-center min-h-screen">
+    
+    <div id="root" class="w-full flex justify-center min-h-screen"></div>
 
-    <main class="main-content">
-        <!-- Candidate View -->
-        <section id="candidate-view" class="view-section active">
-            <header class="section-header">
-                <div class="header-content">
-                    <h1>Find Your Next <span class="highlight">Dream Job</span></h1>
-                    <p>Discover thousands of job opportunities with top companies.</p>
-                    <div class="search-bar">
-                        <i class="ph ph-magnifying-glass"></i>
-                        <input type="text" placeholder="Job title, keywords, or company...">
-                        <button class="btn-primary">Search Jobs</button>
-                    </div>
-                </div>
-            </header>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
 
-            <div class="dashboard-grid">
-                <div class="left-panel">
-                    <h2 class="panel-title">Recommended Jobs</h2>
-                    <div class="job-list" id="candidate-jobs">
-                        <!-- Jobs injected by JS -->
-                    </div>
-                </div>
+        const CustomCursor = () => {
+            const [pos, setPos] = useState({ x: 0, y: 0 });
+            const [isVisible, setIsVisible] = useState(false);
+
+            useEffect(() => {
+                const moveCursor = (e) => {
+                    setPos({ x: e.clientX, y: e.clientY });
+                    setIsVisible(true);
+                };
+                const hideCursor = () => setIsVisible(false);
                 
-                <div class="right-panel">
-                    <h2 class="panel-title">My Applications</h2>
-                    <div class="tracking-list" id="candidate-applications">
-                        <!-- Applications injected by JS -->
+                window.addEventListener('mousemove', moveCursor);
+                window.addEventListener('mouseleave', hideCursor);
+                return () => {
+                    window.removeEventListener('mousemove', moveCursor);
+                    window.removeEventListener('mouseleave', hideCursor);
+                };
+            }, []);
+
+            return (
+                <div 
+                    className={`fixed pointer-events-none z-[9999] w-96 h-96 rounded-full bg-indigo-500/20 dark:bg-indigo-400/30 blur-[80px] mix-blend-screen transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+                    style={{ 
+                        transform: `translate3d(${pos.x - 192}px, ${pos.y - 192}px, 0)`,
+                        willChange: 'transform'
+                    }}
+                />
+            );
+        };
+
+        // Mock Data
+        const mockJobs = [
+            { id: 1, company: 'Spotify', logo: 'S', title: 'Senior Product Designer', location: 'Remote, US', salary: '₹12-18 LPA', type: 'Full-time', category: 'Design' },
+            { id: 2, company: 'Google', logo: 'G', title: 'Frontend Engineer', location: 'Bangalore, IN', salary: '₹15-25 LPA', type: 'Full-time', category: 'Engineering' },
+            { id: 3, company: 'Amazon', logo: 'A', title: 'UX Researcher', location: 'Hyderabad, IN', salary: '₹10-14 LPA', type: 'Contract', category: 'Design' },
+            { id: 4, company: 'Notion', logo: 'N', title: 'Product Manager', location: 'Remote', salary: '₹18-28 LPA', type: 'Full-time', category: 'Product' },
+            { id: 5, company: 'Stripe', logo: 'S', title: 'Growth Marketing Lead', location: 'Mumbai, IN', salary: '₹14-20 LPA', type: 'Full-time', category: 'Marketing' },
+        ];
+
+
+        // Bottom Navigation Component
+        const BottomNav = ({ activeTab, setActiveTab }) => {
+            const navItems = [
+                { id: 'home', icon: 'home', label: 'Home' },
+                { id: 'tracking', icon: 'briefcase', label: 'Applied' },
+                { id: 'messages', icon: 'message-square', label: 'Messages' },
+                { id: 'profile', icon: 'user', label: 'Profile' },
+            ];
+
+            return (
+                <div className="absolute bottom-0 w-full bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 flex justify-around py-3 px-2 z-50 transition-colors duration-300">
+                    {navItems.map(item => (
+                        <button 
+                            key={item.id} 
+                            onClick={() => setActiveTab(item.id)}
+                            className={`flex flex-col items-center gap-1 ${activeTab === item.id ? 'text-pink-500' : 'text-gray-400'}`}
+                        >
+                            <i data-lucide={item.icon} className="w-6 h-6"></i>
+                            <span className="text-[10px] font-medium">{item.label}</span>
+                        </button>
+                    ))}
+                </div>
+            );
+        };
+
+        // Desktop Sidebar Component
+        const Sidebar = ({ activeTab, setActiveTab }) => {
+            const menuItems = [
+                { id: 'home', icon: 'layout-dashboard', label: 'Team dashboard' },
+                { id: 'contacts', icon: 'users', label: 'Contacts' },
+                { id: 'home', icon: 'briefcase', label: 'Jobs' },
+                { id: 'tracking', icon: 'clipboard-list', label: 'Job requests', badge: 3 },
+                { id: 'activities', icon: 'activity', label: 'Activities' },
+                { id: 'performance', icon: 'bar-chart-2', label: 'Performance' },
+                { id: 'messages', icon: 'mail', label: 'Mailbox' },
+            ];
+
+            return (
+                <div className="w-64 bg-white dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700 flex flex-col h-full py-6 transition-colors duration-300">
+                    <div className="px-6 flex items-center gap-3 mb-10">
+                        <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+                            <i data-lucide="layers" className="w-6 h-6"></i>
+                        </div>
+                        <h1 className="font-sora text-xl font-bold text-gray-900 dark:text-white">TalentPool</h1>
+                    </div>
+                    
+                    <div className="flex-1 px-4 space-y-2">
+                        <p className="px-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-4">Menu</p>
+                        {menuItems.map(item => (
+                            <button 
+                                key={item.id} 
+                                onClick={() => setActiveTab(item.id)}
+                                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 ${activeTab === item.id ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-medium' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}
+                            >
+                                <div className="flex items-center gap-3">
+                                    <i data-lucide={item.icon} className="w-5 h-5"></i>
+                                    <span className="text-sm">{item.label}</span>
+                                </div>
+                                {item.badge && (
+                                    <span className="w-5 h-5 bg-indigo-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center">{item.badge}</span>
+                                )}
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className="px-6 mt-auto">
+                        <div className="bg-indigo-50 dark:bg-indigo-900/30 p-4 rounded-2xl">
+                            <p className="text-xs text-indigo-600 dark:text-indigo-400 font-medium mb-2">Upgrade your plan</p>
+                            <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-relaxed">Get access to more features and data.</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            );
+        };
 
-        <!-- Employer View -->
-        <section id="employer-view" class="view-section">
-            <header class="section-header employer-header">
-                <div class="header-content">
-                    <h1>Manage Your <span class="highlight">Talent Pipeline</span></h1>
-                    <p>Post jobs, track candidates, and make hires seamlessly.</p>
-                    <div class="action-bar">
-                        <button class="btn-primary" id="post-job-btn">
-                            <i class="ph ph-plus"></i> Post a New Job
+        // Desktop TopBar Component
+        const TopBar = () => {
+            return (
+                <div className="h-16 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between px-8 transition-colors duration-300">
+                    <div className="relative w-96">
+                        <i data-lucide="search" className="absolute left-3 top-2.5 w-4 h-4 text-gray-400"></i>
+                        <input type="text" placeholder="Search Contacts, Jobs..." className="w-full bg-gray-50 dark:bg-gray-700 border-none rounded-xl py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-indigo-100 outline-none dark:text-white" />
+                    </div>
+                    
+                    <div className="flex items-center gap-6">
+                        <button className="text-gray-400 hover:text-indigo-600 transition-colors"><i data-lucide="bell" className="w-5 h-5"></i></button>
+                        <button className="text-gray-400 hover:text-indigo-600 transition-colors"><i data-lucide="settings" className="w-5 h-5"></i></button>
+                        <div className="flex items-center gap-3 pl-4 border-l border-gray-100 dark:border-gray-700">
+                            <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-900/50 rounded-full flex items-center justify-center font-bold text-indigo-700 dark:text-indigo-400 text-xs">ST</div>
+                            <div className="flex flex-col">
+                                <span className="text-xs font-bold text-gray-900 dark:text-white">Sarah Thompson</span>
+                                <span className="text-[10px] text-gray-500 dark:text-gray-400">Recruiter</span>
+                            </div>
+                            <i data-lucide="chevron-down" className="w-4 h-4 text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Screen 1: Home Feed
+        const HomeFeed = ({ navigateToJob }) => {
+            const categories = ['All', 'Design', 'Engineering', 'Product', 'Marketing'];
+            const [selectedCategory, setSelectedCategory] = useState('All');
+            const [searchQuery, setSearchQuery] = useState('');
+
+            const filteredJobs = mockJobs.filter(job => {
+                const matchesCategory = selectedCategory === 'All' || job.category === selectedCategory;
+                const matchesSearch = job.title.toLowerCase().includes(searchQuery.toLowerCase()) || job.company.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesCategory && matchesSearch;
+            });
+
+            return (
+                <div className="flex-1 overflow-y-auto pb-20">
+                    <div className="px-6 pt-10 pb-4 bg-white sticky top-0 z-10 flex justify-between items-center">
+                        <div>
+                            <p className="text-gray-500 text-sm mb-1">Good morning</p>
+                            <h1 className="font-sora text-xl font-bold">Alex Kumar</h1>
+                        </div>
+                        <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center font-sora font-bold text-gray-500 text-lg border-2 border-indigo-100 cursor-pointer" onClick={() => window.dispatchEvent(new CustomEvent('navigate', {detail: 'profile'}))}>AK</div>
+                    </div>
+                    
+                    <div className="px-6 mt-2">
+                        <div className="relative">
+                            <i data-lucide="search" className="absolute left-4 top-3.5 w-5 h-5 text-gray-400"></i>
+                            <input type="text" placeholder="Search for jobs..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full bg-white rounded-2xl py-3 pl-12 pr-4 shadow-sm border-none focus:ring-2 focus:ring-indigo-100 outline-none text-sm" />
+                        </div>
+                    </div>
+
+                    <div className="mt-6 pl-6 flex gap-3 overflow-x-auto hide-scrollbar">
+                        {categories.map((cat, i) => (
+                            <button key={i} onClick={() => setSelectedCategory(cat)} className={`whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-medium transition-colors duration-300 ${selectedCategory === cat ? 'bg-gradient-to-r from-pink-400 to-yellow-400 text-white shadow-md shadow-pink-200' : 'bg-white text-gray-600 border border-gray-100 hover:bg-gray-50'}`}>
+                                {cat}
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className="mt-8 px-6">
+                        <h2 className="font-sora text-lg font-bold mb-4 animate-fade-in">Recommended Jobs</h2>
+                        <div className="flex flex-col gap-4">
+                            {filteredJobs.length === 0 && <p className="text-gray-500 text-sm text-center py-4">No jobs found matching your criteria.</p>}
+                            {filteredJobs.map((job, idx) => (
+                                <div 
+                                    key={job.id} 
+                                    onClick={() => navigateToJob(job)} 
+                                    className="bg-white p-5 rounded-2xl shadow-sm border border-gray-50 flex flex-col gap-4 cursor-pointer animate-slide-up hover:-translate-y-1 hover:shadow-md transition-all duration-300"
+                                    style={{ animationDelay: `${idx * 100}ms` }}
+                                >
+                                    <div className="flex justify-between items-start">
+                                        <div className="flex gap-4 items-center">
+                                            <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center font-sora font-bold text-xl text-gray-800">
+                                                {job.logo}
+                                            </div>
+                                            <div>
+                                                <h3 className="font-sora font-bold text-gray-900">{job.title}</h3>
+                                                <p className="text-sm text-gray-500">{job.company} • {job.location}</p>
+                                            </div>
+                                        </div>
+                                        <i data-lucide="bookmark" className="w-5 h-5 text-gray-300"></i>
+                                    </div>
+                                    <div className="flex justify-between items-center mt-2">
+                                        <div className="flex gap-2">
+                                            <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-lg text-xs font-medium">{job.type}</span>
+                                            <span className="px-3 py-1 bg-pink-50 text-pink-600 rounded-lg text-xs font-medium font-sora">{job.salary}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Screen 2: Job Detail
+        const JobDetail = ({ job, goBack, onApply, hasApplied }) => {
+            const [showModal, setShowModal] = useState(false);
+            const [resumeName, setResumeName] = useState('');
+            const [details, setDetails] = useState({ name: 'Alex Kumar', email: 'alex@example.com' });
+
+            const handleApply = () => {
+                onApply(job.id);
+                setShowModal(false);
+            };
+
+            return (
+                <div className="flex-1 bg-white flex flex-col h-full z-50 absolute w-full inset-0">
+                    <div className="px-6 py-6 flex justify-between items-center sticky top-0 bg-white/80 backdrop-blur-md z-10">
+                        <button onClick={goBack} className="w-10 h-10 border border-gray-200 rounded-full flex items-center justify-center text-gray-600">
+                            <i data-lucide="arrow-left" className="w-5 h-5"></i>
+                        </button>
+                        <div className="flex gap-3">
+                            <button className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center text-gray-600">
+                                <i data-lucide="heart" className="w-5 h-5"></i>
+                            </button>
+                            <button className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center text-gray-600">
+                                <i data-lucide="share" className="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto pb-24 px-6">
+                        <div className="flex flex-col items-center text-center mt-4 animate-fade-in">
+                            <div className="w-20 h-20 rounded-2xl bg-gray-100 flex items-center justify-center font-sora font-bold text-3xl text-gray-800 shadow-sm border border-gray-50 mb-4">
+                                {job.logo}
+                            </div>
+                            <h1 className="font-sora text-2xl font-bold text-gray-900 mb-1">{job.title}</h1>
+                            <p className="text-gray-500 mb-4">{job.company} • {job.location}</p>
+                            <div className="flex gap-2">
+                                <span className="px-4 py-1.5 bg-gray-100 text-gray-600 rounded-full text-sm font-medium">{job.type}</span>
+                                <span className="px-4 py-1.5 bg-pink-50 text-pink-600 rounded-full text-sm font-medium font-sora">{job.salary}</span>
+                            </div>
+                        </div>
+
+                        <div className="mt-8 animate-slide-up" style={{ animationDelay: '100ms' }}>
+                            <h2 className="font-sora text-lg font-bold mb-3 text-gray-900">About the role</h2>
+                            <p className="text-gray-600 text-sm leading-relaxed mb-6">
+                                We are looking for a highly skilled {job.title} to join our dynamic team. You will be responsible for creating intuitive, engaging, and scalable experiences for our users.
+                            </p>
+
+                            <h2 className="font-sora text-lg font-bold mb-3 text-gray-900">Responsibilities</h2>
+                            <ul className="text-gray-600 text-sm leading-relaxed list-disc pl-5 flex flex-col gap-2">
+                                <li>Collaborate with cross-functional teams to define, design, and ship new features.</li>
+                                <li>Work on bug fixing and improving application performance.</li>
+                                <li>Continuously discover, evaluate, and implement new technologies.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div className="absolute bottom-0 w-full p-6 bg-white border-t border-gray-100 z-20">
+                        {hasApplied ? (
+                            <button disabled className="w-full bg-gray-300 text-gray-600 font-medium text-lg py-4 rounded-2xl cursor-not-allowed">
+                                Already Applied
+                            </button>
+                        ) : (
+                            <button onClick={() => setShowModal(true)} className="w-full bg-gradient-to-r from-pink-400 to-yellow-400 text-white font-medium text-lg py-4 rounded-2xl shadow-lg shadow-pink-200">
+                                Apply Now
+                            </button>
+                        )}
+                    </div>
+
+                    {showModal && (
+                        <div className="fixed inset-0 z-[100] bg-black/50 flex items-end sm:items-center justify-center backdrop-blur-sm">
+                            <div className="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-10 animate-slide-up">
+                                <div className="flex justify-between items-center mb-6">
+                                    <h2 className="font-sora text-xl font-bold text-gray-900">Apply for {job.title}</h2>
+                                    <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600"><i data-lucide="x" className="w-5 h-5"></i></button>
+                                </div>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="text-xs text-gray-500 font-medium">Full Name</label>
+                                        <input type="text" value={details.name} onChange={e => setDetails({...details, name: e.target.value})} className="w-full p-3 bg-gray-50 text-gray-900 rounded-xl mt-1 border border-gray-200 focus:ring-2 focus:ring-indigo-100 outline-none" />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs text-gray-500 font-medium">Email Address</label>
+                                        <input type="email" value={details.email} onChange={e => setDetails({...details, email: e.target.value})} className="w-full p-3 bg-gray-50 text-gray-900 rounded-xl mt-1 border border-gray-200 focus:ring-2 focus:ring-indigo-100 outline-none" />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs text-gray-500 font-medium">Resume (PDF)</label>
+                                        <div className="w-full p-4 border-2 border-dashed border-gray-200 rounded-xl mt-1 flex flex-col items-center justify-center text-gray-400 relative bg-gray-50 hover:bg-gray-100 transition-colors">
+                                            <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={e => setResumeName(e.target.files[0]?.name)} />
+                                            <i data-lucide="upload-cloud" className="w-8 h-8 mb-2"></i>
+                                            <span className="text-sm font-medium text-gray-600">{resumeName || 'Tap to upload resume'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button onClick={handleApply} className="w-full bg-gradient-to-r from-pink-400 to-yellow-400 text-white font-medium text-lg py-4 rounded-2xl mt-8 shadow-lg shadow-pink-200 hover:bg-indigo-700 transition-colors">
+                                    Submit Application
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // Screen 3: Application Tracking
+        const ApplicationTracking = ({ appliedJobs, isMobileView }) => {
+            const stages = ['Applied', 'Screening', 'Interview', 'Selected', 'Offer'];
+            const [tab, setTab] = useState('Active');
+            
+            const activeApps = [
+                { id: 101, name: 'William Smith', title: 'Sr. Marketing Manager', company: 'Spotify', logo: 'S', stage: 0, tags: ['LinkedIn', 'Active'] },
+                { id: 102, name: 'Isabella Anderson', title: 'Growth Marketer', company: 'Google', logo: 'G', stage: 1, tags: ['Scheduled'] },
+                { id: 103, name: 'Alexander Jackson', title: 'SEO Specialist', company: 'Amazon', logo: 'A', stage: 2, tags: ['Video'] },
+                { id: 104, name: 'Olivia Martinez', title: 'Marketing VP', company: 'Netflix', logo: 'N', stage: 3, tags: ['Scheduled'] },
+                { id: 105, name: 'Noah Brown', title: 'Head of Marketing', company: 'Apple', logo: 'A', stage: 4, tags: ['Offered'] },
+                ...appliedJobs.map(id => {
+                    const job = mockJobs.find(j => j.id === id);
+                    return { id, name: 'Alex Kumar', title: job.title, company: job.company, logo: job.logo, stage: 0, tags: ['New'] };
+                })
+            ];
+
+            const archivedApps = [
+                { id: 201, name: 'Elijah Thomas', title: 'Marketing Manager', company: 'Meta', logo: 'M', stage: 4, rejected: true },
+            ];
+
+            const displayApps = tab === 'Active' ? activeApps : archivedApps;
+
+            if (!isMobileView && tab === 'Active') {
+                return (
+                    <div className="flex-1 flex flex-col h-full bg-[#F9FAFB] dark:bg-gray-900 p-8 overflow-hidden transition-colors duration-300">
+                        <div className="mb-8">
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Jobs / Marketing manager</p>
+                            <h1 className="font-sora text-3xl font-bold text-gray-900 dark:text-white">Marketing manager</h1>
+                            <div className="flex gap-8 mt-8 border-b border-gray-200 dark:border-gray-700">
+                                <button className="pb-3 border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400 font-medium text-sm transition-all">Applications</button>
+                                <button className="pb-3 text-gray-500 dark:text-gray-400 text-sm hover:text-gray-700 dark:hover:text-gray-200 transition-all">Details</button>
+                                <button className="pb-3 text-gray-500 dark:text-gray-400 text-sm hover:text-gray-700 dark:hover:text-gray-200 transition-all">Notes</button>
+                            </div>
+                        </div>
+
+                        <div className="flex-1 flex gap-6 overflow-x-auto pb-6 hide-scrollbar">
+                            {stages.map((stage, sIdx) => (
+                                <div key={sIdx} className="flex-shrink-0 w-72">
+                                    <div className="flex items-center gap-2 mb-6">
+                                        <h3 className="font-sora font-bold text-gray-400 dark:text-gray-500 text-[10px] uppercase tracking-widest">{stage}</h3>
+                                        <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">{activeApps.filter(app => app.stage === sIdx).length}</span>
+                                    </div>
+                                    <div className="flex flex-col gap-4">
+                                        {activeApps.filter(app => app.stage === sIdx).map(app => (
+                                            <div key={app.id} className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700 hover:shadow-md hover:-translate-y-1 transition-all cursor-pointer group">
+                                                <h4 className="font-sora font-bold text-gray-900 dark:text-white text-sm mb-1 group-hover:text-indigo-600 transition-colors">{app.name}</h4>
+                                                <p className="text-[10px] text-gray-500 dark:text-gray-400 mb-4">{app.title}</p>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {app.tags?.map((tag, tIdx) => (
+                                                        <span key={tIdx} className={`px-2.5 py-1 rounded-lg text-[9px] font-bold transition-all ${tag === 'Active' || tag === 'Offered' ? 'bg-teal-50 text-teal-600 dark:bg-teal-900/30' : tag === 'Scheduled' || tag === 'Video' ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/30' : 'bg-gray-50 text-gray-500 dark:bg-gray-700'}`}>
+                                                            {tag}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="flex-1 flex flex-col pb-20">
+                    <div className="px-6 py-8 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 transition-colors duration-300">
+                        <h1 className="font-sora text-2xl font-bold mb-6 text-gray-900 dark:text-white">Track Applications</h1>
+                        <div className="flex gap-4">
+                            <button onClick={() => setTab('Active')} className={`font-medium pb-1 transition-all ${tab === 'Active' ? 'text-pink-500 border-b-2 border-pink-500' : 'text-gray-400'}`}>Active ({activeApps.length})</button>
+                            <button onClick={() => setTab('Archived')} className={`font-medium pb-1 transition-all ${tab === 'Archived' ? 'text-pink-500 border-b-2 border-pink-500' : 'text-gray-400'}`}>Archived</button>
+                        </div>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-6">
+                        {displayApps.length === 0 && <p className="text-gray-500 text-sm text-center py-4">No {tab.toLowerCase()} applications found.</p>}
+                        {displayApps.map((app, appIdx) => (
+                            <div key={app.id} className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-50 dark:border-gray-700 animate-slide-up transition-colors duration-300" style={{ animationDelay: `${appIdx * 100}ms` }}>
+                                <div className="flex items-center gap-4 mb-6">
+                                    <div className={`w-12 h-12 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center font-sora font-bold text-xl ${app.rejected ? 'text-red-500' : 'text-gray-800 dark:text-white'}`}>{app.logo}</div>
+                                    <div>
+                                        <h3 className="font-sora font-bold text-gray-900 dark:text-white">{app.title}</h3>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">{app.company}</p>
+                                    </div>
+                                </div>
+                                
+                                <div className="relative">
+                                    <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-gray-100 dark:bg-gray-700"></div>
+                                    <div className="flex flex-col gap-6 relative">
+                                        {stages.map((stage, idx) => {
+                                            const isCompleted = idx < app.stage;
+                                            const isCurrent = idx === app.stage;
+                                            const isRejectedStage = app.rejected && isCurrent;
+                                            
+                                            return (
+                                                <div key={idx} className="flex gap-4 items-center">
+                                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center z-10 transition-all ${isRejectedStage ? 'bg-red-500 text-white' : isCompleted ? 'bg-teal-500 text-white' : isCurrent ? 'bg-white border-2 border-pink-500' : 'bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600'}`}>
+                                                        {(isCompleted || isRejectedStage) && <i data-lucide={isRejectedStage ? "x" : "check"} className="w-3.5 h-3.5"></i>}
+                                                        {isCurrent && !isRejectedStage && <div className="w-2 h-2 rounded-full bg-gradient-to-r from-pink-400 to-yellow-400"></div>}
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <p className={`font-medium text-sm transition-all ${(isCurrent && !isRejectedStage) || isCompleted ? 'text-gray-900 dark:text-white' : isRejectedStage ? 'text-red-500' : 'text-gray-400'}`}>{isRejectedStage ? 'Rejected' : stage}</p>
+                                                        {isCurrent && !app.rejected && <p className="text-xs text-pink-500 mt-0.5">In Progress</p>}
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        // Screen 5: Messages
+        const Messages = () => {
+            const [selectedChat, setSelectedChat] = useState(null);
+            const [inputText, setInputText] = useState('');
+            const [msgsList, setMsgsList] = useState([
+                { id: 1, name: 'Sarah from Spotify', role: 'Recruiter', text: 'Hi Alex! We would love to schedule...', time: '10:42 AM', unread: 2, initial: 'S', messages: [{text: 'Hi Alex! We would love to schedule an interview with you.', sender: 'them'}] },
+                { id: 2, name: 'David from Google', role: 'Hiring Manager', text: 'Thanks for taking the time today.', time: 'Yesterday', unread: 0, initial: 'D', messages: [{text: 'Thanks for taking the time today.', sender: 'them'}] },
+            ]);
+
+            const handleSend = (chat) => {
+                if (inputText.trim()) {
+                    chat.messages.push({text: inputText, sender: 'me'});
+                    chat.text = inputText;
+                    chat.time = 'Just now';
+                    setInputText('');
+                    setMsgsList([...msgsList]);
+                }
+            };
+
+            if (selectedChat) {
+                const chat = msgsList.find(m => m.id === selectedChat);
+                return (
+                    <div className="flex-1 flex flex-col bg-white dark:bg-gray-900 absolute inset-0 z-50 transition-colors duration-300">
+                        <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center gap-4 bg-white dark:bg-gray-900 sticky top-0 z-10 transition-colors duration-300">
+                            <button onClick={() => setSelectedChat(null)} className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"><i data-lucide="arrow-left" className="w-5 h-5"></i></button>
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-pink-100 dark:bg-pink-900/50 rounded-full flex items-center justify-center font-bold text-pink-600 dark:text-pink-400 font-sora">{chat.initial}</div>
+                                <div>
+                                    <h3 className="font-sora font-bold text-sm text-gray-900 dark:text-white">{chat.name}</h3>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">{chat.role}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4 animate-fade-in">
+                            {chat.messages.map((m, i) => (
+                                <div key={i} className={`max-w-[80%] p-3 rounded-2xl text-sm ${m.sender === 'me' ? 'bg-gradient-to-r from-pink-400 to-yellow-400 text-white self-end rounded-br-none' : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 self-start rounded-bl-none border border-gray-50 dark:border-gray-700'}`}>
+                                    {m.text}
+                                </div>
+                            ))}
+                        </div>
+                        <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex gap-3 pb-8 transition-colors duration-300">
+                            <input 
+                                type="text" 
+                                value={inputText} 
+                                onChange={e => setInputText(e.target.value)} 
+                                onKeyDown={e => { if (e.key === 'Enter') handleSend(chat); }} 
+                                placeholder="Type a message..." 
+                                className="flex-1 bg-gray-50 dark:bg-gray-800 dark:text-white rounded-full px-4 py-2 border border-gray-200 dark:border-gray-700 outline-none focus:ring-2 focus:ring-indigo-500" 
+                            />
+                            <button onClick={() => handleSend(chat)} className="w-10 h-10 bg-gradient-to-r from-pink-400 to-yellow-400 rounded-full flex items-center justify-center text-white shadow-md shadow-pink-200 dark:shadow-none hover:bg-indigo-700 transition-colors">
+                                <i data-lucide="send" className="w-4 h-4 ml-0.5"></i>
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="flex-1 flex flex-col pb-20 bg-white dark:bg-gray-900 transition-colors duration-300">
+                    <div className="px-6 pt-10 pb-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center transition-colors duration-300">
+                        <h1 className="font-sora text-2xl font-bold text-gray-900 dark:text-white">Messages</h1>
+                        <button className="w-10 h-10 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <i data-lucide="edit" className="w-5 h-5"></i>
                         </button>
                     </div>
-                </div>
-            </header>
-
-            <div class="dashboard-grid">
-                <div class="left-panel">
-                    <h2 class="panel-title">Active Job Postings</h2>
-                    <div class="job-list" id="employer-jobs">
-                        <!-- Employer jobs injected by JS -->
+                    <div className="flex-1 overflow-y-auto">
+                        {msgsList.map((m, i) => (
+                            <div key={i} onClick={() => { m.unread = 0; setSelectedChat(m.id); setMsgsList([...msgsList]); }} className="flex gap-4 items-center px-6 py-4 border-b border-gray-50 dark:border-gray-800/50 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors animate-slide-up" style={{ animationDelay: `${i * 100}ms` }}>
+                                <div className="w-12 h-12 rounded-full bg-pink-100 dark:bg-pink-900/50 flex items-center justify-center text-pink-600 dark:text-pink-400 font-bold font-sora text-lg">
+                                    {m.initial}
+                                </div>
+                                <div className="flex-1">
+                                    <div className="flex justify-between items-center mb-1">
+                                        <h3 className={`font-sora font-bold text-sm ${m.unread ? 'text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-300'}`}>{m.name}</h3>
+                                        <span className="text-xs text-gray-400 dark:text-gray-500">{m.time}</span>
+                                    </div>
+                                    <p className={`text-sm ${m.unread ? 'text-gray-900 dark:text-white font-medium' : 'text-gray-500 dark:text-gray-400'} truncate`}>{m.text}</p>
+                                </div>
+                                {m.unread > 0 && (
+                                    <div className="w-5 h-5 bg-gradient-to-r from-pink-400 to-yellow-400 rounded-full flex items-center justify-center text-white text-[10px] font-bold">
+                                        {m.unread}
+                                    </div>
+                                )}
+                            </div>
+                        ))}
                     </div>
                 </div>
+            );
+        };
+
+        // Screen 6: User Profile
+        const UserProfile = ({ isMobileView, setIsMobileView, isDarkMode, setIsDarkMode }) => {
+            return (
+                <div className="flex-1 flex flex-col pb-20 bg-[#F9FAFB] dark:bg-gray-900 overflow-y-auto transition-colors duration-300">
+                    <div className="bg-white dark:bg-gray-800 pt-12 pb-8 px-6 rounded-b-3xl shadow-sm mb-6 flex flex-col items-center transition-colors duration-300">
+                        <div className="w-24 h-24 bg-pink-100 rounded-full flex items-center justify-center font-sora font-bold text-3xl text-pink-600 mb-4 border-4 border-white dark:border-gray-800 shadow-md relative">
+                            AK
+                            <div className="absolute bottom-0 right-0 w-6 h-6 bg-gradient-to-r from-pink-400 to-yellow-400 rounded-full border-2 border-white flex items-center justify-center">
+                                <i data-lucide="edit-2" className="w-3 h-3 text-white"></i>
+                            </div>
+                        </div>
+                        <h1 className="font-sora text-2xl font-bold text-gray-900 dark:text-white">Alex Kumar</h1>
+                        <p className="text-gray-500 dark:text-gray-400 mb-4">Senior Frontend Engineer</p>
+
+                        <button className="px-6 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-full text-sm font-medium mb-6 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                            Edit Profile
+                        </button>
+                        
+                        <div className="flex gap-4 w-full">
+                            <div className="flex-1 bg-gray-50 dark:bg-gray-700 rounded-2xl p-4 text-center">
+                                <h3 className="font-sora text-xl font-bold text-gray-900 dark:text-white">12</h3>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-1">Applications</p>
+                            </div>
+                            <div className="flex-1 bg-gray-50 dark:bg-gray-700 rounded-2xl p-4 text-center">
+                                <h3 className="font-sora text-xl font-bold text-gray-900 dark:text-white">4</h3>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-1">Interviews</p>
+                            </div>
+                            <div className="flex-1 bg-gray-50 dark:bg-gray-700 rounded-2xl p-4 text-center">
+                                <h3 className="font-sora text-xl font-bold text-gray-900 dark:text-white">1</h3>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-1">Offers</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="px-6 mb-6">
+                        <h2 className="font-sora text-lg font-bold mb-4 text-gray-900 dark:text-white">Top Skills</h2>
+                        <div className="flex flex-wrap gap-2">
+                            {['React.js', 'TypeScript', 'Tailwind CSS', 'Figma', 'Node.js', 'UX Design'].map((skill, i) => (
+                                <span key={i} className="px-4 py-2 bg-white dark:bg-gray-800 rounded-full text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm border border-gray-100 dark:border-gray-700 transition-colors duration-300">
+                                    {skill}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="px-6 mb-6">
+                        <h2 className="font-sora text-lg font-bold mb-4 text-gray-900 dark:text-white">Experience</h2>
+                        <div className="flex flex-col gap-4">
+                            <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700">
+                                <h3 className="font-sora font-bold text-gray-900 dark:text-white text-sm">Senior Frontend Engineer</h3>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">TechCorp Inc. • 2021 - Present</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">Led the frontend development of the core ATS product using React and Tailwind.</p>
+                            </div>
+                            <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700">
+                                <h3 className="font-sora font-bold text-gray-900 dark:text-white text-sm">UI/UX Developer</h3>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Creative Solutions • 2018 - 2021</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">Designed and implemented high-conversion landing pages.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="px-6 mb-6">
+                        <h2 className="font-sora text-lg font-bold mb-4 text-gray-900 dark:text-white">Education</h2>
+                        <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700">
+                            <h3 className="font-sora font-bold text-gray-900 dark:text-white text-sm">B.Tech in Computer Science</h3>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Indian Institute of Technology • Completed 2018</p>
+                        </div>
+                    </div>
+
+                    <div className="px-6 mb-6">
+                        <h2 className="font-sora text-lg font-bold mb-4 text-gray-900 dark:text-white">Settings</h2>
+                        <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-50 flex justify-between items-center">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-600">
+                                    <i data-lucide="monitor" className="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h3 className="font-sora font-bold text-gray-900 text-sm">Desktop View</h3>
+                                    <p className="text-xs text-gray-500">Switch to full width layout</p>
+                                </div>
+                            </div>
+                            <button 
+                                onClick={() => setIsMobileView(!isMobileView)}
+                                className={`w-12 h-6 rounded-full relative transition-colors duration-300 ${!isMobileView ? 'bg-gradient-to-r from-pink-400 to-yellow-400' : 'bg-gray-200 dark:bg-gray-600'}`}
+                            >
+                                <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ${!isMobileView ? 'translate-x-6' : 'translate-x-0.5'}`}></div>
+                            </button>
+                        </div>
+
+                        <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700 flex justify-between items-center mt-3">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300">
+                                    <i data-lucide="moon" className="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h3 className="font-sora font-bold text-gray-900 dark:text-white text-sm">Dark Theme</h3>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">Switch to dark mode</p>
+                                </div>
+                            </div>
+                            <button 
+                                onClick={() => setIsDarkMode(!isDarkMode)}
+                                className={`w-12 h-6 rounded-full relative transition-colors duration-300 ${isDarkMode ? 'bg-gradient-to-r from-pink-400 to-yellow-400' : 'bg-gray-200 dark:bg-gray-600'}`}
+                            >
+                                <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ${isDarkMode ? 'translate-x-6' : 'translate-x-0.5'}`}></div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Main App Component
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('home');
+            const [selectedJob, setSelectedJob] = useState(null);
+            const [isMobileView, setIsMobileView] = useState(true);
+            const [isDarkMode, setIsDarkMode] = useState(false);
+            const [appliedJobs, setAppliedJobs] = useState([]);
+
+            useEffect(() => {
+                // Initialize lucide icons whenever component renders
+                lucide.createIcons();
                 
-                <div class="right-panel">
-                    <h2 class="panel-title">Applicant Tracking</h2>
-                    <div class="tracking-board">
-                        <div class="board-column">
-                            <div class="column-header">Applied <span class="count">3</span></div>
-                            <div class="column-content" id="status-applied">
-                                <!-- Cards injected by JS -->
-                            </div>
+                // Custom event listener for internal navigation (e.g., clicking avatar to go to profile)
+                const handleNav = (e) => setActiveTab(e.detail);
+                window.addEventListener('navigate', handleNav);
+                return () => window.removeEventListener('navigate', handleNav);
+            });
+
+            return (
+                <div className={`h-full w-full relative flex transition-all duration-300 ${isDarkMode ? 'dark bg-gray-900 text-white' : 'bg-gradient-to-br from-pink-50 to-yellow-50'} shadow-2xl overflow-hidden`}>
+                    {!isMobileView && <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />}
+                    
+                    <div className={`flex-1 flex flex-col h-full overflow-hidden relative ${isMobileView ? 'max-w-md mx-auto bg-white dark:bg-gray-900 shadow-2xl' : ''}`}>
+                        <CustomCursor />
+                        {!isMobileView && <TopBar />}
+                        
+                        <div className="flex-1 overflow-y-auto relative">
+                            {activeTab === 'home' && <HomeFeed navigateToJob={setSelectedJob} />}
+                            {activeTab === 'tracking' && <ApplicationTracking appliedJobs={appliedJobs} isMobileView={isMobileView} />}
+                            {activeTab === 'messages' && <Messages />}
+                            {activeTab === 'profile' && <UserProfile isMobileView={isMobileView} setIsMobileView={setIsMobileView} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />}
+                            
+                            {selectedJob && <JobDetail job={selectedJob} goBack={() => setSelectedJob(null)} hasApplied={appliedJobs.includes(selectedJob.id)} onApply={(id) => setAppliedJobs([...appliedJobs, id])} />}
                         </div>
-                        <div class="board-column">
-                            <div class="column-header">Interview <span class="count">2</span></div>
-                            <div class="column-content" id="status-interview">
-                                <!-- Cards injected by JS -->
-                            </div>
-                        </div>
-                        <div class="board-column">
-                            <div class="column-header">Offered <span class="count">1</span></div>
-                            <div class="column-content" id="status-offered">
-                                <!-- Cards injected by JS -->
-                            </div>
-                        </div>
+                        
+                        {isMobileView && !selectedJob && <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />}
                     </div>
                 </div>
-            </div>
-        </section>
-    </main>
+            );
+        };
 
-    <!-- Post Job Modal -->
-    <div class="modal" id="post-job-modal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h2>Post a New Job</h2>
-            <form id="job-form">
-                <div class="form-group">
-                    <label>Job Title</label>
-                    <input type="text" required placeholder="e.g. Senior Frontend Developer">
-                </div>
-                <div class="form-group">
-                    <label>Department</label>
-                    <input type="text" required placeholder="e.g. Engineering">
-                </div>
-                <div class="form-group">
-                    <label>Location</label>
-                    <input type="text" required placeholder="e.g. Remote">
-                </div>
-                <button type="submit" class="btn-primary w-100">Publish Job</button>
-            </form>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
 </body>
 </html>
+
+
+
