@@ -27,23 +27,35 @@
                         'slide-up': {
                             '0%': { opacity: '0', transform: 'translateY(20px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        'slide-in-left': {
+                            '0%': { opacity: '0', transform: 'translateX(-20px)' },
+                            '100%': { opacity: '1', transform: 'translateX(0)' },
                         }
                     },
                     animation: {
-                        'fade-in': 'fade-in 0.5s ease-out forwards',
-                        'slide-up': 'slide-up 0.5s ease-out forwards',
+                        'fade-in': 'fade-in 0.4s ease-out forwards',
+                        'slide-up': 'slide-up 0.4s ease-out forwards',
+                        'slide-in-left': 'slide-in-left 0.4s ease-out forwards',
                     },
                     colors: {
-                        indigo: {
-                            600: '#7C3AED',
-                        },
-                        teal: {
-                            50: '#F0FDFA',
-                            700: '#0F766E',
-                            500: '#10B981',
-                        },
-                        yellow: {
-                            400: '#FBBF24',
+                        saas: {
+                            bg: '#0F172A',
+                            card: '#1E293B',
+                            border: '#334155',
+                            hover: '#263248',
+                            primary: '#4F46E5',
+                            'primary-hover': '#4338CA',
+                            'primary-light': 'rgba(79,70,229,0.15)',
+                            secondary: '#06B6D4',
+                            'secondary-light': 'rgba(6,182,212,0.15)',
+                            text: '#F8FAFC',
+                            muted: '#94A3B8',
+                            success: '#22C55E',
+                            'success-light': 'rgba(34,197,94,0.15)',
+                            error: '#EF4444',
+                            'error-light': 'rgba(239,68,68,0.15)',
+                            warning: '#F59E0B',
                         }
                     }
                 }
@@ -63,12 +75,27 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
     <style>
-        body { background-color: #F9FAFB; }
+        :root {
+            --color-bg: #0F172A;
+            --color-card: #1E293B;
+            --color-primary: #4F46E5;
+            --color-secondary: #06B6D4;
+            --color-text: #F8FAFC;
+            --color-muted: #94A3B8;
+            --color-success: #22C55E;
+            --color-error: #EF4444;
+            --color-border: #334155;
+        }
+        body { background-color: #0F172A; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Smooth scrollbar for visible scrollbars */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #1E293B; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
     </style>
 </head>
-<body class="font-sans antialiased text-gray-900 bg-gray-100 dark:bg-gray-900 flex justify-center min-h-screen transition-colors duration-300">
+<body class="font-sans antialiased bg-saas-bg text-saas-text flex justify-center min-h-screen">
     
     <div id="root" class="w-full flex justify-center min-h-screen"></div>
 
@@ -126,12 +153,12 @@
             ];
 
             return (
-                <div className="w-full bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 flex justify-around py-3 px-2 z-50 transition-colors duration-300">
+                <div className="w-full bg-saas-card border-t border-saas-border flex justify-around py-3 px-2 z-50">
                     {navItems.map(item => (
                         <button 
                             key={item.id} 
                             onClick={() => setActiveTab(item.id)}
-                            className={`flex flex-col items-center gap-1 ${activeTab === item.id ? 'text-pink-500' : 'text-gray-400'}`}
+                            className={`flex flex-col items-center gap-1 transition-colors duration-200 ${activeTab === item.id ? 'text-saas-primary' : 'text-saas-muted hover:text-saas-text'}`}
                         >
                             <i data-lucide={item.icon} className="w-6 h-6"></i>
                             <span className="text-[10px] font-medium">{item.label}</span>
@@ -155,37 +182,35 @@
             ];
 
             return (
-                <div className="w-64 bg-white dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700 flex flex-col h-full py-6 transition-colors duration-300">
+                <div className="w-64 bg-saas-card border-r border-saas-border flex flex-col h-full py-6">
                     <div className="px-6 flex items-center gap-3 mb-10">
-                        <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+                        <div className="w-10 h-10 bg-saas-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-saas-primary/20">
                             <i data-lucide="layers" className="w-6 h-6"></i>
                         </div>
-                        <h1 className="font-sora text-xl font-bold text-gray-900 dark:text-white">Align Flow</h1>
+                        <h1 className="font-sora text-xl font-bold text-saas-text">Align Flow</h1>
                     </div>
-                    
-                    <div className="flex-1 px-4 space-y-2">
-                        <p className="px-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-4">Menu</p>
+                    <div className="flex-1 px-4 space-y-1">
+                        <p className="px-2 text-[10px] font-bold text-saas-muted uppercase tracking-wider mb-4">Menu</p>
                         {menuItems.map(item => (
                             <button 
                                 key={item.id} 
                                 onClick={() => setActiveTab(item.id)}
-                                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 ${activeTab === item.id ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-medium' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}
+                                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 ${activeTab === item.id ? 'bg-saas-primary-light text-saas-primary font-semibold' : 'text-saas-muted hover:bg-saas-hover hover:text-saas-text'}`}
                             >
                                 <div className="flex items-center gap-3">
                                     <i data-lucide={item.icon} className="w-5 h-5"></i>
                                     <span className="text-sm">{item.label}</span>
                                 </div>
                                 {item.badge && (
-                                    <span className="w-5 h-5 bg-indigo-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center">{item.badge}</span>
+                                    <span className="w-5 h-5 bg-saas-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center">{item.badge}</span>
                                 )}
                             </button>
                         ))}
                     </div>
-
                     <div className="px-6 mt-auto">
-                        <div className="bg-indigo-50 dark:bg-indigo-900/30 p-4 rounded-2xl">
-                            <p className="text-xs text-indigo-600 dark:text-indigo-400 font-medium mb-2">Upgrade your plan</p>
-                            <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-relaxed">Get access to more features and data.</p>
+                        <div className="bg-saas-primary-light border border-saas-primary/30 p-4 rounded-2xl">
+                            <p className="text-xs text-saas-primary font-semibold mb-1">Upgrade your plan</p>
+                            <p className="text-[10px] text-saas-muted leading-relaxed">Get access to more features and data.</p>
                         </div>
                     </div>
                 </div>
@@ -195,22 +220,21 @@
         // Desktop TopBar Component
         const TopBar = () => {
             return (
-                <div className="h-16 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between px-8 transition-colors duration-300">
+                <div className="h-16 bg-saas-card border-b border-saas-border flex items-center justify-between px-8">
                     <div className="relative w-96">
-                        <i data-lucide="search" className="absolute left-3 top-2.5 w-4 h-4 text-gray-400"></i>
-                        <input type="text" placeholder="Search Contacts, Jobs..." className="w-full bg-gray-50 dark:bg-gray-700 border-none rounded-xl py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-indigo-100 outline-none dark:text-white" />
+                        <i data-lucide="search" className="absolute left-3 top-2.5 w-4 h-4 text-saas-muted"></i>
+                        <input type="text" placeholder="Search Contacts, Jobs..." className="w-full bg-saas-bg border border-saas-border rounded-xl py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-saas-primary/50 outline-none text-saas-text placeholder-saas-muted" />
                     </div>
-                    
-                    <div className="flex items-center gap-6">
-                        <button className="text-gray-400 hover:text-indigo-600 transition-colors"><i data-lucide="bell" className="w-5 h-5"></i></button>
-                        <button className="text-gray-400 hover:text-indigo-600 transition-colors"><i data-lucide="settings" className="w-5 h-5"></i></button>
-                        <div className="flex items-center gap-3 pl-4 border-l border-gray-100 dark:border-gray-700">
-                            <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-900/50 rounded-full flex items-center justify-center font-bold text-indigo-700 dark:text-indigo-400 text-xs">ST</div>
+                    <div className="flex items-center gap-4">
+                        <button className="text-saas-muted hover:text-saas-secondary transition-colors"><i data-lucide="bell" className="w-5 h-5"></i></button>
+                        <button className="text-saas-muted hover:text-saas-secondary transition-colors"><i data-lucide="settings" className="w-5 h-5"></i></button>
+                        <div className="flex items-center gap-3 pl-4 border-l border-saas-border">
+                            <div className="w-8 h-8 bg-saas-primary/20 rounded-full flex items-center justify-center font-bold text-saas-primary text-xs">ST</div>
                             <div className="flex flex-col">
-                                <span className="text-xs font-bold text-gray-900 dark:text-white">Sarah Thompson</span>
-                                <span className="text-[10px] text-gray-500 dark:text-gray-400">Recruiter</span>
+                                <span className="text-xs font-bold text-saas-text">Sarah Thompson</span>
+                                <span className="text-[10px] text-saas-muted">Recruiter</span>
                             </div>
-                            <i data-lucide="chevron-down" className="w-4 h-4 text-gray-400"></i>
+                            <i data-lucide="chevron-down" className="w-4 h-4 text-saas-muted"></i>
                         </div>
                     </div>
                 </div>
@@ -236,28 +260,24 @@
 
             return (
                 <>
-                    {/* Backdrop */}
                     <div 
-                        className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                        className={`fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                         onClick={onClose}
                     ></div>
-                    
-                    {/* Drawer */}
-                    <div className={`fixed top-0 left-0 bottom-0 w-80 bg-white dark:bg-gray-900 z-[110] transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} shadow-[20px_0_60px_-15px_rgba(0,0,0,0.3)] overflow-y-auto`}>
-                        <div className="p-8 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+                    <div className={`fixed top-0 left-0 bottom-0 w-80 bg-saas-card z-[110] transition-transform duration-500 transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} shadow-[20px_0_60px_-15px_rgba(0,0,0,0.6)] overflow-y-auto border-r border-saas-border`}>
+                        <div className="p-6 border-b border-saas-border flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-200 dark:shadow-none">
+                                <div className="w-10 h-10 bg-saas-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-saas-primary/20">
                                     <i data-lucide="layers" className="w-6 h-6"></i>
                                 </div>
-                                <h1 className="font-sora text-xl font-bold text-gray-900 dark:text-white">Align Flow</h1>
+                                <h1 className="font-sora text-xl font-bold text-saas-text">Align Flow</h1>
                             </div>
-                            <button onClick={onClose} className="p-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition-colors">
-                                <i data-lucide="x" className="w-6 h-6 text-gray-400"></i>
+                            <button onClick={onClose} className="p-2 hover:bg-saas-hover rounded-xl transition-colors">
+                                <i data-lucide="x" className="w-6 h-6 text-saas-muted"></i>
                             </button>
                         </div>
-
-                        <div className="p-6 space-y-2">
-                            <p className="px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Quick Access</p>
+                        <div className="p-4 space-y-1">
+                            <p className="px-4 text-[10px] font-bold text-saas-muted uppercase tracking-widest mb-3">Quick Access</p>
                             {menuItems.map((item) => (
                                 <button 
                                     key={item.id}
@@ -266,22 +286,21 @@
                                         else setActiveTab(item.tab);
                                         onClose(); 
                                     }}
-                                    className="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-all text-left group"
+                                    className="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-saas-hover transition-all text-left group"
                                 >
-                                    <div className="w-10 h-10 bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center justify-center text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                                        <i data-lucide={item.icon} className="w-5 h-5"></i>
+                                    <div className="w-9 h-9 bg-saas-bg rounded-lg flex items-center justify-center text-saas-muted group-hover:text-saas-secondary transition-colors">
+                                        <i data-lucide={item.icon} className="w-4 h-4"></i>
                                     </div>
-                                    <span className="font-bold text-sm text-gray-600 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">{item.label}</span>
+                                    <span className="font-medium text-sm text-saas-muted group-hover:text-saas-text transition-colors">{item.label}</span>
                                 </button>
                             ))}
                         </div>
-
-                        <div className="mt-8 px-8 pb-10">
-                            <div className="p-6 bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-3xl text-white relative overflow-hidden">
+                        <div className="mt-4 px-4 pb-8">
+                            <div className="p-5 bg-gradient-to-br from-saas-primary to-[#7C3AED] rounded-2xl text-white relative overflow-hidden">
                                 <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
-                                <h4 className="font-sora font-bold text-sm mb-2 relative z-10">Jobseeker Service</h4>
+                                <h4 className="font-sora font-bold text-sm mb-1 relative z-10">Jobseeker Service</h4>
                                 <p className="text-[10px] text-indigo-100 leading-relaxed mb-4 relative z-10">Get a professionally written resume that passes ATS filters.</p>
-                                <button className="bg-white text-indigo-600 text-[10px] font-bold py-2 px-4 rounded-xl relative z-10">Upgrade Now</button>
+                                <button className="bg-white text-saas-primary text-[10px] font-bold py-2 px-4 rounded-lg relative z-10 hover:opacity-90 transition-opacity">Upgrade Now</button>
                             </div>
                         </div>
                     </div>
@@ -308,67 +327,66 @@
             });
 
             return (
-                <div className="flex-1 overflow-y-auto">
+                <div className="flex-1 overflow-y-auto bg-saas-bg">
                     <MobileDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} setActiveTab={handleNavigate} />
                     
-                    <div className="px-6 pt-10 pb-4 bg-white dark:bg-gray-900 sticky top-0 z-10 flex justify-between items-center transition-colors duration-300">
+                    <div className="px-5 pt-8 pb-4 bg-saas-bg sticky top-0 z-10 flex justify-between items-center border-b border-saas-border">
                         <div className="flex items-center gap-4">
                             <button 
                                 onClick={() => setIsDrawerOpen(true)}
-                                className="w-10 h-10 bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center justify-center text-gray-900 dark:text-white shadow-sm border border-gray-100 dark:border-gray-700"
+                                className="w-9 h-9 bg-saas-card rounded-lg flex items-center justify-center text-saas-muted hover:text-saas-text border border-saas-border hover:border-saas-primary/50 transition-all"
                             >
                                 <i data-lucide="menu" className="w-5 h-5"></i>
                             </button>
                             <div>
-                                <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest">Hello</p>
-                                <h1 className="font-sora text-lg font-bold text-gray-900 dark:text-white leading-tight">Alex Kumar</h1>
+                                <p className="text-saas-muted text-[10px] uppercase font-bold tracking-widest">Hello</p>
+                                <h1 className="font-sora text-lg font-bold text-saas-text leading-tight">Alex Kumar</h1>
                             </div>
                         </div>
-                        <div className="w-10 h-10 bg-gray-200 rounded-xl flex items-center justify-center font-sora font-bold text-gray-500 text-sm border-2 border-indigo-100 cursor-pointer" onClick={() => handleNavigate('profile')}>AK</div>
+                        <div className="w-9 h-9 bg-saas-primary rounded-lg flex items-center justify-center font-sora font-bold text-white text-xs cursor-pointer hover:bg-saas-primary-hover transition-colors" onClick={() => handleNavigate('profile')}>AK</div>
                     </div>
                     
-                    <div className="px-6 mt-2">
+                    <div className="px-5 mt-4">
                         <div className="relative">
-                            <i data-lucide="search" className="absolute left-4 top-3.5 w-5 h-5 text-gray-400"></i>
-                            <input type="text" placeholder="Search for jobs..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full bg-white dark:bg-gray-800 rounded-2xl py-3 pl-12 pr-4 shadow-sm border-none focus:ring-2 focus:ring-indigo-100 outline-none text-sm dark:text-white transition-colors duration-300" />
+                            <i data-lucide="search" className="absolute left-4 top-3 w-4 h-4 text-saas-muted"></i>
+                            <input type="text" placeholder="Search for jobs..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full bg-saas-card border border-saas-border rounded-xl py-2.5 pl-11 pr-4 focus:ring-2 focus:ring-saas-primary/50 outline-none text-sm text-saas-text placeholder-saas-muted transition-all" />
                         </div>
                     </div>
 
-                    <div className="mt-6 pl-6 flex gap-3 overflow-x-auto hide-scrollbar">
+                    <div className="mt-5 pl-5 flex gap-2 overflow-x-auto hide-scrollbar">
                         {categories.map((cat, i) => (
-                            <button key={i} onClick={() => setSelectedCategory(cat)} className={`whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-medium transition-colors duration-300 ${selectedCategory === cat ? 'bg-gradient-to-r from-pink-400 to-yellow-400 text-white shadow-md shadow-pink-200' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'}`}>
+                            <button key={i} onClick={() => setSelectedCategory(cat)} className={`whitespace-nowrap px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200 ${selectedCategory === cat ? 'bg-saas-primary text-white shadow-lg shadow-saas-primary/30' : 'bg-saas-card text-saas-muted border border-saas-border hover:border-saas-primary/50 hover:text-saas-text'}`}>
                                 {cat}
                             </button>
                         ))}
                     </div>
 
-                    <div className="mt-8 px-6">
-                        <h2 className="font-sora text-lg font-bold mb-4 animate-fade-in text-gray-900 dark:text-white">Recommended Jobs</h2>
-                        <div className="flex flex-col gap-4">
-                            {filteredJobs.length === 0 && <p className="text-gray-500 text-sm text-center py-4">No jobs found matching your criteria.</p>}
+                    <div className="mt-6 px-5 pb-6">
+                        <h2 className="font-sora text-base font-bold mb-4 animate-fade-in text-saas-text">Recommended Jobs</h2>
+                        <div className="flex flex-col gap-3">
+                            {filteredJobs.length === 0 && <p className="text-saas-muted text-sm text-center py-4">No jobs found matching your criteria.</p>}
                             {filteredJobs.map((job, idx) => (
                                 <div 
                                     key={job.id} 
                                     onClick={() => navigateToJob(job)} 
-                                    className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700 flex flex-col gap-4 cursor-pointer animate-slide-up hover:-translate-y-1 hover:shadow-md transition-all duration-300"
-                                    style={{ animationDelay: `${idx * 100}ms` }}
+                                    className="bg-saas-card p-4 rounded-xl border border-saas-border flex flex-col gap-3 cursor-pointer animate-slide-up hover:border-saas-primary/50 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-saas-primary/10 transition-all duration-200"
+                                    style={{ animationDelay: `${idx * 80}ms` }}
                                 >
                                     <div className="flex justify-between items-start">
-                                        <div className="flex gap-4 items-center">
-                                            <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center font-sora font-bold text-xl text-gray-800 dark:text-white transition-colors">
+                                        <div className="flex gap-3 items-center">
+                                            <div className="w-11 h-11 rounded-lg bg-saas-bg border border-saas-border flex items-center justify-center font-sora font-bold text-lg text-saas-secondary">
                                                 {job.logo}
                                             </div>
                                             <div>
-                                                <h3 className="font-sora font-bold text-gray-900">{job.title}</h3>
-                                                <p className="text-sm text-gray-500">{job.company} • {job.location}</p>
+                                                <h3 className="font-sora font-bold text-sm text-saas-text">{job.title}</h3>
+                                                <p className="text-xs text-saas-muted mt-0.5">{job.company} · {job.location}</p>
                                             </div>
                                         </div>
-                                        <i data-lucide="bookmark" className="w-5 h-5 text-gray-300"></i>
+                                        <i data-lucide="bookmark" className="w-4 h-4 text-saas-border hover:text-saas-secondary cursor-pointer transition-colors"></i>
                                     </div>
-                                    <div className="flex justify-between items-center mt-2">
-                                        <div className="flex gap-2">
-                                            <span className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-lg text-xs font-medium transition-colors">{job.type}</span>
-                                        </div>
+                                    <div className="flex gap-2">
+                                        <span className="px-2.5 py-1 bg-saas-bg border border-saas-border text-saas-muted rounded-md text-[10px] font-semibold uppercase tracking-wide">{job.type}</span>
+                                        <span className="px-2.5 py-1 bg-saas-secondary-light text-saas-secondary rounded-md text-[10px] font-semibold uppercase tracking-wide">{job.category}</span>
                                     </div>
                                 </div>
                             ))}
@@ -390,41 +408,42 @@
             };
 
             return (
-                <div className="flex-1 bg-white dark:bg-gray-900 flex flex-col h-full z-50 absolute w-full inset-0 transition-colors duration-300">
-                    <div className="px-6 py-6 flex justify-between items-center sticky top-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md z-10 transition-colors duration-300">
-                        <button onClick={goBack} className="w-10 h-10 border border-gray-200 rounded-full flex items-center justify-center text-gray-600">
-                            <i data-lucide="arrow-left" className="w-5 h-5"></i>
+                <div className="flex-1 bg-saas-bg flex flex-col h-full z-50 absolute w-full inset-0">
+                    <div className="px-5 py-4 flex justify-between items-center sticky top-0 bg-saas-bg/90 backdrop-blur-md z-10 border-b border-saas-border">
+                        <button onClick={goBack} className="w-9 h-9 border border-saas-border rounded-lg flex items-center justify-center text-saas-muted hover:text-saas-text hover:border-saas-primary/50 transition-all">
+                            <i data-lucide="arrow-left" className="w-4 h-4"></i>
                         </button>
-                        <div className="flex gap-3">
-                             <button className="w-10 h-10 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
-                                 <i data-lucide="heart" className="w-5 h-5"></i>
+                        <div className="flex gap-2">
+                             <button className="w-9 h-9 bg-saas-card rounded-lg flex items-center justify-center text-saas-muted border border-saas-border hover:text-saas-error hover:border-saas-error/50 transition-all">
+                                 <i data-lucide="heart" className="w-4 h-4"></i>
                              </button>
-                             <button className="w-10 h-10 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
-                                 <i data-lucide="share" className="w-5 h-5"></i>
+                             <button className="w-9 h-9 bg-saas-card rounded-lg flex items-center justify-center text-saas-muted border border-saas-border hover:text-saas-secondary hover:border-saas-secondary/50 transition-all">
+                                 <i data-lucide="share" className="w-4 h-4"></i>
                              </button>
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto pb-24 px-6">
-                        <div className="flex flex-col items-center text-center mt-4 animate-fade-in">
-                            <div className="w-20 h-20 rounded-2xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center font-sora font-bold text-3xl text-gray-800 dark:text-white shadow-sm border border-gray-50 dark:border-gray-700 mb-4 transition-colors">
+                    <div className="flex-1 overflow-y-auto pb-24 px-5">
+                        <div className="flex flex-col items-center text-center mt-6 animate-fade-in">
+                            <div className="w-16 h-16 rounded-xl bg-saas-card border border-saas-border flex items-center justify-center font-sora font-bold text-2xl text-saas-secondary mb-4">
                                 {job.logo}
                             </div>
-                            <h1 className="font-sora text-2xl font-bold text-gray-900 mb-1">{job.title}</h1>
-                            <p className="text-gray-500 mb-4">{job.company} • {job.location}</p>
+                            <h1 className="font-sora text-xl font-bold text-saas-text mb-1">{job.title}</h1>
+                            <p className="text-saas-muted text-sm mb-4">{job.company} · {job.location}</p>
                             <div className="flex gap-2">
-                                 <span className="px-4 py-1.5 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-full text-sm font-medium">{job.type}</span>
+                                 <span className="px-3 py-1 bg-saas-primary-light text-saas-primary rounded-lg text-xs font-semibold">{job.type}</span>
+                                 <span className="px-3 py-1 bg-saas-secondary-light text-saas-secondary rounded-lg text-xs font-semibold">{job.category}</span>
                             </div>
                         </div>
 
-                        <div className="mt-8 animate-slide-up" style={{ animationDelay: '100ms' }}>
-                            <h2 className="font-sora text-lg font-bold mb-3 text-gray-900">About the role</h2>
-                            <p className="text-gray-600 text-sm leading-relaxed mb-6">
+                        <div className="mt-6 animate-slide-up" style={{ animationDelay: '100ms' }}>
+                            <h2 className="font-sora text-sm font-bold mb-2 text-saas-text">About the role</h2>
+                            <p className="text-saas-muted text-sm leading-relaxed mb-5">
                                 We are looking for a highly skilled {job.title} to join our dynamic team. You will be responsible for creating intuitive, engaging, and scalable experiences for our users.
                             </p>
 
-                            <h2 className="font-sora text-lg font-bold mb-3 text-gray-900">Responsibilities</h2>
-                            <ul className="text-gray-600 text-sm leading-relaxed list-disc pl-5 flex flex-col gap-2">
+                            <h2 className="font-sora text-sm font-bold mb-2 text-saas-text">Responsibilities</h2>
+                            <ul className="text-saas-muted text-sm leading-relaxed list-disc pl-5 flex flex-col gap-2">
                                 <li>Collaborate with cross-functional teams to define, design, and ship new features.</li>
                                 <li>Work on bug fixing and improving application performance.</li>
                                 <li>Continuously discover, evaluate, and implement new technologies.</li>
@@ -432,44 +451,44 @@
                         </div>
                     </div>
 
-                    <div className="absolute bottom-0 w-full p-6 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 z-20 transition-colors duration-300">
+                    <div className="absolute bottom-0 w-full p-4 bg-saas-bg border-t border-saas-border z-20">
                         {hasApplied ? (
-                            <button disabled className="w-full bg-gray-300 text-gray-600 font-medium text-lg py-4 rounded-2xl cursor-not-allowed">
+                            <button disabled className="w-full bg-saas-card text-saas-muted font-semibold text-base py-3.5 rounded-xl cursor-not-allowed border border-saas-border">
                                 Already Applied
                             </button>
                         ) : (
-                            <button onClick={() => setShowModal(true)} className="w-full bg-gradient-to-r from-pink-400 to-yellow-400 text-white font-medium text-lg py-4 rounded-2xl shadow-lg shadow-pink-200">
+                            <button onClick={() => setShowModal(true)} className="w-full bg-saas-primary hover:bg-saas-primary-hover text-white font-semibold text-base py-3.5 rounded-xl shadow-lg shadow-saas-primary/30 transition-colors">
                                 Apply Now
                             </button>
                         )}
                     </div>
 
                     {showModal && (
-                        <div className="fixed inset-0 z-[100] bg-black/50 flex items-end sm:items-center justify-center backdrop-blur-sm">
-                            <div className="bg-white dark:bg-gray-800 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-10 animate-slide-up transition-colors duration-300">
-                                <div className="flex justify-between items-center mb-6">
-                                    <h2 className="font-sora text-xl font-bold text-gray-900">Apply for {job.title}</h2>
-                                    <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600"><i data-lucide="x" className="w-5 h-5"></i></button>
+                        <div className="fixed inset-0 z-[100] bg-black/60 flex items-end sm:items-center justify-center backdrop-blur-sm">
+                            <div className="bg-saas-card w-full max-w-md rounded-t-2xl sm:rounded-2xl p-5 pb-8 animate-slide-up border border-saas-border">
+                                <div className="flex justify-between items-center mb-5">
+                                    <h2 className="font-sora text-lg font-bold text-saas-text">Apply for {job.title}</h2>
+                                    <button onClick={() => setShowModal(false)} className="text-saas-muted hover:text-saas-text"><i data-lucide="x" className="w-5 h-5"></i></button>
                                 </div>
                                 <div className="space-y-4">
                                     <div>
-                                        <label className="text-xs text-gray-500 font-medium">Full Name</label>
-                                        <input type="text" value={details.name} onChange={e => setDetails({...details, name: e.target.value})} className="w-full p-3 bg-gray-50 text-gray-900 rounded-xl mt-1 border border-gray-200 focus:ring-2 focus:ring-indigo-100 outline-none" />
+                                        <label className="text-xs text-saas-muted font-medium">Full Name</label>
+                                        <input type="text" value={details.name} onChange={e => setDetails({...details, name: e.target.value})} className="w-full p-3 bg-saas-bg text-saas-text rounded-lg mt-1 border border-saas-border focus:ring-2 focus:ring-saas-primary/50 outline-none" />
                                     </div>
                                     <div>
-                                        <label className="text-xs text-gray-500 font-medium">Email Address</label>
-                                        <input type="email" value={details.email} onChange={e => setDetails({...details, email: e.target.value})} className="w-full p-3 bg-gray-50 text-gray-900 rounded-xl mt-1 border border-gray-200 focus:ring-2 focus:ring-indigo-100 outline-none" />
+                                        <label className="text-xs text-saas-muted font-medium">Email Address</label>
+                                        <input type="email" value={details.email} onChange={e => setDetails({...details, email: e.target.value})} className="w-full p-3 bg-saas-bg text-saas-text rounded-lg mt-1 border border-saas-border focus:ring-2 focus:ring-saas-primary/50 outline-none" />
                                     </div>
                                     <div>
-                                        <label className="text-xs text-gray-500 font-medium">Resume (PDF)</label>
-                                        <div className="w-full p-4 border-2 border-dashed border-gray-200 rounded-xl mt-1 flex flex-col items-center justify-center text-gray-400 relative bg-gray-50 hover:bg-gray-100 transition-colors">
+                                        <label className="text-xs text-saas-muted font-medium">Resume (PDF)</label>
+                                        <div className="w-full p-4 border-2 border-dashed border-saas-border rounded-xl mt-1 flex flex-col items-center justify-center text-saas-muted relative bg-saas-bg hover:border-saas-primary/50 transition-colors">
                                             <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={e => setResumeName(e.target.files[0]?.name)} />
                                             <i data-lucide="upload-cloud" className="w-8 h-8 mb-2"></i>
-                                            <span className="text-sm font-medium text-gray-600">{resumeName || 'Tap to upload resume'}</span>
+                                            <span className="text-sm font-medium text-saas-muted">{resumeName || 'Tap to upload resume'}</span>
                                         </div>
                                     </div>
                                 </div>
-                                <button onClick={handleApply} className="w-full bg-gradient-to-r from-pink-400 to-yellow-400 text-white font-medium text-lg py-4 rounded-2xl mt-8 shadow-lg shadow-pink-200 hover:bg-indigo-700 transition-colors">
+                                <button onClick={handleApply} className="w-full bg-saas-primary hover:bg-saas-primary-hover text-white font-semibold text-base py-3.5 rounded-xl mt-8 shadow-lg shadow-saas-primary/30 transition-colors">
                                     Submit Application
                                 </button>
                             </div>
@@ -504,32 +523,32 @@
 
             if (!isMobileView && tab === 'Active') {
                 return (
-                    <div className="flex-1 flex flex-col h-full bg-[#F9FAFB] dark:bg-gray-900 p-8 overflow-hidden transition-colors duration-300">
-                        <div className="mb-8">
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Jobs / Marketing manager</p>
-                            <h1 className="font-sora text-3xl font-bold text-gray-900 dark:text-white">Marketing manager</h1>
-                            <div className="flex gap-8 mt-8 border-b border-gray-200 dark:border-gray-700">
-                                <button className="pb-3 border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400 font-medium text-sm transition-all">Applications</button>
-                                <button className="pb-3 text-gray-500 dark:text-gray-400 text-sm hover:text-gray-700 dark:hover:text-gray-200 transition-all">Details</button>
-                                <button className="pb-3 text-gray-500 dark:text-gray-400 text-sm hover:text-gray-700 dark:hover:text-gray-200 transition-all">Notes</button>
+                    <div className="flex-1 flex flex-col h-full bg-saas-bg p-6 overflow-hidden">
+                        <div className="mb-6">
+                            <p className="text-xs text-saas-muted mb-1">Jobs / Applications</p>
+                            <h1 className="font-sora text-2xl font-bold text-saas-text">Application Pipeline</h1>
+                            <div className="flex gap-6 mt-6 border-b border-saas-border">
+                                <button className="pb-3 border-b-2 border-saas-primary text-saas-primary font-semibold text-sm">Applications</button>
+                                <button className="pb-3 text-saas-muted text-sm hover:text-saas-text transition-colors">Details</button>
+                                <button className="pb-3 text-saas-muted text-sm hover:text-saas-text transition-colors">Notes</button>
                             </div>
                         </div>
 
-                        <div className="flex-1 flex gap-6 overflow-x-auto pb-6 hide-scrollbar">
+                        <div className="flex-1 flex gap-4 overflow-x-auto pb-6 hide-scrollbar">
                             {stages.map((stage, sIdx) => (
-                                <div key={sIdx} className="flex-shrink-0 w-72">
-                                    <div className="flex items-center gap-2 mb-6">
-                                        <h3 className="font-sora font-bold text-gray-400 dark:text-gray-500 text-[10px] uppercase tracking-widest">{stage}</h3>
-                                        <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">{activeApps.filter(app => app.stage === sIdx).length}</span>
+                                <div key={sIdx} className="flex-shrink-0 w-64">
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <h3 className="font-sora font-bold text-saas-muted text-[10px] uppercase tracking-widest">{stage}</h3>
+                                        <span className="text-[10px] font-bold text-saas-muted bg-saas-card border border-saas-border px-2 py-0.5 rounded-full">{activeApps.filter(app => app.stage === sIdx).length}</span>
                                     </div>
-                                    <div className="flex flex-col gap-4">
+                                    <div className="flex flex-col gap-3">
                                         {activeApps.filter(app => app.stage === sIdx).map(app => (
-                                            <div key={app.id} className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700 hover:shadow-md hover:-translate-y-1 transition-all cursor-pointer group">
-                                                <h4 className="font-sora font-bold text-gray-900 dark:text-white text-sm mb-1 group-hover:text-indigo-600 transition-colors">{app.name}</h4>
-                                                <p className="text-[10px] text-gray-500 dark:text-gray-400 mb-4">{app.title}</p>
-                                                <div className="flex flex-wrap gap-2">
+                                            <div key={app.id} className="bg-saas-card p-4 rounded-xl border border-saas-border hover:border-saas-primary/50 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-saas-primary/10 transition-all cursor-pointer group">
+                                                <h4 className="font-sora font-bold text-saas-text text-sm mb-0.5 group-hover:text-saas-secondary transition-colors">{app.name}</h4>
+                                                <p className="text-[10px] text-saas-muted mb-3">{app.title}</p>
+                                                <div className="flex flex-wrap gap-1.5">
                                                     {app.tags?.map((tag, tIdx) => (
-                                                        <span key={tIdx} className={`px-2.5 py-1 rounded-lg text-[9px] font-bold transition-all ${tag === 'Active' || tag === 'Offered' ? 'bg-teal-50 text-teal-600 dark:bg-teal-900/30' : tag === 'Scheduled' || tag === 'Video' ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/30' : 'bg-gray-50 text-gray-500 dark:bg-gray-700'}`}>
+                                                        <span key={tIdx} className={`px-2 py-0.5 rounded-md text-[9px] font-bold transition-all ${tag === 'Active' || tag === 'Offered' ? 'bg-saas-success-light text-saas-success' : tag === 'Scheduled' || tag === 'Video' ? 'bg-saas-secondary-light text-saas-secondary' : 'bg-saas-bg text-saas-muted border border-saas-border'}`}>
                                                             {tag}
                                                         </span>
                                                     ))}
@@ -545,44 +564,42 @@
             }
 
             return (
-                <div className="flex-1 flex flex-col pb-20">
-                    <div className="px-6 py-8 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 transition-colors duration-300">
-                        <h1 className="font-sora text-2xl font-bold mb-6 text-gray-900 dark:text-white">Track Applications</h1>
+                <div className="flex-1 flex flex-col bg-saas-bg">
+                    <div className="px-5 py-5 bg-saas-card border-b border-saas-border sticky top-0 z-10">
+                        <h1 className="font-sora text-xl font-bold mb-4 text-saas-text">Track Applications</h1>
                         <div className="flex gap-4">
-                            <button onClick={() => setTab('Active')} className={`font-medium pb-1 transition-all ${tab === 'Active' ? 'text-pink-500 border-b-2 border-pink-500' : 'text-gray-400'}`}>Active ({activeApps.length})</button>
-                            <button onClick={() => setTab('Archived')} className={`font-medium pb-1 transition-all ${tab === 'Archived' ? 'text-pink-500 border-b-2 border-pink-500' : 'text-gray-400'}`}>Archived</button>
+                            <button onClick={() => setTab('Active')} className={`font-semibold text-sm pb-1 transition-all ${tab === 'Active' ? 'text-saas-primary border-b-2 border-saas-primary' : 'text-saas-muted'}`}>Active ({activeApps.length})</button>
+                            <button onClick={() => setTab('Archived')} className={`font-semibold text-sm pb-1 transition-all ${tab === 'Archived' ? 'text-saas-primary border-b-2 border-saas-primary' : 'text-saas-muted'}`}>Archived</button>
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-6">
-                        {displayApps.length === 0 && <p className="text-gray-500 text-sm text-center py-4">No {tab.toLowerCase()} applications found.</p>}
+                    <div className="flex-1 overflow-y-auto px-5 py-4 flex flex-col gap-4">
+                        {displayApps.length === 0 && <p className="text-saas-muted text-sm text-center py-4">No {tab.toLowerCase()} applications found.</p>}
                         {displayApps.map((app, appIdx) => (
-                            <div key={app.id} className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-50 dark:border-gray-700 animate-slide-up transition-colors duration-300" style={{ animationDelay: `${appIdx * 100}ms` }}>
-                                <div className="flex items-center gap-4 mb-6">
-                                    <div className={`w-12 h-12 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center font-sora font-bold text-xl ${app.rejected ? 'text-red-500' : 'text-gray-800 dark:text-white'}`}>{app.logo}</div>
+                            <div key={app.id} className="bg-saas-card rounded-xl p-4 border border-saas-border animate-slide-up" style={{ animationDelay: `${appIdx * 80}ms` }}>
+                                <div className="flex items-center gap-3 mb-5">
+                                    <div className={`w-10 h-10 rounded-lg bg-saas-bg border border-saas-border flex items-center justify-center font-sora font-bold text-lg ${app.rejected ? 'text-saas-error' : 'text-saas-secondary'}`}>{app.logo}</div>
                                     <div>
-                                        <h3 className="font-sora font-bold text-gray-900 dark:text-white">{app.title}</h3>
-                                        <p className="text-sm text-gray-500 dark:text-gray-400">{app.company}</p>
+                                        <h3 className="font-sora font-bold text-sm text-saas-text">{app.title}</h3>
+                                        <p className="text-xs text-saas-muted">{app.company}</p>
                                     </div>
                                 </div>
-                                
                                 <div className="relative">
-                                    <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-gray-100 dark:bg-gray-700"></div>
-                                    <div className="flex flex-col gap-6 relative">
+                                    <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-saas-border"></div>
+                                    <div className="flex flex-col gap-4 relative">
                                         {stages.map((stage, idx) => {
                                             const isCompleted = idx < app.stage;
                                             const isCurrent = idx === app.stage;
                                             const isRejectedStage = app.rejected && isCurrent;
-                                            
                                             return (
-                                                <div key={idx} className="flex gap-4 items-center">
-                                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center z-10 transition-all ${isRejectedStage ? 'bg-red-500 text-white' : isCompleted ? 'bg-teal-500 text-white' : isCurrent ? 'bg-white border-2 border-pink-500' : 'bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600'}`}>
+                                                <div key={idx} className="flex gap-3 items-center">
+                                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center z-10 transition-all ${isRejectedStage ? 'bg-saas-error text-white' : isCompleted ? 'bg-saas-success text-white' : isCurrent ? 'bg-saas-bg border-2 border-saas-primary' : 'bg-saas-bg border-2 border-saas-border'}`}>
                                                         {(isCompleted || isRejectedStage) && <i data-lucide={isRejectedStage ? "x" : "check"} className="w-3.5 h-3.5"></i>}
-                                                        {isCurrent && !isRejectedStage && <div className="w-2 h-2 rounded-full bg-gradient-to-r from-pink-400 to-yellow-400"></div>}
+                                                        {isCurrent && !isRejectedStage && <div className="w-2 h-2 rounded-full bg-saas-primary"></div>}
                                                     </div>
                                                     <div className="flex-1">
-                                                        <p className={`font-medium text-sm transition-all ${(isCurrent && !isRejectedStage) || isCompleted ? 'text-gray-900 dark:text-white' : isRejectedStage ? 'text-red-500' : 'text-gray-400'}`}>{isRejectedStage ? 'Rejected' : stage}</p>
-                                                        {isCurrent && !app.rejected && <p className="text-xs text-pink-500 mt-0.5">In Progress</p>}
+                                                        <p className={`font-medium text-sm transition-all ${(isCurrent && !isRejectedStage) || isCompleted ? 'text-saas-text' : isRejectedStage ? 'text-saas-error' : 'text-saas-muted'}`}>{isRejectedStage ? 'Rejected' : stage}</p>
+                                                        {isCurrent && !app.rejected && <p className="text-xs text-saas-secondary mt-0.5">In Progress</p>}
                                                     </div>
                                                 </div>
                                             )
@@ -618,34 +635,34 @@
             if (selectedChat) {
                 const chat = msgsList.find(m => m.id === selectedChat);
                 return (
-                    <div className="flex-1 flex flex-col bg-white dark:bg-gray-900 absolute inset-0 z-50 transition-colors duration-300">
-                        <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center gap-4 bg-white dark:bg-gray-900 sticky top-0 z-10 transition-colors duration-300">
-                            <button onClick={() => setSelectedChat(null)} className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"><i data-lucide="arrow-left" className="w-5 h-5"></i></button>
+                    <div className="flex-1 flex flex-col bg-saas-bg absolute inset-0 z-50">
+                        <div className="px-5 py-4 border-b border-saas-border flex items-center gap-4 bg-saas-bg sticky top-0 z-10">
+                            <button onClick={() => setSelectedChat(null)} className="text-saas-muted hover:text-saas-text"><i data-lucide="arrow-left" className="w-5 h-5"></i></button>
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-pink-100 dark:bg-pink-900/50 rounded-full flex items-center justify-center font-bold text-pink-600 dark:text-pink-400 font-sora">{chat.initial}</div>
+                                <div className="w-9 h-9 bg-saas-primary/20 rounded-full flex items-center justify-center font-bold text-saas-primary font-sora">{chat.initial}</div>
                                 <div>
-                                    <h3 className="font-sora font-bold text-sm text-gray-900 dark:text-white">{chat.name}</h3>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">{chat.role}</p>
+                                    <h3 className="font-sora font-bold text-sm text-saas-text">{chat.name}</h3>
+                                    <p className="text-xs text-saas-muted">{chat.role}</p>
                                 </div>
                             </div>
                         </div>
-                        <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4 animate-fade-in">
+                        <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-3 animate-fade-in">
                             {chat.messages.map((m, i) => (
-                                <div key={i} className={`max-w-[80%] p-3 rounded-2xl text-sm ${m.sender === 'me' ? 'bg-gradient-to-r from-pink-400 to-yellow-400 text-white self-end rounded-br-none' : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 self-start rounded-bl-none border border-gray-50 dark:border-gray-700'}`}>
+                                <div key={i} className={`max-w-[80%] p-3 rounded-xl text-sm ${m.sender === 'me' ? 'bg-saas-primary text-white self-end rounded-br-none' : 'bg-saas-card text-saas-text self-start rounded-bl-none border border-saas-border'}`}>
                                     {m.text}
                                 </div>
                             ))}
                         </div>
-                        <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex gap-3 pb-8 transition-colors duration-300">
+                        <div className="p-4 border-t border-saas-border bg-saas-bg flex gap-3">
                             <input 
                                 type="text" 
                                 value={inputText} 
                                 onChange={e => setInputText(e.target.value)} 
                                 onKeyDown={e => { if (e.key === 'Enter') handleSend(chat); }} 
                                 placeholder="Type a message..." 
-                                className="flex-1 bg-gray-50 dark:bg-gray-800 dark:text-white rounded-full px-4 py-2 border border-gray-200 dark:border-gray-700 outline-none focus:ring-2 focus:ring-indigo-500" 
+                                className="flex-1 bg-saas-card text-saas-text rounded-xl px-4 py-2.5 border border-saas-border outline-none focus:ring-2 focus:ring-saas-primary/50 placeholder-saas-muted" 
                             />
-                            <button onClick={() => handleSend(chat)} className="w-10 h-10 bg-gradient-to-r from-pink-400 to-yellow-400 rounded-full flex items-center justify-center text-white shadow-md shadow-pink-200 dark:shadow-none hover:bg-indigo-700 transition-colors">
+                            <button onClick={() => handleSend(chat)} className="w-10 h-10 bg-saas-primary rounded-xl flex items-center justify-center text-white hover:bg-saas-primary-hover transition-colors">
                                 <i data-lucide="send" className="w-4 h-4 ml-0.5"></i>
                             </button>
                         </div>
@@ -654,28 +671,28 @@
             }
 
             return (
-                <div className="flex-1 flex flex-col bg-white dark:bg-gray-900 transition-colors duration-300">
-                    <div className="px-6 pt-10 pb-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center transition-colors duration-300">
-                        <h1 className="font-sora text-2xl font-bold text-gray-900 dark:text-white">Messages</h1>
-                        <button className="w-10 h-10 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                            <i data-lucide="edit" className="w-5 h-5"></i>
+                <div className="flex-1 flex flex-col bg-saas-bg">
+                    <div className="px-5 pt-8 pb-4 border-b border-saas-border flex justify-between items-center sticky top-0 bg-saas-bg z-10">
+                        <h1 className="font-sora text-xl font-bold text-saas-text">Messages</h1>
+                        <button className="w-9 h-9 bg-saas-card rounded-lg flex items-center justify-center text-saas-muted border border-saas-border hover:text-saas-secondary transition-colors">
+                            <i data-lucide="edit" className="w-4 h-4"></i>
                         </button>
                     </div>
                     <div className="flex-1 overflow-y-auto">
                         {msgsList.map((m, i) => (
-                            <div key={i} onClick={() => { m.unread = 0; setSelectedChat(m.id); setMsgsList([...msgsList]); }} className="flex gap-4 items-center px-6 py-4 border-b border-gray-50 dark:border-gray-800/50 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors animate-slide-up" style={{ animationDelay: `${i * 100}ms` }}>
-                                <div className="w-12 h-12 rounded-full bg-pink-100 dark:bg-pink-900/50 flex items-center justify-center text-pink-600 dark:text-pink-400 font-bold font-sora text-lg">
+                            <div key={i} onClick={() => { m.unread = 0; setSelectedChat(m.id); setMsgsList([...msgsList]); }} className="flex gap-4 items-center px-5 py-4 border-b border-saas-border cursor-pointer hover:bg-saas-hover transition-colors animate-slide-up" style={{ animationDelay: `${i * 80}ms` }}>
+                                <div className="w-11 h-11 rounded-full bg-saas-primary/20 flex items-center justify-center text-saas-primary font-bold font-sora">
                                     {m.initial}
                                 </div>
                                 <div className="flex-1">
-                                    <div className="flex justify-between items-center mb-1">
-                                        <h3 className={`font-sora font-bold text-sm ${m.unread ? 'text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-300'}`}>{m.name}</h3>
-                                        <span className="text-xs text-gray-400 dark:text-gray-500">{m.time}</span>
+                                    <div className="flex justify-between items-center mb-0.5">
+                                        <h3 className={`font-sora font-bold text-sm ${m.unread ? 'text-saas-text' : 'text-saas-muted'}`}>{m.name}</h3>
+                                        <span className="text-xs text-saas-muted">{m.time}</span>
                                     </div>
-                                    <p className={`text-sm ${m.unread ? 'text-gray-900 dark:text-white font-medium' : 'text-gray-500 dark:text-gray-400'} truncate`}>{m.text}</p>
+                                    <p className={`text-sm ${m.unread ? 'text-saas-text font-medium' : 'text-saas-muted'} truncate`}>{m.text}</p>
                                 </div>
                                 {m.unread > 0 && (
-                                    <div className="w-5 h-5 bg-gradient-to-r from-pink-400 to-yellow-400 rounded-full flex items-center justify-center text-white text-[10px] font-bold">
+                                    <div className="w-5 h-5 bg-saas-primary rounded-full flex items-center justify-center text-white text-[10px] font-bold">
                                         {m.unread}
                                     </div>
                                 )}
@@ -697,26 +714,26 @@
             ];
 
             return (
-                <div className="flex-1 flex flex-col bg-white dark:bg-gray-900 transition-colors duration-300">
-                    <div className="px-6 pt-10 pb-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center transition-colors duration-300">
-                        <h1 className="font-sora text-2xl font-bold text-gray-900 dark:text-white">Activities</h1>
-                        <button className="text-indigo-600 dark:text-indigo-400 text-sm font-bold">Mark all as read</button>
+                <div className="flex-1 flex flex-col bg-saas-bg">
+                    <div className="px-5 pt-8 pb-4 border-b border-saas-border flex justify-between items-center sticky top-0 bg-saas-bg z-10">
+                        <h1 className="font-sora text-xl font-bold text-saas-text">Activities</h1>
+                        <button className="text-saas-secondary text-xs font-semibold hover:opacity-80 transition-opacity">Mark all as read</button>
                     </div>
-                    <div className="flex-1 overflow-y-auto px-6 py-6">
+                    <div className="flex-1 overflow-y-auto px-5 py-5">
                         <div className="relative">
-                            <div className="absolute left-[23px] top-2 bottom-2 w-0.5 bg-gray-100 dark:bg-gray-800"></div>
-                            <div className="flex flex-col gap-8">
+                            <div className="absolute left-[18px] top-2 bottom-2 w-0.5 bg-saas-border"></div>
+                            <div className="flex flex-col gap-6">
                                 {activityItems.map((item, idx) => (
-                                    <div key={item.id} className="flex gap-4 relative animate-slide-up" style={{ animationDelay: `${idx * 100}ms` }}>
-                                        <div className={`w-12 h-12 rounded-full ${item.color} flex items-center justify-center text-white z-10 shadow-lg shadow-gray-200 dark:shadow-none`}>
-                                            <i data-lucide={item.icon} className="w-5 h-5"></i>
+                                    <div key={item.id} className="flex gap-4 relative animate-slide-up" style={{ animationDelay: `${idx * 80}ms` }}>
+                                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-white z-10 flex-shrink-0 ${item.color}`}>
+                                            <i data-lucide={item.icon} className="w-4 h-4"></i>
                                         </div>
-                                        <div className="flex-1 pt-1">
+                                        <div className="flex-1 bg-saas-card p-3 rounded-xl border border-saas-border">
                                             <div className="flex justify-between items-center mb-1">
-                                                <h3 className="font-sora font-bold text-sm text-gray-900 dark:text-white">{item.title}</h3>
-                                                <span className="text-xs text-gray-400 dark:text-gray-500">{item.time}</span>
+                                                <h3 className="font-sora font-bold text-xs text-saas-text">{item.title}</h3>
+                                                <span className="text-[10px] text-saas-muted">{item.time}</span>
                                             </div>
-                                            <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{item.details}</p>
+                                            <p className="text-xs text-saas-muted leading-relaxed">{item.details}</p>
                                         </div>
                                     </div>
                                 ))}
@@ -737,64 +754,64 @@
             ];
 
             return (
-                <div className="flex-1 flex flex-col bg-[#F9FAFB] dark:bg-gray-900 transition-colors duration-300">
-                    <div className="px-6 pt-10 pb-8 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 transition-colors duration-300">
-                        <h1 className="font-sora text-2xl font-bold text-gray-900 dark:text-white mb-2">Performance</h1>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Track your career growth and application stats.</p>
+                <div className="flex-1 flex flex-col bg-saas-bg">
+                    <div className="px-5 pt-8 pb-5 bg-saas-card border-b border-saas-border sticky top-0 z-10">
+                        <h1 className="font-sora text-xl font-bold text-saas-text mb-0.5">Performance</h1>
+                        <p className="text-xs text-saas-muted">Track your career growth and application stats.</p>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto px-6 py-8">
-                        <div className="grid grid-cols-2 gap-4 mb-8">
+                    <div className="flex-1 overflow-y-auto px-5 py-5">
+                        <div className="grid grid-cols-2 gap-3 mb-5">
                             {stats.map((stat, idx) => (
-                                <div key={idx} className="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-sm border border-gray-50 dark:border-gray-700 animate-slide-up" style={{ animationDelay: `${idx * 100}ms` }}>
-                                    <div className="flex justify-between items-start mb-4">
-                                        <div className={`w-10 h-10 rounded-xl bg-gray-50 dark:bg-gray-700 flex items-center justify-center ${stat.color}`}>
-                                            <i data-lucide={stat.icon} className="w-5 h-5"></i>
+                                <div key={idx} className="bg-saas-card p-4 rounded-xl border border-saas-border animate-slide-up" style={{ animationDelay: `${idx * 80}ms` }}>
+                                    <div className="flex justify-between items-start mb-3">
+                                        <div className={`w-9 h-9 rounded-lg bg-saas-bg border border-saas-border flex items-center justify-center ${stat.color}`}>
+                                            <i data-lucide={stat.icon} className="w-4 h-4"></i>
                                         </div>
-                                        <span className="text-[10px] font-bold text-teal-500 bg-teal-50 dark:bg-teal-900/30 px-2 py-0.5 rounded-lg">{stat.growth}</span>
+                                        <span className="text-[10px] font-bold text-saas-success bg-saas-success-light px-2 py-0.5 rounded-md">{stat.growth}</span>
                                     </div>
-                                    <h3 className="font-sora text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</h3>
-                                    <p className="text-[10px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-wider mt-1">{stat.label}</p>
+                                    <h3 className="font-sora text-xl font-bold text-saas-text">{stat.value}</h3>
+                                    <p className="text-[10px] text-saas-muted font-bold uppercase tracking-wider mt-0.5">{stat.label}</p>
                                 </div>
                             ))}
                         </div>
 
-                        <div className="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-50 dark:border-gray-700 mb-6">
-                            <h3 className="font-sora font-bold text-gray-900 dark:text-white mb-6">Application Volume</h3>
-                            <div className="flex items-end justify-between h-40 gap-2">
+                        <div className="bg-saas-card p-5 rounded-xl border border-saas-border mb-4">
+                            <h3 className="font-sora font-bold text-sm text-saas-text mb-5">Application Volume</h3>
+                            <div className="flex items-end justify-between h-36 gap-1.5">
                                 {[40, 70, 45, 90, 65, 80, 55].map((h, i) => (
                                     <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
                                         <div 
-                                            className="w-full bg-indigo-100 dark:bg-indigo-900/30 rounded-t-lg relative transition-all duration-500 group-hover:bg-indigo-600 group-hover:shadow-lg group-hover:shadow-indigo-200"
+                                            className="w-full bg-saas-primary-light rounded-t-md relative transition-all duration-500 group-hover:bg-saas-primary"
                                             style={{ height: `${h}%` }}
                                         >
-                                            <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-saas-text text-saas-bg text-[10px] py-0.5 px-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity font-bold">
                                                 {h}
                                             </div>
                                         </div>
-                                        <span className="text-[10px] text-gray-400 font-medium">{'MTWTFSS'[i]}</span>
+                                        <span className="text-[10px] text-saas-muted font-medium">{'MTWTFSS'[i]}</span>
                                     </div>
                                 ))}
                             </div>
                         </div>
 
-                        <div className="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-50 dark:border-gray-700">
-                            <div className="flex justify-between items-center mb-6">
-                                <h3 className="font-sora font-bold text-gray-900 dark:text-white">Top Skills Match</h3>
-                                <button className="text-xs text-indigo-600 dark:text-indigo-400 font-bold">Details</button>
+                        <div className="bg-saas-card p-5 rounded-xl border border-saas-border">
+                            <div className="flex justify-between items-center mb-5">
+                                <h3 className="font-sora font-bold text-sm text-saas-text">Top Skills Match</h3>
+                                <button className="text-xs text-saas-secondary font-bold">Details</button>
                             </div>
                             <div className="space-y-4">
                                 {[
-                                    { name: 'React.js', percent: 95, color: 'bg-blue-500' },
-                                    { name: 'TypeScript', percent: 80, color: 'bg-indigo-500' },
-                                    { name: 'Tailwind CSS', percent: 90, color: 'bg-teal-500' }
+                                    { name: 'React.js', percent: 95, color: 'bg-saas-primary' },
+                                    { name: 'TypeScript', percent: 80, color: 'bg-saas-secondary' },
+                                    { name: 'Tailwind CSS', percent: 90, color: 'bg-saas-success' }
                                 ].map((skill, i) => (
                                     <div key={i}>
-                                        <div className="flex justify-between text-xs font-bold mb-1.5">
-                                            <span className="text-gray-700 dark:text-gray-300">{skill.name}</span>
-                                            <span className="text-gray-400">{skill.percent}%</span>
+                                        <div className="flex justify-between text-xs font-semibold mb-1.5">
+                                            <span className="text-saas-text">{skill.name}</span>
+                                            <span className="text-saas-muted">{skill.percent}%</span>
                                         </div>
-                                        <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                                        <div className="h-1.5 bg-saas-bg rounded-full overflow-hidden">
                                             <div className={`h-full ${skill.color} transition-all duration-1000`} style={{ width: `${skill.percent}%` }}></div>
                                         </div>
                                     </div>
@@ -817,37 +834,37 @@
             ];
 
             return (
-                <div className="flex-1 flex flex-col bg-white dark:bg-gray-900 transition-colors duration-300">
-                    <div className="px-6 pt-10 pb-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center">
-                        <h1 className="font-sora text-2xl font-bold text-gray-900 dark:text-white">Contacts</h1>
-                        <button className="w-10 h-10 bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center justify-center text-gray-600 dark:text-gray-400">
-                            <i data-lucide="user-plus" className="w-5 h-5"></i>
+                <div className="flex-1 flex flex-col bg-saas-bg">
+                    <div className="px-5 pt-8 pb-4 border-b border-saas-border flex justify-between items-center sticky top-0 bg-saas-bg z-10">
+                        <h1 className="font-sora text-xl font-bold text-saas-text">Contacts</h1>
+                        <button className="w-9 h-9 bg-saas-card rounded-lg flex items-center justify-center text-saas-muted border border-saas-border hover:text-saas-secondary transition-colors">
+                            <i data-lucide="user-plus" className="w-4 h-4"></i>
                         </button>
                     </div>
                     
-                    <div className="flex-1 overflow-y-auto p-6">
-                        <div className="relative mb-6">
-                            <i data-lucide="search" className="absolute left-4 top-3.5 w-5 h-5 text-gray-400"></i>
+                    <div className="flex-1 overflow-y-auto p-5">
+                        <div className="relative mb-4">
+                            <i data-lucide="search" className="absolute left-4 top-3 w-4 h-4 text-saas-muted"></i>
                             <input 
                                 type="text" 
                                 placeholder="Search contacts..." 
-                                className="w-full bg-gray-50 dark:bg-gray-800 border-none rounded-2xl py-3.5 pl-12 pr-4 text-sm focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white transition-all"
+                                className="w-full bg-saas-card border border-saas-border rounded-xl py-2.5 pl-11 pr-4 text-sm focus:ring-2 focus:ring-saas-primary/50 outline-none text-saas-text placeholder-saas-muted"
                             />
                         </div>
 
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                             {contactList.map((contact, idx) => (
-                                <div key={contact.id} className="flex items-center gap-4 p-4 bg-white dark:bg-gray-800 rounded-3xl border border-gray-50 dark:border-gray-700 hover:shadow-md transition-all animate-slide-up" style={{ animationDelay: `${idx * 100}ms` }}>
+                                <div key={contact.id} className="flex items-center gap-3 p-3 bg-saas-card rounded-xl border border-saas-border hover:border-saas-primary/50 hover:shadow-lg hover:shadow-saas-primary/10 transition-all animate-slide-up" style={{ animationDelay: `${idx * 80}ms` }}>
                                     <div className="relative">
-                                        <img src={contact.avatar} className="w-12 h-12 rounded-2xl object-cover" alt={contact.name} />
-                                        <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white dark:border-gray-800 ${contact.status === 'online' ? 'bg-teal-500' : 'bg-gray-300'}`}></div>
+                                        <img src={contact.avatar} className="w-10 h-10 rounded-lg object-cover" alt={contact.name} />
+                                        <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-saas-card ${contact.status === 'online' ? 'bg-saas-success' : 'bg-saas-muted'}`}></div>
                                     </div>
                                     <div className="flex-1">
-                                        <h3 className="font-sora font-bold text-sm text-gray-900 dark:text-white">{contact.name}</h3>
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">{contact.role}</p>
+                                        <h3 className="font-sora font-bold text-sm text-saas-text">{contact.name}</h3>
+                                        <p className="text-[10px] text-saas-muted">{contact.role}</p>
                                     </div>
-                                    <button className="w-10 h-10 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center">
-                                        <i data-lucide="message-circle" className="w-5 h-5"></i>
+                                    <button className="w-9 h-9 bg-saas-primary-light text-saas-primary rounded-lg flex items-center justify-center hover:bg-saas-primary hover:text-white transition-all">
+                                        <i data-lucide="message-circle" className="w-4 h-4"></i>
                                     </button>
                                 </div>
                             ))}
@@ -857,111 +874,116 @@
             );
         };
 
-        // Screen 6: User Profile
         const UserProfile = ({ isMobileView, setIsMobileView, isDarkMode, setIsDarkMode }) => {
             return (
-                <div className="flex-1 flex flex-col bg-[#F9FAFB] dark:bg-gray-900 transition-colors duration-300">
-                    <div className="bg-white dark:bg-gray-800 pt-12 pb-8 px-6 rounded-b-3xl shadow-sm mb-6 flex flex-col items-center transition-colors duration-300">
-                        <div className="w-24 h-24 bg-pink-100 rounded-full flex items-center justify-center font-sora font-bold text-3xl text-pink-600 mb-4 border-4 border-white dark:border-gray-800 shadow-md relative">
+                <div className="flex-1 flex flex-col bg-saas-bg">
+                    <div className="px-5 pt-8 pb-4 bg-saas-card border-b border-saas-border sticky top-0 z-10 flex justify-between items-center">
+                        <h1 className="font-sora text-xl font-bold text-saas-text">Profile</h1>
+                        <button className="text-saas-error text-xs font-semibold hover:opacity-80 transition-opacity">Logout</button>
+                    </div>
+                    <div className="bg-saas-card px-5 pt-8 pb-6 mb-4 flex flex-col items-center border-b border-saas-border">
+                        <div className="w-20 h-20 bg-saas-primary/20 rounded-2xl flex items-center justify-center font-sora font-bold text-2xl text-saas-primary mb-3 relative">
                             AK
-                            <div className="absolute bottom-0 right-0 w-6 h-6 bg-gradient-to-r from-pink-400 to-yellow-400 rounded-full border-2 border-white flex items-center justify-center">
+                            <div className="absolute bottom-0 right-0 w-6 h-6 bg-saas-primary rounded-lg border-2 border-saas-card flex items-center justify-center">
                                 <i data-lucide="edit-2" className="w-3 h-3 text-white"></i>
                             </div>
                         </div>
-                        <h1 className="font-sora text-2xl font-bold text-gray-900 dark:text-white">Alex Kumar</h1>
-                        <p className="text-gray-500 dark:text-gray-400 mb-4">Senior Frontend Engineer</p>
+                        <h1 className="font-sora text-xl font-bold text-saas-text">Alex Kumar</h1>
+                        <p className="text-saas-muted text-sm mb-4">Senior Frontend Engineer</p>
 
-                        <button className="px-6 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-full text-sm font-medium mb-6 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                        <button className="px-5 py-1.5 bg-saas-primary-light text-saas-primary rounded-lg text-sm font-semibold mb-5 hover:bg-saas-primary hover:text-white transition-all">
                             Edit Profile
                         </button>
                         
-                        <div className="flex gap-4 w-full">
-                            <div className="flex-1 bg-gray-50 dark:bg-gray-700 rounded-2xl p-4 text-center">
-                                <h3 className="font-sora text-xl font-bold text-gray-900 dark:text-white">12</h3>
-                                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-1">Applications</p>
+                        <div className="flex gap-3 w-full">
+                            <div className="flex-1 bg-saas-bg border border-saas-border rounded-xl p-3 text-center">
+                                <h3 className="font-sora text-lg font-bold text-saas-text">12</h3>
+                                <p className="text-[10px] text-saas-muted font-semibold uppercase tracking-wide mt-0.5">Applications</p>
                             </div>
-                            <div className="flex-1 bg-gray-50 dark:bg-gray-700 rounded-2xl p-4 text-center">
-                                <h3 className="font-sora text-xl font-bold text-gray-900 dark:text-white">4</h3>
-                                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-1">Interviews</p>
+                            <div className="flex-1 bg-saas-bg border border-saas-border rounded-xl p-3 text-center">
+                                <h3 className="font-sora text-lg font-bold text-saas-secondary">4</h3>
+                                <p className="text-[10px] text-saas-muted font-semibold uppercase tracking-wide mt-0.5">Interviews</p>
                             </div>
-                            <div className="flex-1 bg-gray-50 dark:bg-gray-700 rounded-2xl p-4 text-center">
-                                <h3 className="font-sora text-xl font-bold text-gray-900 dark:text-white">1</h3>
-                                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-1">Offers</p>
+                            <div className="flex-1 bg-saas-bg border border-saas-border rounded-xl p-3 text-center">
+                                <h3 className="font-sora text-lg font-bold text-saas-success">1</h3>
+                                <p className="text-[10px] text-saas-muted font-semibold uppercase tracking-wide mt-0.5">Offers</p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="px-6 mb-6">
-                        <h2 className="font-sora text-lg font-bold mb-4 text-gray-900 dark:text-white">Top Skills</h2>
+                    <div className="px-5 mb-5">
+                        <h2 className="font-sora text-sm font-bold mb-3 text-saas-text">Top Skills</h2>
                         <div className="flex flex-wrap gap-2">
                             {['React.js', 'TypeScript', 'Tailwind CSS', 'Figma', 'Node.js', 'UX Design'].map((skill, i) => (
-                                <span key={i} className="px-4 py-2 bg-white dark:bg-gray-800 rounded-full text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm border border-gray-100 dark:border-gray-700 transition-colors duration-300">
+                                <span key={i} className="px-3 py-1.5 bg-saas-card rounded-lg text-xs font-medium text-saas-muted border border-saas-border hover:border-saas-primary/50 hover:text-saas-text transition-all">
                                     {skill}
                                 </span>
                             ))}
                         </div>
                     </div>
 
-                    <div className="px-6 mb-6">
-                        <h2 className="font-sora text-lg font-bold mb-4 text-gray-900 dark:text-white">Experience</h2>
-                        <div className="flex flex-col gap-4">
-                            <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700">
-                                <h3 className="font-sora font-bold text-gray-900 dark:text-white text-sm">Senior Frontend Engineer</h3>
-                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">TechCorp Inc. • 2021 - Present</p>
-                                <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">Led the frontend development of the core ATS product using React and Tailwind.</p>
+                    <div className="px-5 mb-5">
+                        <h2 className="font-sora text-sm font-bold mb-3 text-saas-text">Experience</h2>
+                        <div className="flex flex-col gap-3">
+                            <div className="bg-saas-card p-4 rounded-xl border border-saas-border">
+                                <h3 className="font-sora font-bold text-saas-text text-sm">Senior Frontend Engineer</h3>
+                                <p className="text-xs text-saas-secondary mt-1">TechCorp Inc. · 2021 - Present</p>
+                                <p className="text-xs text-saas-muted mt-2 leading-relaxed">Led the frontend development of the core ATS product using React and Tailwind.</p>
                             </div>
-                            <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700">
-                                <h3 className="font-sora font-bold text-gray-900 dark:text-white text-sm">UI/UX Developer</h3>
-                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Creative Solutions • 2018 - 2021</p>
-                                <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">Designed and implemented high-conversion landing pages.</p>
+                            <div className="bg-saas-card p-4 rounded-xl border border-saas-border">
+                                <h3 className="font-sora font-bold text-saas-text text-sm">UI/UX Developer</h3>
+                                <p className="text-xs text-saas-secondary mt-1">Creative Solutions · 2018 - 2021</p>
+                                <p className="text-xs text-saas-muted mt-2 leading-relaxed">Designed and implemented high-conversion landing pages.</p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="px-6 mb-6">
-                        <h2 className="font-sora text-lg font-bold mb-4 text-gray-900 dark:text-white">Education</h2>
-                        <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700">
-                            <h3 className="font-sora font-bold text-gray-900 dark:text-white text-sm">B.Tech in Computer Science</h3>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Indian Institute of Technology • Completed 2018</p>
+                    <div className="px-5 mb-5">
+                        <h2 className="font-sora text-sm font-bold mb-3 text-saas-text">Education</h2>
+                        <div className="bg-saas-card p-4 rounded-xl border border-saas-border">
+                            <h3 className="font-sora font-bold text-saas-text text-sm">B.Tech in Computer Science</h3>
+                            <p className="text-xs text-saas-muted mt-1">Indian Institute of Technology · Completed 2018</p>
                         </div>
                     </div>
 
-                    <div className="px-6 mb-6">
-                        <h2 className="font-sora text-lg font-bold mb-4 text-gray-900 dark:text-white">Settings</h2>
-                        <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700 flex justify-between items-center transition-colors duration-300">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-600">
-                                    <i data-lucide="monitor" className="w-5 h-5"></i>
+                    <div className="px-5 mb-8">
+                        <h2 className="font-sora text-sm font-bold mb-3 text-saas-text">Settings</h2>
+                        <div className="flex flex-col gap-2">
+                            <div className="bg-saas-card p-4 rounded-xl border border-saas-border flex justify-between items-center">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-9 h-9 rounded-lg bg-saas-bg border border-saas-border flex items-center justify-center text-saas-muted">
+                                        <i data-lucide="monitor" className="w-4 h-4"></i>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-sora font-bold text-saas-text text-sm">Desktop View</h3>
+                                        <p className="text-[10px] text-saas-muted">Switch to full width layout</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 className="font-sora font-bold text-gray-900 dark:text-white text-sm">Desktop View</h3>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">Switch to full width layout</p>
-                                </div>
+                                <button 
+                                    onClick={() => setIsMobileView(!isMobileView)}
+                                    className={`w-11 h-6 rounded-full relative transition-colors duration-300 ${!isMobileView ? 'bg-saas-primary' : 'bg-saas-border'}`}
+                                >
+                                    <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform duration-300 ${!isMobileView ? 'translate-x-6' : 'translate-x-1'}`}></div>
+                                </button>
                             </div>
-                            <button 
-                                onClick={() => setIsMobileView(!isMobileView)}
-                                className={`w-12 h-6 rounded-full relative transition-colors duration-300 ${!isMobileView ? 'bg-gradient-to-r from-pink-400 to-yellow-400' : 'bg-gray-200 dark:bg-gray-600'}`}
-                            >
-                                <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ${!isMobileView ? 'translate-x-6' : 'translate-x-0.5'}`}></div>
-                            </button>
-                        </div>
 
-                        <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700 flex justify-between items-center mt-3">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300">
-                                    <i data-lucide="moon" className="w-5 h-5"></i>
+                            <div className="bg-saas-card p-4 rounded-xl border border-saas-border flex justify-between items-center">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-9 h-9 rounded-lg bg-saas-bg border border-saas-border flex items-center justify-center text-saas-muted">
+                                        <i data-lucide="moon" className="w-4 h-4"></i>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-sora font-bold text-saas-text text-sm">Dark Theme</h3>
+                                        <p className="text-[10px] text-saas-muted">Switch to dark mode</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 className="font-sora font-bold text-gray-900 dark:text-white text-sm">Dark Theme</h3>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">Switch to dark mode</p>
-                                </div>
+                                <button 
+                                    onClick={() => setIsDarkMode(!isDarkMode)}
+                                    className={`w-11 h-6 rounded-full relative transition-colors duration-300 ${isDarkMode ? 'bg-saas-primary' : 'bg-saas-border'}`}
+                                >
+                                    <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform duration-300 ${isDarkMode ? 'translate-x-6' : 'translate-x-1'}`}></div>
+                                </button>
                             </div>
-                            <button 
-                                onClick={() => setIsDarkMode(!isDarkMode)}
-                                className={`w-12 h-6 rounded-full relative transition-colors duration-300 ${isDarkMode ? 'bg-gradient-to-r from-pink-400 to-yellow-400' : 'bg-gray-200 dark:bg-gray-600'}`}
-                            >
-                                <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ${isDarkMode ? 'translate-x-6' : 'translate-x-0.5'}`}></div>
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -979,80 +1001,80 @@
             };
 
             return (
-                <div className="flex-1 flex flex-col items-center justify-center p-6 bg-white dark:bg-gray-900 min-h-screen transition-colors duration-300">
-                    <div className="w-full max-w-md animate-fade-in">
-                        <div className="flex items-center gap-3 mb-12 justify-center">
-                            <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-200 dark:shadow-none">
-                                <i data-lucide="layers" className="w-8 h-8"></i>
+                <div className="flex-1 flex flex-col items-center justify-center p-6 bg-saas-bg min-h-screen">
+                    <div className="w-full max-w-sm animate-fade-in">
+                        <div className="flex items-center gap-3 mb-10 justify-center">
+                            <div className="w-10 h-10 bg-saas-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-saas-primary/30">
+                                <i data-lucide="layers" className="w-6 h-6"></i>
                             </div>
-                            <h1 className="font-sora text-3xl font-bold text-gray-900 dark:text-white">Align Flow</h1>
+                            <h1 className="font-sora text-2xl font-bold text-saas-text">Align Flow</h1>
                         </div>
 
-                        <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 transition-colors duration-300">
-                            <h2 className="font-sora text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                        <div className="bg-saas-card p-7 rounded-2xl border border-saas-border shadow-2xl">
+                            <h2 className="font-sora text-xl font-bold text-saas-text mb-1">
                                 {isLogin ? 'Welcome back' : 'Create account'}
                             </h2>
-                            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm">
-                                {isLogin ? 'Please enter your details to sign in.' : 'Start your journey with us today.'}
+                            <p className="text-saas-muted mb-6 text-sm">
+                                {isLogin ? 'Sign in to continue to Align Flow.' : 'Start your career journey today.'}
                             </p>
 
-                            <form onSubmit={handleSubmit} className="space-y-5">
+                            <form onSubmit={handleSubmit} className="space-y-4">
                                 <div>
-                                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">Email Address</label>
+                                    <label className="text-[10px] font-bold text-saas-muted uppercase tracking-wider mb-1.5 block">Email Address</label>
                                     <div className="relative">
-                                        <i data-lucide="mail" className="absolute left-4 top-3.5 w-5 h-5 text-gray-400"></i>
+                                        <i data-lucide="mail" className="absolute left-3.5 top-3 w-4 h-4 text-saas-muted"></i>
                                         <input 
                                             type="email" 
                                             required
                                             value={email}
                                             onChange={e => setEmail(e.target.value)}
                                             placeholder="hello@example.com" 
-                                            className="w-full bg-gray-50 dark:bg-gray-700 border-none rounded-2xl py-3.5 pl-12 pr-4 text-sm focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white transition-all"
+                                            className="w-full bg-saas-bg border border-saas-border rounded-xl py-3 pl-11 pr-4 text-sm focus:ring-2 focus:ring-saas-primary/50 outline-none text-saas-text placeholder-saas-muted transition-all"
                                         />
                                     </div>
                                 </div>
                                 
                                 <div>
-                                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">Password</label>
+                                    <label className="text-[10px] font-bold text-saas-muted uppercase tracking-wider mb-1.5 block">Password</label>
                                     <div className="relative">
-                                        <i data-lucide="lock" className="absolute left-4 top-3.5 w-5 h-5 text-gray-400"></i>
+                                        <i data-lucide="lock" className="absolute left-3.5 top-3 w-4 h-4 text-saas-muted"></i>
                                         <input 
                                             type="password" 
                                             required
                                             value={password}
                                             onChange={e => setPassword(e.target.value)}
                                             placeholder="••••••••" 
-                                            className="w-full bg-gray-50 dark:bg-gray-700 border-none rounded-2xl py-3.5 pl-12 pr-4 text-sm focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white transition-all"
+                                            className="w-full bg-saas-bg border border-saas-border rounded-xl py-3 pl-11 pr-4 text-sm focus:ring-2 focus:ring-saas-primary/50 outline-none text-saas-text placeholder-saas-muted transition-all"
                                         />
                                     </div>
                                 </div>
 
-                                <button type="submit" className="w-full bg-gradient-to-r from-pink-400 to-yellow-400 text-white font-bold py-4 rounded-2xl shadow-lg shadow-pink-200 dark:shadow-none hover:scale-[1.02] transition-transform mt-4">
+                                <button type="submit" className="w-full bg-saas-primary hover:bg-saas-primary-hover text-white font-semibold py-3 rounded-xl shadow-lg shadow-saas-primary/30 transition-all mt-2">
                                     {isLogin ? 'Sign In' : 'Sign Up'}
                                 </button>
                             </form>
 
-                            <div className="mt-8 flex items-center gap-4">
-                                <div className="flex-1 h-[1px] bg-gray-100 dark:bg-gray-700"></div>
-                                <span className="text-xs text-gray-400 font-medium">OR</span>
-                                <div className="flex-1 h-[1px] bg-gray-100 dark:bg-gray-700"></div>
+                            <div className="mt-6 flex items-center gap-3">
+                                <div className="flex-1 h-[1px] bg-saas-border"></div>
+                                <span className="text-[10px] text-saas-muted font-semibold uppercase tracking-wider">OR</span>
+                                <div className="flex-1 h-[1px] bg-saas-border"></div>
                             </div>
 
-                            <div className="mt-6 grid grid-cols-2 gap-4">
-                                <button className="flex items-center justify-center gap-2 py-3 border border-gray-100 dark:border-gray-700 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                            <div className="mt-4 grid grid-cols-2 gap-3">
+                                <button className="flex items-center justify-center gap-2 py-2.5 border border-saas-border rounded-xl hover:bg-saas-hover text-saas-muted hover:text-saas-text transition-all">
                                     <img src="https://www.google.com/favicon.ico" className="w-4 h-4" alt="Google" />
-                                    <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Google</span>
+                                    <span className="text-sm font-medium">Google</span>
                                 </button>
-                                <button className="flex items-center justify-center gap-2 py-3 border border-gray-100 dark:border-gray-700 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                                    <i data-lucide="github" className="w-4 h-4 text-gray-900 dark:text-white"></i>
-                                    <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Github</span>
+                                <button className="flex items-center justify-center gap-2 py-2.5 border border-saas-border rounded-xl hover:bg-saas-hover text-saas-muted hover:text-saas-text transition-all">
+                                    <i data-lucide="github" className="w-4 h-4"></i>
+                                    <span className="text-sm font-medium">Github</span>
                                 </button>
                             </div>
                         </div>
 
-                        <p className="text-center mt-8 text-sm text-gray-500 dark:text-gray-400">
+                        <p className="text-center mt-6 text-sm text-saas-muted">
                             {isLogin ? "Don't have an account?" : "Already have an account?"}
-                            <button onClick={() => setIsLogin(!isLogin)} className="ml-2 font-bold text-indigo-600 dark:text-indigo-400 hover:underline">
+                            <button onClick={() => setIsLogin(!isLogin)} className="ml-2 font-bold text-saas-secondary hover:underline">
                                 {isLogin ? 'Sign Up' : 'Sign In'}
                             </button>
                         </p>
@@ -1072,31 +1094,24 @@
             const [appliedJobs, setAppliedJobs] = useState([]);
 
             useEffect(() => {
-                // Initialize lucide icons whenever component renders
                 lucide.createIcons();
-                
-                // Handle Dark Mode Class on document element
-                if (isDarkMode) {
-                    document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                }
+                // Always keep dark class applied for SaaS theme
+                document.documentElement.classList.add('dark');
 
-                // Custom event listener for internal navigation
                 const handleNav = (e) => setActiveTab(e.detail);
                 window.addEventListener('navigate', handleNav);
                 return () => window.removeEventListener('navigate', handleNav);
             }, [isDarkMode]);
 
             return (
-                <div className={`h-full w-full relative flex transition-all duration-300 ${isDarkMode ? 'dark bg-gray-900 text-white' : 'bg-gradient-to-br from-pink-50 to-yellow-50'} shadow-2xl overflow-hidden`}>
+                <div className="h-full w-full relative flex bg-saas-bg overflow-hidden">
                     {!isLoggedIn ? (
                         <LoginPage onLogin={(userData) => { setUser(userData); setIsLoggedIn(true); }} />
                     ) : (
                         <>
                             {!isMobileView && <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />}
                             
-                            <div className={`flex-1 flex flex-col h-full overflow-hidden relative ${isMobileView ? 'max-w-md mx-auto bg-white dark:bg-gray-900 shadow-2xl' : ''}`}>
+                            <div className={`flex-1 flex flex-col h-full overflow-hidden relative ${isMobileView ? 'max-w-[430px] mx-auto bg-saas-bg shadow-2xl shadow-black/50' : ''}`}>
                                 <CustomCursor />
                                 {!isMobileView && <TopBar />}
                                 
