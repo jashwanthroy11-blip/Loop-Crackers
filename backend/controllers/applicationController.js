@@ -1,7 +1,4 @@
-const Application = require('../models/Application');
-const Job = require('../models/Job');
-const User = require('../models/User');
-const Notification = require('../models/Notification');
+const supabase = require('../config/supabase');
 const { getIo } = require('../services/socketService');
 const { calculateMatchScore } = require('../services/matchingService');
 
@@ -10,32 +7,57 @@ const applyToJob = async (req, res) => {
         const { job_id, resume_url } = req.body;
         const applicant_id = req.user.id;
 
-        const existingApp = await Application.findOne({ job_id, applicant_id });
+        // check if already applied
+        const { data: existingApp } = await supabase
+            .from('applications')
+            .select('*')
+            .eq('job_id', job_id)
+            .eq('applicant_id', applicant_id)
+            .single();
+
         if (existingApp) return res.status(400).json({ message: 'Already applied' });
 
-        const job = await Job.findById(job_id);
+        // get job details
+        const { data: job } = await supabase
+            .from('jobs')
+            .select('*')
+            .eq('id', job_id)
+            .single();
+
         if (!job) return res.status(404).json({ message: 'Job not found' });
 
-        const applicant = await User.findById(applicant_id);
+        // get applicant details
+        const { data: applicant } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', applicant_id)
+            .single();
         
         // AI Matching
-        const matchResult = calculateMatchScore(applicant.skills, job.skills_required);
+        const matchResult = calculateMatchScore(applicant.skills || [], job.skills_required || []);
 
-        const application = new Application({
-            job_id,
-            applicant_id,
-            resume_url,
-            status_history: [{ status: 'Applied' }]
-        });
+        // insert application
+        const { data: application, error } = await supabase
+            .from('applications')
+            .insert([{
+                job_id,
+                applicant_id,
+                resume_url,
+                status: 'Applied',
+                status_history: [{ status: 'Applied', date: new Date().toISOString() }]
+            }])
+            .select()
+            .single();
         
-        await application.save();
+        if (error) throw error;
 
         // Notify Employer
-        const notification = new Notification({
-            user_id: job.company_id,
-            message: `New application received for ${job.title} with a ${matchResult.score}% skill match.`
-        });
-        await notification.save();
+        await supabase
+            .from('notifications')
+            .insert([{
+                user_id: job.company_id,
+                message: `New application received for ${job.title} with a ${matchResult.score}% skill match.`
+            }]);
 
         // Emit Socket Event
         getIo().to(job.company_id.toString()).emit('new_application', { job_id, applicant_id, match: matchResult });
@@ -48,8 +70,13 @@ const applyToJob = async (req, res) => {
 
 const getApplicantApplications = async (req, res) => {
     try {
-        const apps = await Application.find({ applicant_id: req.user.id }).populate('job_id', 'title company_id');
-        res.json(apps);
+        const { data, error } = await supabase
+            .from('applications')
+            .select('*, job:jobs(title, company_id)')
+            .eq('applicant_id', req.user.id);
+
+        if (error) throw error;
+        res.json(data);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -57,15 +84,25 @@ const getApplicantApplications = async (req, res) => {
 
 const getJobApplications = async (req, res) => {
     try {
-        const job = await Job.findById(req.params.jobId);
-        if (job.company_id.toString() !== req.user.id) return res.status(403).json({ message: 'Not authorized' });
+        const { data: job } = await supabase
+            .from('jobs')
+            .select('company_id, skills_required')
+            .eq('id', req.params.jobId)
+            .single();
 
-        const apps = await Application.find({ job_id: req.params.jobId }).populate('applicant_id', 'name email skills');
+        if (job.company_id !== req.user.id) return res.status(403).json({ message: 'Not authorized' });
+
+        const { data: apps, error } = await supabase
+            .from('applications')
+            .select('*, applicant:users(name, email, skills)')
+            .eq('job_id', req.params.jobId);
         
-        // Calculate match scores for all applicants dynamically
+        if (error) throw error;
+
+        // Calculate match scores
         const populatedApps = apps.map(app => {
-            const match = calculateMatchScore(app.applicant_id.skills, job.skills_required);
-            return { ...app.toObject(), matchScore: match.score, missingSkills: match.missing };
+            const match = calculateMatchScore(app.applicant?.skills || [], job.skills_required || []);
+            return { ...app, matchScore: match.score, missingSkills: match.missing };
         });
 
         res.json(populatedApps);
@@ -77,32 +114,48 @@ const getJobApplications = async (req, res) => {
 const updateApplicationStatus = async (req, res) => {
     try {
         const { status } = req.body;
-        const application = await Application.findById(req.params.id).populate('job_id');
+        
+        const { data: application } = await supabase
+            .from('applications')
+            .select('*, job:jobs(title, company_id)')
+            .eq('id', req.params.id)
+            .single();
         
         if (!application) return res.status(404).json({ message: 'Application not found' });
         
-        if (application.job_id.company_id.toString() !== req.user.id) {
+        if (application.job.company_id !== req.user.id) {
             return res.status(403).json({ message: 'Not authorized' });
         }
 
-        application.status = status;
-        application.status_history.push({ status });
-        await application.save();
+        const newHistory = [...(application.status_history || []), { status, date: new Date().toISOString() }];
+
+        const { data: updatedApp, error } = await supabase
+            .from('applications')
+            .update({ 
+                status,
+                status_history: newHistory
+            })
+            .eq('id', req.params.id)
+            .select()
+            .single();
+
+        if (error) throw error;
 
         // Notify Applicant
-        const notification = new Notification({
-            user_id: application.applicant_id,
-            message: `Your application for ${application.job_id.title} is now: ${status}`
-        });
-        await notification.save();
+        await supabase
+            .from('notifications')
+            .insert([{
+                user_id: application.applicant_id,
+                message: `Your application for ${application.job.title} is now: ${status}`
+            }]);
 
         // Real-time update
         getIo().to(application.applicant_id.toString()).emit('status_updated', { 
-            application_id: application._id, 
+            application_id: application.id, 
             status 
         });
 
-        res.json(application);
+        res.json(updatedApp);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

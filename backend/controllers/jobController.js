@@ -1,18 +1,22 @@
-const Job = require('../models/Job');
+const supabase = require('../config/supabase');
 
 const createJob = async (req, res) => {
     try {
-        const { title, description, skills_required, salary, location } = req.body;
-        const job = new Job({
-            title,
-            description,
-            skills_required,
-            salary,
-            location,
-            company_id: req.user.id
-        });
-        await job.save();
-        res.status(201).json(job);
+        const { title, description, skills_required, location } = req.body;
+        const { data, error } = await supabase
+            .from('jobs')
+            .insert([{
+                title,
+                description,
+                skills_required,
+                location,
+                company_id: req.user.id
+            }])
+            .select()
+            .single();
+
+        if (error) throw error;
+        res.status(201).json(data);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -20,8 +24,12 @@ const createJob = async (req, res) => {
 
 const getJobs = async (req, res) => {
     try {
-        const jobs = await Job.find().populate('company_id', 'companyName logo');
-        res.json(jobs);
+        const { data, error } = await supabase
+            .from('jobs')
+            .select('*, company:users(companyName, logo)');
+        
+        if (error) throw error;
+        res.json(data);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -29,9 +37,14 @@ const getJobs = async (req, res) => {
 
 const getJobById = async (req, res) => {
     try {
-        const job = await Job.findById(req.params.id).populate('company_id', 'companyName logo description');
-        if (!job) return res.status(404).json({ message: 'Job not found' });
-        res.json(job);
+        const { data, error } = await supabase
+            .from('jobs')
+            .select('*, company:users(companyName, logo, description)')
+            .eq('id', req.params.id)
+            .single();
+
+        if (error || !data) return res.status(404).json({ message: 'Job not found' });
+        res.json(data);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -39,14 +52,26 @@ const getJobById = async (req, res) => {
 
 const updateJob = async (req, res) => {
     try {
-        const job = await Job.findById(req.params.id);
+        const { data: job } = await supabase
+            .from('jobs')
+            .select('company_id')
+            .eq('id', req.params.id)
+            .single();
+
         if (!job) return res.status(404).json({ message: 'Job not found' });
         
-        if (job.company_id.toString() !== req.user.id) {
+        if (job.company_id !== req.user.id) {
             return res.status(403).json({ message: 'Not authorized' });
         }
 
-        const updatedJob = await Job.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const { data: updatedJob, error } = await supabase
+            .from('jobs')
+            .update(req.body)
+            .eq('id', req.params.id)
+            .select()
+            .single();
+
+        if (error) throw error;
         res.json(updatedJob);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -55,14 +80,24 @@ const updateJob = async (req, res) => {
 
 const deleteJob = async (req, res) => {
     try {
-        const job = await Job.findById(req.params.id);
+        const { data: job } = await supabase
+            .from('jobs')
+            .select('company_id')
+            .eq('id', req.params.id)
+            .single();
+
         if (!job) return res.status(404).json({ message: 'Job not found' });
 
-        if (job.company_id.toString() !== req.user.id) {
+        if (job.company_id !== req.user.id) {
             return res.status(403).json({ message: 'Not authorized' });
         }
 
-        await job.deleteOne();
+        const { error } = await supabase
+            .from('jobs')
+            .delete()
+            .eq('id', req.params.id);
+
+        if (error) throw error;
         res.json({ message: 'Job removed' });
     } catch (err) {
         res.status(500).json({ error: err.message });

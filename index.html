@@ -68,7 +68,7 @@
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="font-sans antialiased text-gray-900 bg-gray-100 flex justify-center min-h-screen">
+<body class="font-sans antialiased text-gray-900 bg-gray-100 dark:bg-gray-900 flex justify-center min-h-screen transition-colors duration-300">
     
     <div id="root" class="w-full flex justify-center min-h-screen"></div>
 
@@ -107,11 +107,11 @@
 
         // Mock Data
         const mockJobs = [
-            { id: 1, company: 'Spotify', logo: 'S', title: 'Senior Product Designer', location: 'Remote, US', salary: '₹12-18 LPA', type: 'Full-time', category: 'Design' },
-            { id: 2, company: 'Google', logo: 'G', title: 'Frontend Engineer', location: 'Bangalore, IN', salary: '₹15-25 LPA', type: 'Full-time', category: 'Engineering' },
-            { id: 3, company: 'Amazon', logo: 'A', title: 'UX Researcher', location: 'Hyderabad, IN', salary: '₹10-14 LPA', type: 'Contract', category: 'Design' },
-            { id: 4, company: 'Notion', logo: 'N', title: 'Product Manager', location: 'Remote', salary: '₹18-28 LPA', type: 'Full-time', category: 'Product' },
-            { id: 5, company: 'Stripe', logo: 'S', title: 'Growth Marketing Lead', location: 'Mumbai, IN', salary: '₹14-20 LPA', type: 'Full-time', category: 'Marketing' },
+            { id: 1, company: 'Spotify', logo: 'S', title: 'Senior Product Designer', location: 'Remote, US', type: 'Full-time', category: 'Design' },
+            { id: 2, company: 'Google', logo: 'G', title: 'Frontend Engineer', location: 'Bangalore, IN', type: 'Full-time', category: 'Engineering' },
+            { id: 3, company: 'Amazon', logo: 'A', title: 'UX Researcher', location: 'Hyderabad, IN', type: 'Contract', category: 'Design' },
+            { id: 4, company: 'Notion', logo: 'N', title: 'Product Manager', location: 'Remote', type: 'Full-time', category: 'Product' },
+            { id: 5, company: 'Stripe', logo: 'S', title: 'Growth Marketing Lead', location: 'Mumbai, IN', type: 'Full-time', category: 'Marketing' },
         ];
 
 
@@ -229,10 +229,10 @@
 
             return (
                 <div className="flex-1 overflow-y-auto pb-20">
-                    <div className="px-6 pt-10 pb-4 bg-white sticky top-0 z-10 flex justify-between items-center">
+                    <div className="px-6 pt-10 pb-4 bg-white dark:bg-gray-900 sticky top-0 z-10 flex justify-between items-center transition-colors duration-300">
                         <div>
                             <p className="text-gray-500 text-sm mb-1">Good morning</p>
-                            <h1 className="font-sora text-xl font-bold">Alex Kumar</h1>
+                            <h1 className="font-sora text-xl font-bold text-gray-900 dark:text-white">Alex Kumar</h1>
                         </div>
                         <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center font-sora font-bold text-gray-500 text-lg border-2 border-indigo-100 cursor-pointer" onClick={() => window.dispatchEvent(new CustomEvent('navigate', {detail: 'profile'}))}>AK</div>
                     </div>
@@ -240,32 +240,32 @@
                     <div className="px-6 mt-2">
                         <div className="relative">
                             <i data-lucide="search" className="absolute left-4 top-3.5 w-5 h-5 text-gray-400"></i>
-                            <input type="text" placeholder="Search for jobs..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full bg-white rounded-2xl py-3 pl-12 pr-4 shadow-sm border-none focus:ring-2 focus:ring-indigo-100 outline-none text-sm" />
+                            <input type="text" placeholder="Search for jobs..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full bg-white dark:bg-gray-800 rounded-2xl py-3 pl-12 pr-4 shadow-sm border-none focus:ring-2 focus:ring-indigo-100 outline-none text-sm dark:text-white transition-colors duration-300" />
                         </div>
                     </div>
 
                     <div className="mt-6 pl-6 flex gap-3 overflow-x-auto hide-scrollbar">
                         {categories.map((cat, i) => (
-                            <button key={i} onClick={() => setSelectedCategory(cat)} className={`whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-medium transition-colors duration-300 ${selectedCategory === cat ? 'bg-gradient-to-r from-pink-400 to-yellow-400 text-white shadow-md shadow-pink-200' : 'bg-white text-gray-600 border border-gray-100 hover:bg-gray-50'}`}>
+                            <button key={i} onClick={() => setSelectedCategory(cat)} className={`whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-medium transition-colors duration-300 ${selectedCategory === cat ? 'bg-gradient-to-r from-pink-400 to-yellow-400 text-white shadow-md shadow-pink-200' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'}`}>
                                 {cat}
                             </button>
                         ))}
                     </div>
 
                     <div className="mt-8 px-6">
-                        <h2 className="font-sora text-lg font-bold mb-4 animate-fade-in">Recommended Jobs</h2>
+                        <h2 className="font-sora text-lg font-bold mb-4 animate-fade-in text-gray-900 dark:text-white">Recommended Jobs</h2>
                         <div className="flex flex-col gap-4">
                             {filteredJobs.length === 0 && <p className="text-gray-500 text-sm text-center py-4">No jobs found matching your criteria.</p>}
                             {filteredJobs.map((job, idx) => (
                                 <div 
                                     key={job.id} 
                                     onClick={() => navigateToJob(job)} 
-                                    className="bg-white p-5 rounded-2xl shadow-sm border border-gray-50 flex flex-col gap-4 cursor-pointer animate-slide-up hover:-translate-y-1 hover:shadow-md transition-all duration-300"
+                                    className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700 flex flex-col gap-4 cursor-pointer animate-slide-up hover:-translate-y-1 hover:shadow-md transition-all duration-300"
                                     style={{ animationDelay: `${idx * 100}ms` }}
                                 >
                                     <div className="flex justify-between items-start">
                                         <div className="flex gap-4 items-center">
-                                            <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center font-sora font-bold text-xl text-gray-800">
+                                            <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center font-sora font-bold text-xl text-gray-800 dark:text-white transition-colors">
                                                 {job.logo}
                                             </div>
                                             <div>
@@ -277,8 +277,7 @@
                                     </div>
                                     <div className="flex justify-between items-center mt-2">
                                         <div className="flex gap-2">
-                                            <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-lg text-xs font-medium">{job.type}</span>
-                                            <span className="px-3 py-1 bg-pink-50 text-pink-600 rounded-lg text-xs font-medium font-sora">{job.salary}</span>
+                                            <span className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-lg text-xs font-medium transition-colors">{job.type}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -301,31 +300,30 @@
             };
 
             return (
-                <div className="flex-1 bg-white flex flex-col h-full z-50 absolute w-full inset-0">
-                    <div className="px-6 py-6 flex justify-between items-center sticky top-0 bg-white/80 backdrop-blur-md z-10">
+                <div className="flex-1 bg-white dark:bg-gray-900 flex flex-col h-full z-50 absolute w-full inset-0 transition-colors duration-300">
+                    <div className="px-6 py-6 flex justify-between items-center sticky top-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md z-10 transition-colors duration-300">
                         <button onClick={goBack} className="w-10 h-10 border border-gray-200 rounded-full flex items-center justify-center text-gray-600">
                             <i data-lucide="arrow-left" className="w-5 h-5"></i>
                         </button>
                         <div className="flex gap-3">
-                            <button className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center text-gray-600">
-                                <i data-lucide="heart" className="w-5 h-5"></i>
-                            </button>
-                            <button className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center text-gray-600">
-                                <i data-lucide="share" className="w-5 h-5"></i>
-                            </button>
+                             <button className="w-10 h-10 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
+                                 <i data-lucide="heart" className="w-5 h-5"></i>
+                             </button>
+                             <button className="w-10 h-10 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
+                                 <i data-lucide="share" className="w-5 h-5"></i>
+                             </button>
                         </div>
                     </div>
 
                     <div className="flex-1 overflow-y-auto pb-24 px-6">
                         <div className="flex flex-col items-center text-center mt-4 animate-fade-in">
-                            <div className="w-20 h-20 rounded-2xl bg-gray-100 flex items-center justify-center font-sora font-bold text-3xl text-gray-800 shadow-sm border border-gray-50 mb-4">
+                            <div className="w-20 h-20 rounded-2xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center font-sora font-bold text-3xl text-gray-800 dark:text-white shadow-sm border border-gray-50 dark:border-gray-700 mb-4 transition-colors">
                                 {job.logo}
                             </div>
                             <h1 className="font-sora text-2xl font-bold text-gray-900 mb-1">{job.title}</h1>
                             <p className="text-gray-500 mb-4">{job.company} • {job.location}</p>
                             <div className="flex gap-2">
-                                <span className="px-4 py-1.5 bg-gray-100 text-gray-600 rounded-full text-sm font-medium">{job.type}</span>
-                                <span className="px-4 py-1.5 bg-pink-50 text-pink-600 rounded-full text-sm font-medium font-sora">{job.salary}</span>
+                                 <span className="px-4 py-1.5 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-full text-sm font-medium">{job.type}</span>
                             </div>
                         </div>
 
@@ -344,7 +342,7 @@
                         </div>
                     </div>
 
-                    <div className="absolute bottom-0 w-full p-6 bg-white border-t border-gray-100 z-20">
+                    <div className="absolute bottom-0 w-full p-6 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 z-20 transition-colors duration-300">
                         {hasApplied ? (
                             <button disabled className="w-full bg-gray-300 text-gray-600 font-medium text-lg py-4 rounded-2xl cursor-not-allowed">
                                 Already Applied
@@ -358,7 +356,7 @@
 
                     {showModal && (
                         <div className="fixed inset-0 z-[100] bg-black/50 flex items-end sm:items-center justify-center backdrop-blur-sm">
-                            <div className="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-10 animate-slide-up">
+                            <div className="bg-white dark:bg-gray-800 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 pb-10 animate-slide-up transition-colors duration-300">
                                 <div className="flex justify-between items-center mb-6">
                                     <h2 className="font-sora text-xl font-bold text-gray-900">Apply for {job.title}</h2>
                                     <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600"><i data-lucide="x" className="w-5 h-5"></i></button>
@@ -669,14 +667,14 @@
 
                     <div className="px-6 mb-6">
                         <h2 className="font-sora text-lg font-bold mb-4 text-gray-900 dark:text-white">Settings</h2>
-                        <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-50 flex justify-between items-center">
+                        <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700 flex justify-between items-center transition-colors duration-300">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-600">
                                     <i data-lucide="monitor" className="w-5 h-5"></i>
                                 </div>
                                 <div>
-                                    <h3 className="font-sora font-bold text-gray-900 text-sm">Desktop View</h3>
-                                    <p className="text-xs text-gray-500">Switch to full width layout</p>
+                                    <h3 className="font-sora font-bold text-gray-900 dark:text-white text-sm">Desktop View</h3>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">Switch to full width layout</p>
                                 </div>
                             </div>
                             <button 
@@ -709,8 +707,103 @@
             );
         };
 
+        const LoginPage = ({ onLogin }) => {
+            const [isLogin, setIsLogin] = useState(true);
+            const [email, setEmail] = useState('');
+            const [password, setPassword] = useState('');
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                onLogin({ name: 'Alex Kumar', email });
+            };
+
+            return (
+                <div className="flex-1 flex flex-col items-center justify-center p-6 bg-white dark:bg-gray-900 min-h-screen transition-colors duration-300">
+                    <div className="w-full max-w-md animate-fade-in">
+                        <div className="flex items-center gap-3 mb-12 justify-center">
+                            <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-200 dark:shadow-none">
+                                <i data-lucide="layers" className="w-8 h-8"></i>
+                            </div>
+                            <h1 className="font-sora text-3xl font-bold text-gray-900 dark:text-white">TalentPool</h1>
+                        </div>
+
+                        <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 transition-colors duration-300">
+                            <h2 className="font-sora text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                                {isLogin ? 'Welcome back' : 'Create account'}
+                            </h2>
+                            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm">
+                                {isLogin ? 'Please enter your details to sign in.' : 'Start your journey with us today.'}
+                            </p>
+
+                            <form onSubmit={handleSubmit} className="space-y-5">
+                                <div>
+                                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">Email Address</label>
+                                    <div className="relative">
+                                        <i data-lucide="mail" className="absolute left-4 top-3.5 w-5 h-5 text-gray-400"></i>
+                                        <input 
+                                            type="email" 
+                                            required
+                                            value={email}
+                                            onChange={e => setEmail(e.target.value)}
+                                            placeholder="hello@example.com" 
+                                            className="w-full bg-gray-50 dark:bg-gray-700 border-none rounded-2xl py-3.5 pl-12 pr-4 text-sm focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white transition-all"
+                                        />
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">Password</label>
+                                    <div className="relative">
+                                        <i data-lucide="lock" className="absolute left-4 top-3.5 w-5 h-5 text-gray-400"></i>
+                                        <input 
+                                            type="password" 
+                                            required
+                                            value={password}
+                                            onChange={e => setPassword(e.target.value)}
+                                            placeholder="••••••••" 
+                                            className="w-full bg-gray-50 dark:bg-gray-700 border-none rounded-2xl py-3.5 pl-12 pr-4 text-sm focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white transition-all"
+                                        />
+                                    </div>
+                                </div>
+
+                                <button type="submit" className="w-full bg-gradient-to-r from-pink-400 to-yellow-400 text-white font-bold py-4 rounded-2xl shadow-lg shadow-pink-200 dark:shadow-none hover:scale-[1.02] transition-transform mt-4">
+                                    {isLogin ? 'Sign In' : 'Sign Up'}
+                                </button>
+                            </form>
+
+                            <div className="mt-8 flex items-center gap-4">
+                                <div className="flex-1 h-[1px] bg-gray-100 dark:bg-gray-700"></div>
+                                <span className="text-xs text-gray-400 font-medium">OR</span>
+                                <div className="flex-1 h-[1px] bg-gray-100 dark:bg-gray-700"></div>
+                            </div>
+
+                            <div className="mt-6 grid grid-cols-2 gap-4">
+                                <button className="flex items-center justify-center gap-2 py-3 border border-gray-100 dark:border-gray-700 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                    <img src="https://www.google.com/favicon.ico" className="w-4 h-4" alt="Google" />
+                                    <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Google</span>
+                                </button>
+                                <button className="flex items-center justify-center gap-2 py-3 border border-gray-100 dark:border-gray-700 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                    <i data-lucide="github" className="w-4 h-4 text-gray-900 dark:text-white"></i>
+                                    <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Github</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <p className="text-center mt-8 text-sm text-gray-500 dark:text-gray-400">
+                            {isLogin ? "Don't have an account?" : "Already have an account?"}
+                            <button onClick={() => setIsLogin(!isLogin)} className="ml-2 font-bold text-indigo-600 dark:text-indigo-400 hover:underline">
+                                {isLogin ? 'Sign Up' : 'Sign In'}
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            );
+        };
+
         // Main App Component
         const App = () => {
+            const [isLoggedIn, setIsLoggedIn] = useState(false);
+            const [user, setUser] = useState(null);
             const [activeTab, setActiveTab] = useState('home');
             const [selectedJob, setSelectedJob] = useState(null);
             const [isMobileView, setIsMobileView] = useState(true);
@@ -721,31 +814,44 @@
                 // Initialize lucide icons whenever component renders
                 lucide.createIcons();
                 
-                // Custom event listener for internal navigation (e.g., clicking avatar to go to profile)
+                // Handle Dark Mode Class on document element
+                if (isDarkMode) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+
+                // Custom event listener for internal navigation
                 const handleNav = (e) => setActiveTab(e.detail);
                 window.addEventListener('navigate', handleNav);
                 return () => window.removeEventListener('navigate', handleNav);
-            });
+            }, [isDarkMode]);
 
             return (
                 <div className={`h-full w-full relative flex transition-all duration-300 ${isDarkMode ? 'dark bg-gray-900 text-white' : 'bg-gradient-to-br from-pink-50 to-yellow-50'} shadow-2xl overflow-hidden`}>
-                    {!isMobileView && <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />}
-                    
-                    <div className={`flex-1 flex flex-col h-full overflow-hidden relative ${isMobileView ? 'max-w-md mx-auto bg-white dark:bg-gray-900 shadow-2xl' : ''}`}>
-                        <CustomCursor />
-                        {!isMobileView && <TopBar />}
-                        
-                        <div className="flex-1 overflow-y-auto relative">
-                            {activeTab === 'home' && <HomeFeed navigateToJob={setSelectedJob} />}
-                            {activeTab === 'tracking' && <ApplicationTracking appliedJobs={appliedJobs} isMobileView={isMobileView} />}
-                            {activeTab === 'messages' && <Messages />}
-                            {activeTab === 'profile' && <UserProfile isMobileView={isMobileView} setIsMobileView={setIsMobileView} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />}
+                    {!isLoggedIn ? (
+                        <LoginPage onLogin={(userData) => { setUser(userData); setIsLoggedIn(true); }} />
+                    ) : (
+                        <>
+                            {!isMobileView && <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />}
                             
-                            {selectedJob && <JobDetail job={selectedJob} goBack={() => setSelectedJob(null)} hasApplied={appliedJobs.includes(selectedJob.id)} onApply={(id) => setAppliedJobs([...appliedJobs, id])} />}
-                        </div>
-                        
-                        {isMobileView && !selectedJob && <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />}
-                    </div>
+                            <div className={`flex-1 flex flex-col h-full overflow-hidden relative ${isMobileView ? 'max-w-md mx-auto bg-white dark:bg-gray-900 shadow-2xl' : ''}`}>
+                                <CustomCursor />
+                                {!isMobileView && <TopBar />}
+                                
+                                <div className="flex-1 overflow-y-auto relative">
+                                    {activeTab === 'home' && <HomeFeed navigateToJob={setSelectedJob} />}
+                                    {activeTab === 'tracking' && <ApplicationTracking appliedJobs={appliedJobs} isMobileView={isMobileView} />}
+                                    {activeTab === 'messages' && <Messages />}
+                                    {activeTab === 'profile' && <UserProfile isMobileView={isMobileView} setIsMobileView={setIsMobileView} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />}
+                                    
+                                    {selectedJob && <JobDetail job={selectedJob} goBack={() => setSelectedJob(null)} hasApplied={appliedJobs.includes(selectedJob.id)} onApply={(id) => setAppliedJobs([...appliedJobs, id])} />}
+                                </div>
+                                
+                                {isMobileView && !selectedJob && <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />}
+                            </div>
+                        </>
+                    )}
                 </div>
             );
         };

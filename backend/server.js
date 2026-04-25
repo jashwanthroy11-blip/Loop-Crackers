@@ -1,15 +1,17 @@
+require('dotenv').config();
+
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
-const dotenv = require('dotenv');
-const connectDB = require('./config/db');
+
+
 const { initSocket } = require('./services/socketService');
 
 // Load env vars
-dotenv.config();
+
 
 // Connect to database
-connectDB();
+// Database connected via Supabase client
 
 const app = express();
 const server = http.createServer(app);

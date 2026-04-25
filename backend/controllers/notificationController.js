@@ -1,9 +1,15 @@
-const Notification = require('../models/Notification');
+const supabase = require('../config/supabase');
 
 const getNotifications = async (req, res) => {
     try {
-        const notifications = await Notification.find({ user_id: req.user.id }).sort('-createdAt');
-        res.json(notifications);
+        const { data, error } = await supabase
+            .from('notifications')
+            .select('*')
+            .eq('user_id', req.user.id)
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        res.json(data);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -11,7 +17,13 @@ const getNotifications = async (req, res) => {
 
 const markAsRead = async (req, res) => {
     try {
-        await Notification.updateMany({ user_id: req.user.id, read: false }, { read: true });
+        const { error } = await supabase
+            .from('notifications')
+            .update({ read: true })
+            .eq('user_id', req.user.id)
+            .eq('read', false);
+
+        if (error) throw error;
         res.json({ message: 'Notifications marked as read' });
     } catch (err) {
         res.status(500).json({ error: err.message });
