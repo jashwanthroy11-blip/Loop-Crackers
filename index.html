@@ -159,7 +159,7 @@
             const navItems = [
                 { id: 'home', icon: 'home', label: 'Home' },
                 { id: 'companies', icon: 'building-2', label: 'Companies' },
-                { id: 'tracking', icon: 'briefcase', label: 'Applied' },
+                { id: 'tracking', icon: 'briefcase', label: 'Job Tracker' },
                 { id: 'messages', icon: 'message-square', label: 'Messages' },
                 { id: 'profile', icon: 'user', label: 'Profile' },
             ];
@@ -188,7 +188,7 @@
                 { id: 'resume-maker', icon: 'file-text', label: 'Resume Maker' },
                 { id: 'career-guidance', icon: 'compass', label: 'Career Guidance' },
                 { id: 'prepare', icon: 'book-open', label: 'Prepare' },
-                { id: 'tracking', icon: 'clipboard-list', label: 'Job requests', badge: 3 },
+                { id: 'tracking', icon: 'clipboard-list', label: 'Job Tracker', badge: 3 },
                 { id: 'activities', icon: 'activity', label: 'Activities' },
                 { id: 'performance', icon: 'bar-chart-2', label: 'Performance' },
                 { id: 'messages', icon: 'mail', label: 'Mailbox' },
@@ -542,74 +542,27 @@
             const [tab, setTab] = useState('Active');
             
             const activeApps = [
-                { id: 101, name: 'William Smith', title: 'Sr. Marketing Manager', company: 'Spotify', logo: 'S', stage: 0, tags: ['LinkedIn', 'Active'] },
-                { id: 102, name: 'Isabella Anderson', title: 'Growth Marketer', company: 'Google', logo: 'G', stage: 1, tags: ['Scheduled'] },
-                { id: 103, name: 'Alexander Jackson', title: 'SEO Specialist', company: 'Amazon', logo: 'A', stage: 2, tags: ['Video'] },
-                { id: 104, name: 'Olivia Martinez', title: 'Marketing VP', company: 'Netflix', logo: 'N', stage: 3, tags: ['Scheduled'] },
-                { id: 105, name: 'Noah Brown', title: 'Head of Marketing', company: 'Apple', logo: 'A', stage: 4, tags: ['Offered'] },
+                { id: 101, name: 'Applicant', title: 'Sr. Marketing Manager', company: 'Spotify', logo: 'S', stage: 0, tags: ['LinkedIn', 'Active'] },
+                { id: 102, name: 'Applicant', title: 'Growth Marketer', company: 'Google', logo: 'G', stage: 1, tags: ['Scheduled'] },
+                { id: 103, name: 'Applicant', title: 'SEO Specialist', company: 'Amazon', logo: 'A', stage: 2, tags: ['Video'] },
+                { id: 104, name: 'Applicant', title: 'Marketing VP', company: 'Netflix', logo: 'N', stage: 3, tags: ['Scheduled'] },
+                { id: 105, name: 'Applicant', title: 'Head of Marketing', company: 'Apple', logo: 'A', stage: 4, tags: ['Offered'] },
                 ...appliedJobs.map(id => {
-                    const job = mockJobs.find(j => j.id === id);
-                    return { id, name: 'Alex Kumar', title: job.title, company: job.company, logo: job.logo, stage: 0, tags: ['New'] };
+                    const job = mockJobs.find(j => j.id === id) || { title: 'Unknown', company: 'Unknown', logo: 'U' };
+                    return { id, name: 'Applicant', title: job.title, company: job.company, logo: job.logo, stage: 0, tags: ['New'] };
                 })
             ];
 
             const archivedApps = [
-                { id: 201, name: 'Elijah Thomas', title: 'Marketing Manager', company: 'Meta', logo: 'M', stage: 4, rejected: true },
+                { id: 201, name: 'Applicant', title: 'Marketing Manager', company: 'Meta', logo: 'M', stage: 4, rejected: true },
             ];
 
             const displayApps = tab === 'Active' ? activeApps : archivedApps;
 
-            if (!isMobileView && tab === 'Active') {
-                return (
-                    <div className="flex-1 flex flex-col h-full bg-saas-bg p-6 overflow-hidden">
-                        <div className="mb-6">
-                            <p className="text-xs text-saas-muted mb-1">Jobs / Applications</p>
-                            <h1 className="font-sora text-2xl font-bold text-saas-text">Application Pipeline</h1>
-                            <div className="flex gap-6 mt-6 border-b border-saas-border">
-                                <button className="pb-3 border-b-2 border-saas-primary text-saas-primary font-semibold text-sm">Applications</button>
-                                <button className="pb-3 text-saas-muted text-sm hover:text-saas-text transition-colors">Details</button>
-                                <button className="pb-3 text-saas-muted text-sm hover:text-saas-text transition-colors">Notes</button>
-                            </div>
-                        </div>
-
-                        <div className="flex-1 flex gap-4 overflow-x-auto pb-6 hide-scrollbar">
-                            {stages.map((stage, sIdx) => (
-                                <div key={sIdx} className="flex-shrink-0 w-64">
-                                    <div className="flex items-center gap-2 mb-4">
-                                        <h3 className="font-sora font-bold text-saas-muted text-[10px] uppercase tracking-widest">{stage}</h3>
-                                        <span className="text-[10px] font-bold text-saas-muted bg-saas-card border border-saas-border px-2 py-0.5 rounded-full">{activeApps.filter(app => app.stage === sIdx).length}</span>
-                                    </div>
-                                    <div className="flex flex-col gap-3">
-                                        {activeApps.filter(app => app.stage === sIdx).map(app => (
-                                            <div key={app.id} className="bg-[#FFF5EB] p-4 rounded-xl border border-orange-200 hover:border-orange-400 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(251,146,60,0.25)] transition-all cursor-pointer group">
-                                                <div className="flex items-start gap-2 mb-3">
-                                                    <i data-lucide={app.stage === 0 ? 'send' : app.stage === 1 ? 'eye' : app.stage === 2 ? 'video' : app.stage === 3 ? 'check' : 'award'} className="w-4 h-4 text-orange-500 flex-shrink-0 mt-0.5"></i>
-                                                    <div className="flex-1 min-w-0">
-                                                        <h4 className="font-sora font-bold text-gray-900 text-sm mb-0.5 group-hover:text-orange-600 transition-colors truncate">{app.name}</h4>
-                                                        <p className="text-[10px] text-gray-600 font-medium truncate">{app.title}</p>
-                                                    </div>
-                                                </div>
-                                                <div className="flex flex-wrap gap-1.5">
-                                                    {app.tags?.map((tag, tIdx) => (
-                                                        <span key={tIdx} className={`px-2 py-0.5 rounded-md text-[9px] font-bold transition-all ${tag === 'Active' || tag === 'Offered' ? 'bg-green-100 text-green-700' : tag === 'Scheduled' || tag === 'Video' ? 'bg-orange-100 text-orange-700' : 'bg-white text-gray-700 border border-orange-200'}`}>
-                                                            {tag}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                );
-            }
-
             return (
                 <div className="flex-1 flex flex-col bg-saas-bg">
                     <div className="px-5 py-5 bg-saas-card border-b border-saas-border sticky top-0 z-10">
-                        <h1 className="font-sora text-xl font-bold mb-4 text-saas-text">Track Applications</h1>
+                        <h1 className="font-sora text-xl font-bold mb-4 text-saas-text">Job Tracker</h1>
                         <div className="flex gap-4">
                             <button onClick={() => setTab('Active')} className={`font-semibold text-sm pb-1 transition-all ${tab === 'Active' ? 'text-saas-primary border-b-2 border-saas-primary' : 'text-saas-muted'}`}>Active ({activeApps.length})</button>
                             <button onClick={() => setTab('Archived')} className={`font-semibold text-sm pb-1 transition-all ${tab === 'Archived' ? 'text-saas-primary border-b-2 border-saas-primary' : 'text-saas-muted'}`}>Archived</button>
@@ -624,11 +577,11 @@
                                     <div className={`w-10 h-10 rounded-lg bg-white border border-orange-200 flex items-center justify-center font-sora font-bold text-lg shadow-sm ${app.rejected ? 'text-red-500' : 'text-orange-600'}`}>{app.logo}</div>
                                     <div className="flex-1">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <i data-lucide="user" className="w-3.5 h-3.5 text-orange-400"></i>
-                                            <h3 className="font-sora font-bold text-sm text-gray-900">{app.name}</h3>
+                                            <i data-lucide="building" className="w-3.5 h-3.5 text-orange-400"></i>
+                                            <h3 className="font-sora font-bold text-sm text-gray-900">{app.company}</h3>
                                             {app.rejected && <i data-lucide="x-circle" className="w-3.5 h-3.5 text-red-500 ml-auto"></i>}
                                         </div>
-                                        <p className="text-xs text-gray-600 font-medium">{app.title} · {app.company}</p>
+                                        <p className="text-xs text-gray-600 font-medium">{app.title}</p>
                                     </div>
                                 </div>
                                 <div className="relative">
@@ -1222,12 +1175,82 @@
         };
 
         const PreparePage = ({ isMobileView }) => {
+            const [selectedCategory, setSelectedCategory] = useState(null);
+
+            const content = {
+                'company': {
+                    title: 'Company Specific Questions',
+                    items: [
+                        { name: 'Google', questions: ['How do you scale a system for 1B users?', 'Explain MapReduce.', 'What is Bigtable?'] },
+                        { name: 'Amazon', questions: ['Describe a time you failed.', 'How do you handle a difficult teammate?', 'Explain the Leadership Principles.'] },
+                        { name: 'Spotify', questions: ['How do you optimize audio streaming?', 'What is the Spotify model?', 'Explain event-driven architecture.'] }
+                    ]
+                },
+                'coding': {
+                    title: 'Coding Questions',
+                    items: [
+                        { name: 'Data Structures', questions: ['Reverse a linked list.', 'Implement a hash map.', 'Balanced binary tree check.'] },
+                        { name: 'Algorithms', questions: ['Binary search implementation.', 'Merge sort vs Quick sort.', 'Dynamic programming basics.'] },
+                        { name: 'System Design', questions: ['Design a URL shortener.', 'Design a notification system.', 'Rate limiting algorithms.'] }
+                    ]
+                },
+                'mock': {
+                    title: 'Mock Exams',
+                    items: [
+                        { name: 'Aptitude Test', duration: '30 mins', questions: 20 },
+                        { name: 'Technical MCQ', duration: '45 mins', questions: 30 },
+                        { name: 'Coding Assessment', duration: '60 mins', questions: 3 }
+                    ]
+                }
+            };
+
+            if (selectedCategory) {
+                const data = content[selectedCategory];
+                return (
+                    <div className="flex-1 overflow-y-auto bg-saas-bg p-5 animate-fade-in">
+                        <button 
+                            onClick={() => setSelectedCategory(null)}
+                            className="flex items-center gap-2 text-sm font-bold text-orange-600 mb-6 hover:gap-3 transition-all"
+                        >
+                            <i data-lucide="arrow-left" className="w-4 h-4"></i> Back to Prepare
+                        </button>
+                        
+                        <h2 className="font-sora text-2xl font-bold text-saas-text mb-6">{data.title}</h2>
+                        
+                        <div className="space-y-4">
+                            {data.items.map((item, idx) => (
+                                <div key={idx} className="bg-white border border-saas-border rounded-xl p-5 shadow-sm">
+                                    <h3 className="font-sora font-bold text-gray-900 mb-3">{item.name}</h3>
+                                    {item.questions && Array.isArray(item.questions) ? (
+                                        <ul className="space-y-2">
+                                            {item.questions.map((q, qIdx) => (
+                                                <li key={qIdx} className="text-xs text-saas-muted flex gap-2">
+                                                    <span className="text-orange-500 font-bold">•</span> {q}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <div className="flex gap-4 text-xs text-saas-muted font-medium">
+                                            <span className="flex items-center gap-1"><i data-lucide="timer" className="w-3.5 h-3.5"></i> {item.duration}</span>
+                                            <span className="flex items-center gap-1"><i data-lucide="file-text" className="w-3.5 h-3.5"></i> {item.questions} Questions</span>
+                                        </div>
+                                    )}
+                                    <button className="mt-4 text-[10px] font-bold text-white bg-orange-500 px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors">
+                                        Start Now
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            }
+
             return (
                 <div className="flex-1 overflow-y-auto bg-saas-bg p-5">
                     <h1 className="font-sora text-xl font-bold text-saas-text mb-2">Prepare for your Job</h1>
                     <p className="text-sm text-saas-muted mb-6">Mock exams, coding questions, and company-specific interviews.</p>
                     <div className={`grid ${isMobileView ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'} gap-4`}>
-                        <div className="bg-[#FFF5EB] p-5 rounded-xl border border-orange-200 hover:border-orange-400 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(251,146,60,0.25)] transition-all cursor-pointer group">
+                        <div onClick={() => setSelectedCategory('company')} className="bg-[#FFF5EB] p-5 rounded-xl border border-orange-200 hover:border-orange-400 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(251,146,60,0.25)] transition-all cursor-pointer group">
                             <div className="w-12 h-12 bg-white border border-orange-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-orange-100 transition-colors shadow-sm">
                                 <i data-lucide="building-2" className="w-6 h-6 text-orange-500"></i>
                             </div>
@@ -1235,7 +1258,7 @@
                             <p className="text-xs text-gray-600 font-medium leading-relaxed mb-4">Questions most frequently asked by FAANG and top tech companies.</p>
                             <button className="px-4 py-2 bg-white border border-orange-200 rounded-lg text-xs font-bold text-gray-800 hover:text-orange-600 transition-colors w-full">Start Practice</button>
                         </div>
-                        <div className="bg-[#FFF5EB] p-5 rounded-xl border border-orange-200 hover:border-orange-400 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(251,146,60,0.25)] transition-all cursor-pointer group">
+                        <div onClick={() => setSelectedCategory('coding')} className="bg-[#FFF5EB] p-5 rounded-xl border border-orange-200 hover:border-orange-400 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(251,146,60,0.25)] transition-all cursor-pointer group">
                             <div className="w-12 h-12 bg-white border border-orange-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-orange-100 transition-colors shadow-sm">
                                 <i data-lucide="code" className="w-6 h-6 text-orange-500"></i>
                             </div>
@@ -1243,7 +1266,7 @@
                             <p className="text-xs text-gray-600 font-medium leading-relaxed mb-4">Data structures, algorithms, and system design challenges by role.</p>
                             <button className="px-4 py-2 bg-white border border-orange-200 rounded-lg text-xs font-bold text-gray-800 hover:text-orange-600 transition-colors w-full">Start Practice</button>
                         </div>
-                        <div className="bg-[#FFF5EB] p-5 rounded-xl border border-orange-200 hover:border-orange-400 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(251,146,60,0.25)] transition-all cursor-pointer group">
+                        <div onClick={() => setSelectedCategory('mock')} className="bg-[#FFF5EB] p-5 rounded-xl border border-orange-200 hover:border-orange-400 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(251,146,60,0.25)] transition-all cursor-pointer group">
                             <div className="w-12 h-12 bg-white border border-orange-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-orange-100 transition-colors shadow-sm">
                                 <i data-lucide="timer" className="w-6 h-6 text-orange-500"></i>
                             </div>
