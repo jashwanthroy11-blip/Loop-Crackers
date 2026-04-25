@@ -159,7 +159,6 @@
                 { id: 'home', icon: 'home', label: 'Home' },
                 { id: 'tracking', icon: 'briefcase', label: 'Applied' },
                 { id: 'messages', icon: 'message-square', label: 'Messages' },
-                { id: 'contacts', icon: 'users', label: 'Contacts' },
                 { id: 'profile', icon: 'user', label: 'Profile' },
             ];
 
@@ -183,13 +182,11 @@
         const Sidebar = ({ activeTab, setActiveTab }) => {
             const menuItems = [
                 { id: 'home', icon: 'layout-dashboard', label: 'Team dashboard' },
-                { id: 'contacts', icon: 'users', label: 'Contacts' },
                 { id: 'home', icon: 'briefcase', label: 'Jobs' },
                 { id: 'tracking', icon: 'clipboard-list', label: 'Job requests', badge: 3 },
                 { id: 'activities', icon: 'activity', label: 'Activities' },
                 { id: 'performance', icon: 'bar-chart-2', label: 'Performance' },
                 { id: 'messages', icon: 'mail', label: 'Mailbox' },
-                { id: 'contacts', icon: 'users', label: 'Contacts' },
             ];
 
             return (
@@ -834,56 +831,6 @@
             );
         };
 
-        // Screen 9: Contacts
-        const Contacts = () => {
-            const contactList = [
-                { id: 1, name: 'Sarah Wilson', role: 'HR Manager @ Spotify', status: 'online', avatar: 'https://i.pravatar.cc/150?u=sarah' },
-                { id: 2, name: 'James Chen', role: 'Engineering Lead @ Google', status: 'offline', avatar: 'https://i.pravatar.cc/150?u=james' },
-                { id: 3, name: 'Elena Rodriguez', role: 'Senior Recruiter @ Amazon', status: 'online', avatar: 'https://i.pravatar.cc/150?u=elena' },
-                { id: 4, name: 'Marcus Smith', role: 'Product Manager @ Meta', status: 'online', avatar: 'https://i.pravatar.cc/150?u=marcus' },
-                { id: 5, name: 'Jessica Lee', role: 'Talent Acquisition @ Apple', status: 'offline', avatar: 'https://i.pravatar.cc/150?u=jessica' },
-            ];
-
-            return (
-                <div className="flex-1 flex flex-col bg-saas-bg">
-                    <div className="px-5 pt-8 pb-4 border-b border-saas-border flex justify-between items-center sticky top-0 bg-saas-bg z-10">
-                        <h1 className="font-sora text-xl font-bold text-saas-text">Contacts</h1>
-                        <button className="w-9 h-9 bg-saas-card rounded-lg flex items-center justify-center text-saas-muted border border-saas-border hover:text-saas-secondary transition-colors">
-                            <i data-lucide="user-plus" className="w-4 h-4"></i>
-                        </button>
-                    </div>
-                    
-                    <div className="flex-1 overflow-y-auto p-5">
-                        <div className="relative mb-4">
-                            <i data-lucide="search" className="absolute left-4 top-3 w-4 h-4 text-saas-muted"></i>
-                            <input 
-                                type="text" 
-                                placeholder="Search contacts..." 
-                                className="w-full bg-saas-card border border-saas-border rounded-xl py-2.5 pl-11 pr-4 text-sm focus:ring-2 focus:ring-saas-primary/50 outline-none text-saas-text placeholder-saas-muted"
-                            />
-                        </div>
-
-                        <div className="space-y-3">
-                            {contactList.map((contact, idx) => (
-                                <div key={contact.id} className="flex items-center gap-3 p-3 bg-saas-card rounded-xl border border-saas-border hover:border-saas-primary/50 hover:shadow-lg hover:shadow-saas-primary/10 transition-all animate-slide-up" style={{ animationDelay: `${idx * 80}ms` }}>
-                                    <div className="relative">
-                                        <img src={contact.avatar} className="w-10 h-10 rounded-lg object-cover" alt={contact.name} />
-                                        <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-saas-card ${contact.status === 'online' ? 'bg-saas-success' : 'bg-saas-muted'}`}></div>
-                                    </div>
-                                    <div className="flex-1">
-                                        <h3 className="font-sora font-bold text-sm text-saas-text">{contact.name}</h3>
-                                        <p className="text-[10px] text-saas-muted">{contact.role}</p>
-                                    </div>
-                                    <button className="w-9 h-9 bg-saas-primary-light text-saas-primary rounded-lg flex items-center justify-center hover:bg-saas-primary hover:text-white transition-all">
-                                        <i data-lucide="message-circle" className="w-4 h-4"></i>
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            );
-        };
 
         const UserProfile = ({ isMobileView, setIsMobileView, isDarkMode, setIsDarkMode }) => {
             return (
@@ -1131,7 +1078,6 @@
                                     {activeTab === 'tracking' && <ApplicationTracking appliedJobs={appliedJobs} isMobileView={isMobileView} />}
                                     {activeTab === 'activities' && <Activities />}
                                     {activeTab === 'performance' && <Performance />}
-                                    {activeTab === 'contacts' && <Contacts />}
                                     {activeTab === 'messages' && <Messages />}
                                     {activeTab === 'profile' && <UserProfile isMobileView={isMobileView} setIsMobileView={setIsMobileView} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />}
                                     
