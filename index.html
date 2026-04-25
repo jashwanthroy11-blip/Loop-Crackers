@@ -1392,18 +1392,24 @@
             const [appliedJobs, setAppliedJobs] = useState([]);
 
             useEffect(() => {
-                lucide.createIcons();
-                // Apply dark class based on isDarkMode state
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+            });
+
+            useEffect(() => {
                 if (isDarkMode) {
                     document.documentElement.classList.add('dark');
                 } else {
                     document.documentElement.classList.remove('dark');
                 }
+            }, [isDarkMode]);
 
+            useEffect(() => {
                 const handleNav = (e) => setActiveTab(e.detail);
                 window.addEventListener('navigate', handleNav);
                 return () => window.removeEventListener('navigate', handleNav);
-            }, [isDarkMode]);
+            }, []);
 
             return (
                 <div className="h-screen w-screen fixed inset-0 flex bg-saas-bg overflow-hidden">
