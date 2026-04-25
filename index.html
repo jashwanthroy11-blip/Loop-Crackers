@@ -312,7 +312,7 @@
         };
 
         // Screen 1: Home Feed
-        const HomeFeed = ({ navigateToJob }) => {
+        const HomeFeed = ({ navigateToJob, isMobileView }) => {
             const categories = ['All', 'Design', 'Engineering', 'Product', 'Marketing'];
             const [selectedCategory, setSelectedCategory] = useState('All');
             const [searchQuery, setSearchQuery] = useState('');
@@ -366,7 +366,7 @@
 
                     <div className="mt-6 px-5 pb-6">
                         <h2 className="font-sora text-base font-bold mb-4 animate-fade-in text-saas-text">Recommended Jobs</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
+                        <div className={`grid ${isMobileView ? 'grid-cols-1 gap-3' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'}`}>
                             {filteredJobs.length === 0 && <p className="text-saas-muted text-sm text-center py-4 col-span-full">No jobs found matching your criteria.</p>}
                             {filteredJobs.map((job, idx) => (
                                 <div 
@@ -410,7 +410,7 @@
                         </div>
 
                         <h2 className="font-sora text-base font-bold mt-8 mb-4 animate-fade-in text-saas-text">More Resources</h2>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pb-6">
+                        <div className={`grid ${isMobileView ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-3'} gap-3 pb-6`}>
                             <div onClick={() => handleNavigate('resume-maker')} className="bg-gradient-to-br from-saas-primary to-saas-secondary p-4 rounded-xl text-white cursor-pointer hover:opacity-90 transition-opacity shadow-lg shadow-saas-primary/20">
                                 <i data-lucide="file-text" className="w-6 h-6 mb-2"></i>
                                 <h3 className="font-sora font-bold text-sm">Resume Maker</h3>
@@ -779,12 +779,12 @@
                                         <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-white z-10 flex-shrink-0 ${item.color}`}>
                                             <i data-lucide={item.icon} className="w-4 h-4"></i>
                                         </div>
-                                        <div className="flex-1 bg-saas-card p-3 rounded-xl border border-saas-border">
+                                        <div className="flex-1 bg-[#FFF5EB] p-3 rounded-xl border border-orange-200">
                                             <div className="flex justify-between items-center mb-1">
-                                                <h3 className="font-sora font-bold text-xs text-saas-text">{item.title}</h3>
-                                                <span className="text-[10px] text-saas-muted">{item.time}</span>
+                                                <h3 className="font-sora font-bold text-xs text-gray-900">{item.title}</h3>
+                                                <span className="text-[10px] text-gray-500">{item.time}</span>
                                             </div>
-                                            <p className="text-xs text-saas-muted leading-relaxed">{item.details}</p>
+                                            <p className="text-xs text-gray-600 font-medium leading-relaxed">{item.details}</p>
                                         </div>
                                     </div>
                                 ))}
@@ -814,18 +814,18 @@
                     <div className="flex-1 overflow-y-auto px-5 py-5">
                         <div className="grid grid-cols-2 gap-3 mb-5">
                             {stats.map((stat, idx) => (
-                                <div key={idx} className="bg-saas-card p-4 rounded-xl border border-saas-border animate-slide-up" style={{ animationDelay: `${idx * 80}ms` }}>
+                                <div key={idx} className="bg-[#FFF5EB] p-4 rounded-xl border border-orange-200 animate-slide-up" style={{ animationDelay: `${idx * 80}ms` }}>
                                     <div className="flex justify-between items-start mb-3">
                                         <div className="flex items-center gap-2">
-                                            <div className={`w-9 h-9 rounded-lg bg-saas-bg border border-saas-border flex items-center justify-center ${stat.color}`}>
+                                            <div className={`w-9 h-9 rounded-lg bg-white border border-orange-100 shadow-sm flex items-center justify-center ${stat.color}`}>
                                                 <i data-lucide={stat.icon} className="w-4 h-4"></i>
                                             </div>
                                             <i data-lucide="trending-up" className="w-3.5 h-3.5 text-saas-success"></i>
                                         </div>
                                         <span className="text-[10px] font-bold text-saas-success bg-saas-success-light px-2 py-0.5 rounded-md">{stat.growth}</span>
                                     </div>
-                                    <h3 className="font-sora text-xl font-bold text-saas-text">{stat.value}</h3>
-                                    <p className="text-[10px] text-saas-muted font-bold uppercase tracking-wider mt-0.5">{stat.label}</p>
+                                    <h3 className="font-sora text-xl font-bold text-gray-900">{stat.value}</h3>
+                                    <p className="text-[10px] text-gray-600 font-bold uppercase tracking-wider mt-0.5">{stat.label}</p>
                                 </div>
                             ))}
                         </div>
@@ -1235,12 +1235,12 @@
             );
         };
 
-        const PreparePage = () => {
+        const PreparePage = ({ isMobileView }) => {
             return (
                 <div className="flex-1 overflow-y-auto bg-saas-bg p-5">
                     <h1 className="font-sora text-xl font-bold text-saas-text mb-2">Prepare for your Job</h1>
                     <p className="text-sm text-saas-muted mb-6">Mock exams, coding questions, and company-specific interviews.</p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className={`grid ${isMobileView ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'} gap-4`}>
                         <div className="bg-[#FFF5EB] p-5 rounded-xl border border-orange-200 hover:border-orange-400 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(251,146,60,0.25)] transition-all cursor-pointer group">
                             <div className="w-12 h-12 bg-white border border-orange-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-orange-100 transition-colors shadow-sm">
                                 <i data-lucide="building-2" className="w-6 h-6 text-orange-500"></i>
@@ -1270,11 +1270,11 @@
             );
         };
 
-        const CareerGuidancePage = () => {
+        const CareerGuidancePage = ({ isMobileView }) => {
             return (
                 <div className="flex-1 overflow-y-auto bg-saas-bg p-5">
                     <h1 className="font-sora text-xl font-bold text-saas-text mb-6">Career Guidance</h1>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className={`grid ${isMobileView ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'} gap-4`}>
                         <div className="bg-[#FFF5EB] p-5 rounded-xl border border-orange-200 hover:border-orange-400 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(251,146,60,0.25)] transition-all cursor-pointer group">
                             <div className="w-12 h-12 bg-white border border-orange-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-orange-100 transition-colors shadow-sm">
                                 <i data-lucide="book-open" className="w-6 h-6 text-orange-500"></i>
@@ -1434,10 +1434,10 @@
                                 {!isMobileView && <TopBar />}
                                 
                                 <div className="flex-1 overflow-y-auto relative">
-                                    {activeTab === 'home' && <HomeFeed navigateToJob={setSelectedJob} />}
+                                    {activeTab === 'home' && <HomeFeed navigateToJob={setSelectedJob} isMobileView={isMobileView} />}
                                     {activeTab === 'resume-maker' && <ResumeMakerPage />}
-                                    {activeTab === 'career-guidance' && <CareerGuidancePage />}
-                                    {activeTab === 'prepare' && <PreparePage />}
+                                    {activeTab === 'career-guidance' && <CareerGuidancePage isMobileView={isMobileView} />}
+                                    {activeTab === 'prepare' && <PreparePage isMobileView={isMobileView} />}
                                     {activeTab === 'tracking' && <ApplicationTracking appliedJobs={appliedJobs} isMobileView={isMobileView} />}
                                     {activeTab === 'activities' && <Activities />}
                                     {activeTab === 'performance' && <Performance />}
