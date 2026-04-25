@@ -99,7 +99,50 @@ const login = async (req, res) => {
   }
 };
 
+// GET CURRENT USER
+const getMe = async (req, res) => {
+  try {
+    const { data: user, error } = await supabase
+      .from('users')
+      .select('id, name, email, role, companyName, verified, skills, phone, bio, resume_url, created_at')
+      .eq('id', req.user.id)
+      .single();
+
+    if (error || !user) return res.status(404).json({ message: 'User not found' });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// UPDATE PROFILE
+const updateProfile = async (req, res) => {
+  try {
+    const { name, skills, phone, bio, resume_url } = req.body;
+    const updateData = {};
+    if (name !== undefined) updateData.name = name;
+    if (skills !== undefined) updateData.skills = skills;
+    if (phone !== undefined) updateData.phone = phone;
+    if (bio !== undefined) updateData.bio = bio;
+    if (resume_url !== undefined) updateData.resume_url = resume_url;
+
+    const { data, error } = await supabase
+      .from('users')
+      .update(updateData)
+      .eq('id', req.user.id)
+      .select('id, name, email, role, companyName, verified, skills, phone, bio, resume_url')
+      .single();
+
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 module.exports = {
   signup,
-  login
+  login,
+  getMe,
+  updateProfile
 };

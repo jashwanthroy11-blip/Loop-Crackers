@@ -24,12 +24,48 @@ const createJob = async (req, res) => {
 
 const getJobs = async (req, res) => {
     try {
-        const { data, error } = await supabase
+        const { search, location, skills, sort, page = 1, limit = 20 } = req.query;
+        const offset = (page - 1) * limit;
+
+        let query = supabase
             .from('jobs')
-            .select('*, company:users(companyName, logo)');
-        
+            .select('*, company:users(companyName, logo)', { count: 'exact' });
+
+        // Search by title
+        if (search) {
+            query = query.ilike('title', `%${search}%`);
+        }
+
+        // Filter by location
+        if (location) {
+            query = query.ilike('location', `%${location}%`);
+        }
+
+        // Filter by skills (comma-separated)
+        if (skills) {
+            const skillList = skills.split(',').map(s => s.trim());
+            // Match jobs that contain any of the requested skills
+            skillList.forEach(skill => {
+                query = query.ilike('skills_required', `%${skill}%`);
+            });
+        }
+
+        // Sorting
+        const ascending = sort === 'oldest';
+        query = query.order('created_at', { ascending });
+
+        // Pagination
+        query = query.range(offset, offset + parseInt(limit) - 1);
+
+        const { data, count, error } = await query;
+
         if (error) throw error;
-        res.json(data);
+        res.json({
+            jobs: data,
+            totalCount: count,
+            page: parseInt(page),
+            totalPages: Math.ceil(count / limit)
+        });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
