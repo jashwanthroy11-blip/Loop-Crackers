@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HireTrack - Modern Job Portal & Applicant Tracking</title>
+    <meta name="description" content="A premium job portal for employers to post jobs and track applications, and candidates to find opportunities.">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="ph-fill ph-briefcase"></i>
+                HireTrack
+            </div>
+            <div class="nav-links">
+                <button class="nav-btn active" data-view="candidate">For Candidates</button>
+                <button class="nav-btn" data-view="employer">For Employers</button>
+            </div>
+            <div class="user-profile">
+                <img src="https://i.pravatar.cc/150?img=11" alt="Profile" class="avatar">
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <!-- Candidate View -->
+        <section id="candidate-view" class="view-section active">
+            <header class="section-header">
+                <div class="header-content">
+                    <h1>Find Your Next <span class="highlight">Dream Job</span></h1>
+                    <p>Discover thousands of job opportunities with top companies.</p>
+                    <div class="search-bar">
+                        <i class="ph ph-magnifying-glass"></i>
+                        <input type="text" placeholder="Job title, keywords, or company...">
+                        <button class="btn-primary">Search Jobs</button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-grid">
+                <div class="left-panel">
+                    <h2 class="panel-title">Recommended Jobs</h2>
+                    <div class="job-list" id="candidate-jobs">
+                        <!-- Jobs injected by JS -->
+                    </div>
+                </div>
+                
+                <div class="right-panel">
+                    <h2 class="panel-title">My Applications</h2>
+                    <div class="tracking-list" id="candidate-applications">
+                        <!-- Applications injected by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Employer View -->
+        <section id="employer-view" class="view-section">
+            <header class="section-header employer-header">
+                <div class="header-content">
+                    <h1>Manage Your <span class="highlight">Talent Pipeline</span></h1>
+                    <p>Post jobs, track candidates, and make hires seamlessly.</p>
+                    <div class="action-bar">
+                        <button class="btn-primary" id="post-job-btn">
+                            <i class="ph ph-plus"></i> Post a New Job
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-grid">
+                <div class="left-panel">
+                    <h2 class="panel-title">Active Job Postings</h2>
+                    <div class="job-list" id="employer-jobs">
+                        <!-- Employer jobs injected by JS -->
+                    </div>
+                </div>
+                
+                <div class="right-panel">
+                    <h2 class="panel-title">Applicant Tracking</h2>
+                    <div class="tracking-board">
+                        <div class="board-column">
+                            <div class="column-header">Applied <span class="count">3</span></div>
+                            <div class="column-content" id="status-applied">
+                                <!-- Cards injected by JS -->
+                            </div>
+                        </div>
+                        <div class="board-column">
+                            <div class="column-header">Interview <span class="count">2</span></div>
+                            <div class="column-content" id="status-interview">
+                                <!-- Cards injected by JS -->
+                            </div>
+                        </div>
+                        <div class="board-column">
+                            <div class="column-header">Offered <span class="count">1</span></div>
+                            <div class="column-content" id="status-offered">
+                                <!-- Cards injected by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Post Job Modal -->
+    <div class="modal" id="post-job-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Post a New Job</h2>
+            <form id="job-form">
+                <div class="form-group">
+                    <label>Job Title</label>
+                    <input type="text" required placeholder="e.g. Senior Frontend Developer">
+                </div>
+                <div class="form-group">
+                    <label>Department</label>
+                    <input type="text" required placeholder="e.g. Engineering">
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" required placeholder="e.g. Remote">
+                </div>
+                <button type="submit" class="btn-primary w-100">Publish Job</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
