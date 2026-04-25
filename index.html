@@ -513,23 +513,145 @@
             const [selectedChat, setSelectedChat] = useState(null);
             const [inputText, setInputText] = useState('');
             const [msgsList, setMsgsList] = useState([
-                { id: 1, name: 'Sarah from Spotify', role: 'Recruiter', text: 'Hi Alex! We would love to schedule...', time: '10:42 AM', unread: 2, initial: 'S', messages: [{text: 'Hi Alex! We would love to schedule an interview with you.', sender: 'them'}] },
-                { id: 2, name: 'David from Google', role: 'Hiring Manager', text: 'Thanks for taking the time today.', time: 'Yesterday', unread: 0, initial: 'D', messages: [{text: 'Thanks for taking the time today.', sender: 'them'}] },
+                { 
+                    id: 1, 
+                    name: 'Sarah Wilson', 
+                    role: 'HR @ Spotify', 
+                    text: 'Congratulations! You are selected!', 
+                    time: '10:42 AM', 
+                    unread: 1, 
+                    initial: 'S', 
+                    messages: [
+                        { text: 'Hi Alex, I have some great news!', sender: 'them' },
+                        { text: 'The team was extremely impressed with your portfolio and your performance during the technical rounds.', sender: 'them' },
+                        { text: 'We would like to formally offer you the position of Senior Product Designer at Spotify!', sender: 'them' },
+                        { text: 'I will be sending over the official offer letter and benefits package later today. Welcome to the band!', sender: 'them' }
+                    ] 
+                },
+                { 
+                    id: 2, 
+                    name: 'James Rodriguez', 
+                    role: 'Hiring Manager @ Google', 
+                    text: 'Update regarding your application', 
+                    time: 'Yesterday', 
+                    unread: 0, 
+                    initial: 'J', 
+                    messages: [
+                        { text: 'Dear Alex, thank you for your interest in the Frontend Engineer position at Google.', sender: 'them' },
+                        { text: 'After careful consideration, we have decided not to move forward with your application at this time.', sender: 'them' },
+                        { text: 'The feedback from the HR round highlighted the following points for improvement:', sender: 'them' },
+                        { text: '1. Communication clarity during high-pressure scenarios needs polishing.', sender: 'them' },
+                        { text: '2. Lacking deep knowledge in distributed system scalability for large-scale enterprise apps.', sender: 'them' },
+                        { text: '3. Cultural alignment: We are looking for more proactive leadership examples in your past projects.', sender: 'them' },
+                        { text: 'We appreciate your time and wish you the best in your search.', sender: 'them' }
+                    ] 
+                },
+                { 
+                    id: 3, 
+                    name: 'Emily Chen', 
+                    role: 'Recruiter @ Amazon', 
+                    text: 'Interview scheduling', 
+                    time: '9:15 AM', 
+                    unread: 0, 
+                    initial: 'E', 
+                    messages: [
+                        { text: 'Hi Alex, are you available for a quick chat tomorrow at 2 PM?', sender: 'them' }
+                    ] 
+                },
+                { 
+                    id: 4, 
+                    name: 'Marcus Smith', 
+                    role: 'Lead @ Meta', 
+                    text: 'Feedback on task', 
+                    time: '2 days ago', 
+                    unread: 0, 
+                    initial: 'M', 
+                    messages: [
+                        { text: 'The design system you built for the take-home task is exceptional. Great work on the accessibility features.', sender: 'them' }
+                    ] 
+                },
+                { 
+                    id: 5, 
+                    name: 'Jessica Lee', 
+                    role: 'Talent @ Apple', 
+                    text: 'Welcome to the pipeline', 
+                    time: '3 days ago', 
+                    unread: 0, 
+                    initial: 'J', 
+                    messages: [
+                        { text: 'Your application has been received and is currently being reviewed by our engineering team.', sender: 'them' }
+                    ] 
+                },
+                { 
+                    id: 6, 
+                    name: 'Stripe Careers', 
+                    role: 'Automated', 
+                    text: 'Application Received', 
+                    time: 'Monday', 
+                    unread: 0, 
+                    initial: 'S', 
+                    messages: [
+                        { text: 'Thank you for applying to Stripe. We have received your application for the Growth Marketing Lead role.', sender: 'them' }
+                    ] 
+                },
+                { 
+                    id: 7, 
+                    name: 'Notion HR', 
+                    role: 'Team', 
+                    text: 'Next steps for PM role', 
+                    time: 'Last Week', 
+                    unread: 0, 
+                    initial: 'N', 
+                    messages: [
+                        { text: 'We liked your case study. We will be reaching out soon for the final round interviews.', sender: 'them' }
+                    ] 
+                },
+                { 
+                    id: 8, 
+                    name: 'Twitter Recruitment', 
+                    role: 'Recruiter', 
+                    text: 'Quick question about your stack', 
+                    time: 'Oct 20', 
+                    unread: 0, 
+                    initial: 'T', 
+                    messages: [
+                        { text: 'Do you have experience with Rust? We noticed it on your GitHub but not on your resume.', sender: 'them' }
+                    ] 
+                },
+                { 
+                    id: 9, 
+                    name: 'Discord Team', 
+                    role: 'Community Lead', 
+                    text: 'Partnership opportunity', 
+                    time: 'Oct 18', 
+                    unread: 0, 
+                    initial: 'D', 
+                    messages: [
+                        { text: 'Hey Alex, we saw your design contributions to the Discord UI community. Incredible stuff!', sender: 'them' }
+                    ] 
+                },
+                { 
+                    id: 10, 
+                    name: 'Slack Global', 
+                    role: 'HR Manager', 
+                    text: 'Check-in on application', 
+                    time: 'Oct 15', 
+                    unread: 0, 
+                    initial: 'S', 
+                    messages: [
+                        { text: 'Just wanted to check in and see if you are still interested in the Product Designer role.', sender: 'them' }
+                    ] 
+                }
             ]);
 
-            const [selectedChat, setSelectedChat] = useState(null);
-            const [inputText, setInputText] = useState('');
-
             const handleSend = (chat) => {
-                if (!inputText.trim()) return;
-                const updatedList = msgsList.map(m => {
-                    if (m.id === chat.id) {
-                        return { ...m, messages: [...m.messages, { sender: 'me', text: inputText }] };
-                    }
-                    return m;
-                });
-                setMsgsList(updatedList);
-                setInputText('');
+                if (inputText.trim()) {
+                    chat.messages.push({text: inputText, sender: 'me'});
+                    chat.text = inputText;
+                    chat.time = 'Just now';
+                    setInputText('');
+                    setMsgsList([...msgsList]);
+                }
             };
 
             if (selectedChat) {
@@ -537,13 +659,9 @@
                 return (
                     <div className="flex-1 flex flex-col bg-white dark:bg-gray-900 absolute inset-0 z-50 transition-colors duration-300">
                         <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center gap-4 bg-white dark:bg-gray-900 sticky top-0 z-10 transition-colors duration-300">
-                            <button onClick={() => setSelectedChat(null)} className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
-                                <i data-lucide="arrow-left" className="w-5 h-5"></i>
-                            </button>
+                            <button onClick={() => setSelectedChat(null)} className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"><i data-lucide="arrow-left" className="w-5 h-5"></i></button>
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-pink-100 dark:bg-pink-900/50 rounded-full flex items-center justify-center font-bold text-pink-600 dark:text-pink-400 font-sora">
-                                    {chat.initial}
-                                </div>
+                                <div className="w-10 h-10 bg-pink-100 dark:bg-pink-900/50 rounded-full flex items-center justify-center font-bold text-pink-600 dark:text-pink-400 font-sora">{chat.initial}</div>
                                 <div>
                                     <h3 className="font-sora font-bold text-sm text-gray-900 dark:text-white">{chat.name}</h3>
                                     <p className="text-xs text-gray-500 dark:text-gray-400">{chat.role}</p>
@@ -552,7 +670,7 @@
                         </div>
                         <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4 animate-fade-in">
                             {chat.messages.map((m, i) => (
-                                <div key={i} className={`max-w-[85%] p-4 rounded-2xl text-sm leading-relaxed ${m.sender === 'me' ? 'bg-gradient-to-r from-pink-400 to-yellow-400 text-white self-end rounded-br-none shadow-lg shadow-pink-100 dark:shadow-none' : 'bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-200 self-start rounded-bl-none border border-gray-100 dark:border-gray-700 shadow-sm'}`}>
+                                <div key={i} className={`max-w-[80%] p-3 rounded-2xl text-sm ${m.sender === 'me' ? 'bg-gradient-to-r from-pink-400 to-yellow-400 text-white self-end rounded-br-none' : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 self-start rounded-bl-none border border-gray-50 dark:border-gray-700'}`}>
                                     {m.text}
                                 </div>
                             ))}
@@ -564,9 +682,9 @@
                                 onChange={e => setInputText(e.target.value)} 
                                 onKeyDown={e => { if (e.key === 'Enter') handleSend(chat); }} 
                                 placeholder="Type a message..." 
-                                className="flex-1 bg-gray-50 dark:bg-gray-800 dark:text-white rounded-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 outline-none focus:ring-2 focus:ring-indigo-500 transition-all" 
+                                className="flex-1 bg-gray-50 dark:bg-gray-800 dark:text-white rounded-full px-4 py-2 border border-gray-200 dark:border-gray-700 outline-none focus:ring-2 focus:ring-indigo-500" 
                             />
-                            <button onClick={() => handleSend(chat)} className="w-11 h-11 bg-gradient-to-r from-pink-400 to-yellow-400 rounded-full flex items-center justify-center text-white shadow-lg shadow-pink-200 dark:shadow-none hover:scale-105 active:scale-95 transition-all">
+                            <button onClick={() => handleSend(chat)} className="w-10 h-10 bg-gradient-to-r from-pink-400 to-yellow-400 rounded-full flex items-center justify-center text-white shadow-md shadow-pink-200 dark:shadow-none hover:bg-indigo-700 transition-colors">
                                 <i data-lucide="send" className="w-4 h-4 ml-0.5"></i>
                             </button>
                         </div>
@@ -577,33 +695,28 @@
             return (
                 <div className="flex-1 flex flex-col pb-20 bg-white dark:bg-gray-900 transition-colors duration-300">
                     <div className="px-6 pt-10 pb-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center transition-colors duration-300">
-                        <h1 className="font-sora text-2xl font-bold text-gray-900 dark:text-white">Mailbox</h1>
-                        <div className="flex gap-2">
-                            <span className="bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center">10 Mails</span>
-                            <button className="w-10 h-10 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                                <i data-lucide="edit" className="w-5 h-5"></i>
-                            </button>
-                        </div>
+                        <h1 className="font-sora text-2xl font-bold text-gray-900 dark:text-white">Messages</h1>
+                        <button className="w-10 h-10 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <i data-lucide="edit" className="w-5 h-5"></i>
+                        </button>
                     </div>
                     <div className="flex-1 overflow-y-auto">
                         {msgsList.map((m, i) => (
-                            <div key={i} onClick={() => { 
-                                const newList = msgsList.map(item => item.id === m.id ? {...item, unread: 0} : item);
-                                setMsgsList(newList);
-                                setSelectedChat(m.id); 
-                            }} className="flex gap-4 items-center px-6 py-5 border-b border-gray-50 dark:border-gray-800/50 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors animate-slide-up" style={{ animationDelay: `${i * 50}ms` }}>
-                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold font-sora text-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                            <div key={i} onClick={() => { m.unread = 0; setSelectedChat(m.id); setMsgsList([...msgsList]); }} className="flex gap-4 items-center px-6 py-4 border-b border-gray-50 dark:border-gray-800/50 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors animate-slide-up" style={{ animationDelay: `${i * 100}ms` }}>
+                                <div className="w-12 h-12 rounded-full bg-pink-100 dark:bg-pink-900/50 flex items-center justify-center text-pink-600 dark:text-pink-400 font-bold font-sora text-lg">
                                     {m.initial}
                                 </div>
-                                <div className="flex-1 min-w-0">
+                                <div className="flex-1">
                                     <div className="flex justify-between items-center mb-1">
-                                        <h3 className={`font-sora font-bold text-sm ${m.unread ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-400'}`}>{m.name}</h3>
-                                        <span className="text-[10px] text-gray-400 dark:text-gray-500 font-bold">{m.time}</span>
+                                        <h3 className={`font-sora font-bold text-sm ${m.unread ? 'text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-300'}`}>{m.name}</h3>
+                                        <span className="text-xs text-gray-400 dark:text-gray-500">{m.time}</span>
                                     </div>
-                                    <p className={`text-xs ${m.unread ? 'text-gray-800 dark:text-gray-200 font-bold' : 'text-gray-500 dark:text-gray-400'} truncate`}>{m.text}</p>
+                                    <p className={`text-sm ${m.unread ? 'text-gray-900 dark:text-white font-medium' : 'text-gray-500 dark:text-gray-400'} truncate`}>{m.text}</p>
                                 </div>
                                 {m.unread > 0 && (
-                                    <div className="w-2.5 h-2.5 bg-pink-500 rounded-full"></div>
+                                    <div className="w-5 h-5 bg-gradient-to-r from-pink-400 to-yellow-400 rounded-full flex items-center justify-center text-white text-[10px] font-bold">
+                                        {m.unread}
+                                    </div>
                                 )}
                             </div>
                         ))}
