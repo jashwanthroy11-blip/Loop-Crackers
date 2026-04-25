@@ -1088,7 +1088,7 @@
             );
         };
 
-        const UserProfile = ({ isMobileView, setIsMobileView, onLogout }) => {
+        const UserProfile = ({ isMobileView, setIsMobileView, isDarkMode, setIsDarkMode, onLogout }) => {
             const [isResumeBuilderOpen, setIsResumeBuilderOpen] = useState(false);
 
             return (
@@ -1189,6 +1189,7 @@
                                     <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform duration-300 ${!isMobileView ? 'translate-x-6' : 'translate-x-1'}`}></div>
                                 </button>
                             </div>
+
 
                         </div>
                     </div>
@@ -1387,6 +1388,7 @@
             const [activeTab, setActiveTab] = useState('home');
             const [selectedJob, setSelectedJob] = useState(null);
             const [isMobileView, setIsMobileView] = useState(true);
+            const [isDarkMode, setIsDarkMode] = useState(false);
             const [appliedJobs, setAppliedJobs] = useState([]);
 
             useEffect(() => {
@@ -1424,7 +1426,7 @@
                                     {activeTab === 'activities' && <Activities />}
                                     {activeTab === 'performance' && <Performance />}
                                     {activeTab === 'messages' && <Messages />}
-                                    {activeTab === 'profile' && <UserProfile isMobileView={isMobileView} setIsMobileView={setIsMobileView} onLogout={() => setIsLoggedIn(false)} />}
+                                    {activeTab === 'profile' && <UserProfile isMobileView={isMobileView} setIsMobileView={setIsMobileView} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} onLogout={() => setIsLoggedIn(false)} />}
                                     
                                     {selectedJob && <JobDetail job={selectedJob} goBack={() => setSelectedJob(null)} hasApplied={appliedJobs.includes(selectedJob.id)} onApply={(id) => setAppliedJobs([...appliedJobs, id])} />}
                                 </div>
