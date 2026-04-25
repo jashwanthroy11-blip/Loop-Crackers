@@ -145,6 +145,7 @@
         const Sidebar = ({ activeTab, setActiveTab }) => {
             const menuItems = [
                 { id: 'home', icon: 'layout-dashboard', label: 'Team dashboard' },
+                { id: 'contacts', icon: 'users', label: 'Contacts' },
                 { id: 'home', icon: 'briefcase', label: 'Jobs' },
                 { id: 'tracking', icon: 'clipboard-list', label: 'Job requests', badge: 3 },
                 { id: 'activities', icon: 'activity', label: 'Activities' },
@@ -216,11 +217,89 @@
             );
         };
 
+        // Mobile Side Drawer Component
+        const MobileDrawer = ({ isOpen, onClose, setActiveTab }) => {
+            const menuItems = [
+                { id: 'recommended', icon: 'zap', label: 'Recommended Jobs', tab: 'home' },
+                { id: 'saved', icon: 'bookmark', label: 'Saved Jobs', tab: 'home' },
+                { id: 'performance', icon: 'bar-chart-2', label: 'Profile Performance', tab: 'performance' },
+                { id: 'display', icon: 'monitor', label: 'Display Performance', tab: 'performance' },
+                { id: 'help', icon: 'help-circle', label: 'Chat for Help', tab: 'messages' },
+                { id: 'settings', icon: 'settings', label: 'profile' },
+                { id: 'service', icon: 'briefcase', label: 'Jobseeker Service', tab: 'home' },
+                { id: 'how-it-works', icon: 'info', label: 'How App Works', tab: 'home' },
+            ];
+
+            useEffect(() => {
+                if (isOpen) lucide.createIcons();
+            }, [isOpen]);
+
+            return (
+                <>
+                    {/* Backdrop */}
+                    <div 
+                        className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                        onClick={onClose}
+                    ></div>
+                    
+                    {/* Drawer */}
+                    <div className={`fixed top-0 left-0 bottom-0 w-80 bg-white dark:bg-gray-900 z-[110] transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} shadow-[20px_0_60px_-15px_rgba(0,0,0,0.3)] overflow-y-auto`}>
+                        <div className="p-8 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-200 dark:shadow-none">
+                                    <i data-lucide="layers" className="w-6 h-6"></i>
+                                </div>
+                                <h1 className="font-sora text-xl font-bold text-gray-900 dark:text-white">Align Flow</h1>
+                            </div>
+                            <button onClick={onClose} className="p-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition-colors">
+                                <i data-lucide="x" className="w-6 h-6 text-gray-400"></i>
+                            </button>
+                        </div>
+
+                        <div className="p-6 space-y-2">
+                            <p className="px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Quick Access</p>
+                            {menuItems.map((item) => (
+                                <button 
+                                    key={item.id}
+                                    onClick={() => { 
+                                        if (item.id === 'settings') setActiveTab('profile');
+                                        else setActiveTab(item.tab);
+                                        onClose(); 
+                                    }}
+                                    className="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-all text-left group"
+                                >
+                                    <div className="w-10 h-10 bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center justify-center text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                                        <i data-lucide={item.icon} className="w-5 h-5"></i>
+                                    </div>
+                                    <span className="font-bold text-sm text-gray-600 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">{item.label}</span>
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="mt-8 px-8 pb-10">
+                            <div className="p-6 bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-3xl text-white relative overflow-hidden">
+                                <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+                                <h4 className="font-sora font-bold text-sm mb-2 relative z-10">Jobseeker Service</h4>
+                                <p className="text-[10px] text-indigo-100 leading-relaxed mb-4 relative z-10">Get a professionally written resume that passes ATS filters.</p>
+                                <button className="bg-white text-indigo-600 text-[10px] font-bold py-2 px-4 rounded-xl relative z-10">Upgrade Now</button>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            );
+        };
+
         // Screen 1: Home Feed
         const HomeFeed = ({ navigateToJob }) => {
             const categories = ['All', 'Design', 'Engineering', 'Product', 'Marketing'];
             const [selectedCategory, setSelectedCategory] = useState('All');
             const [searchQuery, setSearchQuery] = useState('');
+            const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+            // Access setActiveTab via window event as a simple way for this architecture
+            const handleNavigate = (tab) => {
+                window.dispatchEvent(new CustomEvent('navigate', { detail: tab }));
+            };
 
             const filteredJobs = mockJobs.filter(job => {
                 const matchesCategory = selectedCategory === 'All' || job.category === selectedCategory;
@@ -230,14 +309,22 @@
 
             return (
                 <div className="flex-1 overflow-y-auto pb-20">
+                    <MobileDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} setActiveTab={handleNavigate} />
+                    
                     <div className="px-6 pt-10 pb-4 bg-white dark:bg-gray-900 sticky top-0 z-10 flex justify-between items-center transition-colors duration-300">
-                        <div>
-                            <p className="text-gray-500 text-sm mb-1">Good morning</p>
-                            <h1 className="font-sora text-xl font-bold text-gray-900 dark:text-white">Alex Kumar</h1>
+                        <div className="flex items-center gap-4">
+                            <button 
+                                onClick={() => setIsDrawerOpen(true)}
+                                className="w-10 h-10 bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center justify-center text-gray-900 dark:text-white shadow-sm border border-gray-100 dark:border-gray-700"
+                            >
+                                <i data-lucide="menu" className="w-5 h-5"></i>
+                            </button>
+                            <div>
+                                <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest">Hello</p>
+                                <h1 className="font-sora text-lg font-bold text-gray-900 dark:text-white leading-tight">Alex Kumar</h1>
+                            </div>
                         </div>
-                        <div className="w-14 h-14 bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center overflow-hidden border border-gray-100 dark:border-gray-800">
-                            <img src="C:/Users/JAHWANTH/.gemini/antigravity/brain/81a8b1d5-4e56-4d10-9259-13734744398b/app_symbols_set_1777130375203.png" className="w-12 h-12 object-contain" alt="Dashboard Symbol" style={{ clipPath: 'inset(0 75% 0 0)' }} />
-                        </div>
+                        <div className="w-10 h-10 bg-gray-200 rounded-xl flex items-center justify-center font-sora font-bold text-gray-500 text-sm border-2 border-indigo-100 cursor-pointer" onClick={() => handleNavigate('profile')}>AK</div>
                     </div>
                     
                     <div className="px-6 mt-2">
@@ -509,221 +596,13 @@
             );
         };
 
-        // Screen 10: PDF Viewer
-        const PdfViewer = ({ file, onClose }) => {
-            return (
-                <div className="absolute inset-0 z-[60] bg-gray-900/90 flex flex-col animate-fade-in backdrop-blur-sm">
-                    <div className="px-6 py-4 flex justify-between items-center bg-gray-800 text-white">
-                        <div className="flex items-center gap-3">
-                            <i data-lucide="file-text" className="w-5 h-5 text-red-400"></i>
-                            <h2 className="font-sora font-bold text-sm">{file.name}</h2>
-                        </div>
-                        <button onClick={onClose} className="w-8 h-8 rounded-full hover:bg-gray-700 flex items-center justify-center">
-                            <i data-lucide="x" className="w-5 h-5"></i>
-                        </button>
-                    </div>
-                    <div className="flex-1 overflow-y-auto p-8 flex justify-center">
-                        <div className="w-full max-w-2xl bg-white rounded-lg shadow-2xl p-12 min-h-[800px] animate-slide-up relative">
-                            <div className="absolute top-0 right-0 p-4 opacity-10">
-                                <i data-lucide="layers" className="w-24 h-24"></i>
-                            </div>
-                            <div className="flex justify-between items-start mb-12">
-                                <div>
-                                    <h1 className="font-sora text-4xl font-bold text-gray-900 mb-2">Align Flow</h1>
-                                    <p className="text-gray-500 font-medium">Official Document</p>
-                                </div>
-                                <div className="text-right">
-                                    <p className="text-sm font-bold text-gray-900">DATE</p>
-                                    <p className="text-sm text-gray-500">October 25, 2026</p>
-                                </div>
-                            </div>
-
-                            <div className="space-y-6 text-gray-800">
-                                <p className="font-bold text-lg">Subject: {file.name.replace('.pdf', '').replace(/_/g, ' ')}</p>
-                                
-                                <p>Dear Alex Kumar,</p>
-                                
-                                <p className="leading-relaxed">
-                                    {file.name.includes('Offer') 
-                                        ? "We are delighted to extend this formal offer for the position of Senior Product Designer at Align Flow (formerly TalentPool). Your expertise in modern design systems and user-centric problem solving aligns perfectly with our vision."
-                                        : "Thank you for the opportunity to review your application and for the time you spent interviewing with our team. While your technical skills are impressive, we have decided to move forward with other candidates who more closely match our current strategic needs."}
-                                </p>
-
-                                <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100">
-                                    <p className="font-bold text-sm uppercase tracking-wider text-gray-400 mb-4">Key Details</p>
-                                    <div className="grid grid-cols-2 gap-4 text-sm">
-                                        <div>
-                                            <p className="font-bold">Position</p>
-                                            <p className="text-gray-600">Senior Product Designer</p>
-                                        </div>
-                                        <div>
-                                            <p className="font-bold">Status</p>
-                                            <p className={file.name.includes('Offer') ? "text-teal-600 font-bold" : "text-red-600 font-bold"}>
-                                                {file.name.includes('Offer') ? "Selected" : "Application Closed"}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <p className="leading-relaxed italic text-gray-600">
-                                    "Your journey is just beginning. Every interaction is an opportunity to learn and grow."
-                                </p>
-
-                                <div className="pt-12">
-                                    <div className="w-48 h-[1px] bg-gray-300 mb-4"></div>
-                                    <p className="font-bold">Align Flow HR Team</p>
-                                    <p className="text-sm text-gray-500 underline">www.alignflow.com/verify</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="p-4 bg-gray-800 flex justify-center gap-4">
-                        <button className="flex items-center gap-2 bg-indigo-600 text-white px-6 py-2 rounded-xl font-bold text-sm shadow-lg">
-                            <i data-lucide="download" className="w-4 h-4"></i> Download
-                        </button>
-                        <button className="flex items-center gap-2 bg-gray-700 text-white px-6 py-2 rounded-xl font-bold text-sm">
-                            <i data-lucide="printer" className="w-4 h-4"></i> Print
-                        </button>
-                    </div>
-                </div>
-            );
-        };
-
         // Screen 5: Messages
         const Messages = () => {
             const [selectedChat, setSelectedChat] = useState(null);
-            const [selectedPdf, setSelectedPdf] = useState(null);
             const [inputText, setInputText] = useState('');
             const [msgsList, setMsgsList] = useState([
-                { 
-                    id: 1, 
-                    name: 'Sarah Wilson', 
-                    company: 'Spotify',
-                    role: 'HR Manager', 
-                    text: 'Congratulations! You are selected!', 
-                    time: '10:42 AM', 
-                    unread: 1, 
-                    initial: 'S', 
-                    messages: [
-                        { text: 'Hi Alex, I have some great news!', sender: 'them' },
-                        { text: 'The team was extremely impressed with your portfolio and your performance during the technical rounds.', sender: 'them' },
-                        { text: 'We would like to formally offer you the position of Senior Product Designer at Spotify!', sender: 'them' },
-                        { text: 'I have attached the official offer letter below. Welcome to the band!', sender: 'them', attachment: { name: 'Offer_Letter_Alex.pdf', size: '1.2 MB' } }
-                    ] 
-                },
-                { 
-                    id: 2, 
-                    name: 'James Rodriguez', 
-                    company: 'Google',
-                    role: 'Hiring Manager', 
-                    text: 'Update regarding your application', 
-                    time: 'Yesterday', 
-                    unread: 0, 
-                    initial: 'J', 
-                    messages: [
-                        { text: 'Dear Alex, thank you for your interest in the Frontend Engineer position at Google.', sender: 'them' },
-                        { text: 'After careful consideration, we have decided not to move forward with your application at this time.', sender: 'them' },
-                        { text: 'I have attached a detailed feedback document explaining the decision and areas for improvement.', sender: 'them', attachment: { name: 'Interview_Feedback.pdf', size: '450 KB' } }
-                    ] 
-                },
-                { 
-                    id: 3, 
-                    name: 'Emily Chen', 
-                    company: 'Amazon',
-                    role: 'Recruiter', 
-                    text: 'Interview scheduling', 
-                    time: '9:15 AM', 
-                    unread: 0, 
-                    initial: 'E', 
-                    messages: [
-                        { text: 'Hi Alex, are you available for a quick chat tomorrow at 2 PM?', sender: 'them' }
-                    ] 
-                },
-                { 
-                    id: 4, 
-                    name: 'Marcus Smith', 
-                    company: 'Meta',
-                    role: 'Lead Designer', 
-                    text: 'Feedback on task', 
-                    time: '2 days ago', 
-                    unread: 0, 
-                    initial: 'M', 
-                    messages: [
-                        { text: 'The design system you built for the take-home task is exceptional. I\'ve attached some minor notes for the next round.', sender: 'them', attachment: { name: 'Task_Review_Notes.pdf', size: '890 KB' } }
-                    ] 
-                },
-                { 
-                    id: 5, 
-                    name: 'Jessica Lee', 
-                    role: 'Talent @ Apple', 
-                    text: 'Welcome to the pipeline', 
-                    time: '3 days ago', 
-                    unread: 0, 
-                    initial: 'J', 
-                    messages: [
-                        { text: 'Your application has been received and is currently being reviewed by our engineering team.', sender: 'them' }
-                    ] 
-                },
-                { 
-                    id: 6, 
-                    name: 'Stripe Careers', 
-                    role: 'Automated', 
-                    text: 'Application Received', 
-                    time: 'Monday', 
-                    unread: 0, 
-                    initial: 'S', 
-                    messages: [
-                        { text: 'Thank you for applying to Stripe. We have received your application for the Growth Marketing Lead role.', sender: 'them' }
-                    ] 
-                },
-                { 
-                    id: 7, 
-                    name: 'Notion HR', 
-                    role: 'Team', 
-                    text: 'Next steps for PM role', 
-                    time: 'Last Week', 
-                    unread: 0, 
-                    initial: 'N', 
-                    messages: [
-                        { text: 'We liked your case study. We will be reaching out soon for the final round interviews.', sender: 'them' }
-                    ] 
-                },
-                { 
-                    id: 8, 
-                    name: 'Twitter Recruitment', 
-                    role: 'Recruiter', 
-                    text: 'Quick question about your stack', 
-                    time: 'Oct 20', 
-                    unread: 0, 
-                    initial: 'T', 
-                    messages: [
-                        { text: 'Do you have experience with Rust? We noticed it on your GitHub but not on your resume.', sender: 'them' }
-                    ] 
-                },
-                { 
-                    id: 9, 
-                    name: 'Discord Team', 
-                    role: 'Community Lead', 
-                    text: 'Partnership opportunity', 
-                    time: 'Oct 18', 
-                    unread: 0, 
-                    initial: 'D', 
-                    messages: [
-                        { text: 'Hey Alex, we saw your design contributions to the Discord UI community. Incredible stuff!', sender: 'them' }
-                    ] 
-                },
-                { 
-                    id: 10, 
-                    name: 'Slack Global', 
-                    role: 'HR Manager', 
-                    text: 'Check-in on application', 
-                    time: 'Oct 15', 
-                    unread: 0, 
-                    initial: 'S', 
-                    messages: [
-                        { text: 'Just wanted to check in and see if you are still interested in the Product Designer role.', sender: 'them' }
-                    ] 
-                }
+                { id: 1, name: 'Sarah from Spotify', role: 'Recruiter', text: 'Hi Alex! We would love to schedule...', time: '10:42 AM', unread: 2, initial: 'S', messages: [{text: 'Hi Alex! We would love to schedule an interview with you.', sender: 'them'}] },
+                { id: 2, name: 'David from Google', role: 'Hiring Manager', text: 'Thanks for taking the time today.', time: 'Yesterday', unread: 0, initial: 'D', messages: [{text: 'Thanks for taking the time today.', sender: 'them'}] },
             ]);
 
             const handleSend = (chat) => {
@@ -752,27 +631,8 @@
                         </div>
                         <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4 animate-fade-in">
                             {chat.messages.map((m, i) => (
-                                <div key={i} className="flex flex-col gap-2">
-                                    <div className={`max-w-[80%] p-3 rounded-2xl text-sm ${m.sender === 'me' ? 'bg-gradient-to-r from-pink-400 to-yellow-400 text-white self-end rounded-br-none' : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 self-start rounded-bl-none border border-gray-50 dark:border-gray-700'}`}>
-                                        {m.text}
-                                    </div>
-                                    {m.attachment && (
-                                        <div 
-                                            onClick={() => setSelectedPdf(m.attachment)}
-                                            className={`flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 w-64 shadow-sm group cursor-pointer hover:border-indigo-400 transition-all ${m.sender === 'me' ? 'self-end' : 'self-start'}`}
-                                        >
-                                            <div className="w-10 h-10 bg-red-50 dark:bg-red-900/20 rounded-xl flex items-center justify-center text-red-500">
-                                                <i data-lucide="file-text" className="w-5 h-5"></i>
-                                            </div>
-                                            <div className="flex-1 overflow-hidden">
-                                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Attachment</p>
-                                                <p className="text-xs font-bold text-gray-700 dark:text-gray-300 truncate">{m.attachment.name}</p>
-                                            </div>
-                                            <button className="text-gray-400 group-hover:text-indigo-600 transition-colors">
-                                                <i data-lucide="download" className="w-4 h-4"></i>
-                                            </button>
-                                        </div>
-                                    )}
+                                <div key={i} className={`max-w-[80%] p-3 rounded-2xl text-sm ${m.sender === 'me' ? 'bg-gradient-to-r from-pink-400 to-yellow-400 text-white self-end rounded-br-none' : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 self-start rounded-bl-none border border-gray-50 dark:border-gray-700'}`}>
+                                    {m.text}
                                 </div>
                             ))}
                         </div>
@@ -789,7 +649,6 @@
                                 <i data-lucide="send" className="w-4 h-4 ml-0.5"></i>
                             </button>
                         </div>
-                        {selectedPdf && <PdfViewer file={selectedPdf} onClose={() => setSelectedPdf(null)} />}
                     </div>
                 );
             }
@@ -797,12 +656,7 @@
             return (
                 <div className="flex-1 flex flex-col pb-20 bg-white dark:bg-gray-900 transition-colors duration-300">
                     <div className="px-6 pt-10 pb-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center transition-colors duration-300">
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 bg-pink-50 dark:bg-pink-900/30 rounded-2xl flex items-center justify-center overflow-hidden">
-                                <img src="C:/Users/JAHWANTH/.gemini/antigravity/brain/81a8b1d5-4e56-4d10-9259-13734744398b/app_symbols_set_1777130375203.png" className="w-10 h-10 object-contain translate-x-[-24px]" alt="Mails Symbol" style={{ clipPath: 'inset(0 25% 0 50%)' }} />
-                            </div>
-                            <h1 className="font-sora text-2xl font-bold text-gray-900 dark:text-white">Messages</h1>
-                        </div>
+                        <h1 className="font-sora text-2xl font-bold text-gray-900 dark:text-white">Messages</h1>
                         <button className="w-10 h-10 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                             <i data-lucide="edit" className="w-5 h-5"></i>
                         </button>
@@ -814,21 +668,11 @@
                                     {m.initial}
                                 </div>
                                 <div className="flex-1">
-                                    <div className="flex justify-between items-center mb-0.5">
-                                        <h3 className={`font-sora font-bold text-sm ${m.unread ? 'text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-300'}`}>
-                                            {m.company}
-                                        </h3>
-                                        <span className="text-[10px] text-gray-400 dark:text-gray-500 font-bold">{m.time}</span>
+                                    <div className="flex justify-between items-center mb-1">
+                                        <h3 className={`font-sora font-bold text-sm ${m.unread ? 'text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-300'}`}>{m.name}</h3>
+                                        <span className="text-xs text-gray-400 dark:text-gray-500">{m.time}</span>
                                     </div>
-                                    <div className="flex items-center gap-1.5 mb-1">
-                                        <span className="text-[10px] text-gray-400 dark:text-gray-500">{m.name}</span>
-                                        <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
-                                        <span className="text-[10px] text-gray-400 dark:text-gray-500">{m.role}</span>
-                                    </div>
-                                    <p className={`text-xs ${m.unread ? 'text-gray-900 dark:text-white font-medium' : 'text-gray-500 dark:text-gray-400'} truncate flex items-center gap-1`}>
-                                        {m.messages.some(msg => msg.attachment) && <i data-lucide="paperclip" className="w-3 h-3"></i>}
-                                        {m.text}
-                                    </p>
+                                    <p className={`text-sm ${m.unread ? 'text-gray-900 dark:text-white font-medium' : 'text-gray-500 dark:text-gray-400'} truncate`}>{m.text}</p>
                                 </div>
                                 {m.unread > 0 && (
                                     <div className="w-5 h-5 bg-gradient-to-r from-pink-400 to-yellow-400 rounded-full flex items-center justify-center text-white text-[10px] font-bold">
@@ -894,14 +738,9 @@
 
             return (
                 <div className="flex-1 flex flex-col pb-20 bg-[#F9FAFB] dark:bg-gray-900 transition-colors duration-300">
-                    <div className="px-6 pt-10 pb-8 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 transition-colors duration-300 flex justify-between items-start">
-                        <div>
-                            <h1 className="font-sora text-2xl font-bold text-gray-900 dark:text-white mb-2">Performance</h1>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">Track your career growth and application stats.</p>
-                        </div>
-                        <div className="w-14 h-14 bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center overflow-hidden">
-                            <img src="C:/Users/JAHWANTH/.gemini/antigravity/brain/81a8b1d5-4e56-4d10-9259-13734744398b/app_symbols_set_1777130375203.png" className="w-12 h-12 object-contain translate-x-[-12px]" alt="Performance Symbol" style={{ clipPath: 'inset(0 0 0 75%)' }} />
-                        </div>
+                    <div className="px-6 pt-10 pb-8 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 transition-colors duration-300">
+                        <h1 className="font-sora text-2xl font-bold text-gray-900 dark:text-white mb-2">Performance</h1>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Track your career growth and application stats.</p>
                     </div>
 
                     <div className="flex-1 overflow-y-auto px-6 py-8">
@@ -980,12 +819,7 @@
             return (
                 <div className="flex-1 flex flex-col pb-20 bg-white dark:bg-gray-900 transition-colors duration-300">
                     <div className="px-6 pt-10 pb-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center">
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 bg-teal-50 dark:bg-teal-900/30 rounded-2xl flex items-center justify-center overflow-hidden">
-                                <img src="C:/Users/JAHWANTH/.gemini/antigravity/brain/81a8b1d5-4e56-4d10-9259-13734744398b/app_symbols_set_1777130375203.png" className="w-10 h-10 object-contain translate-x-[-10px]" alt="Contacts Symbol" style={{ clipPath: 'inset(0 50% 0 25%)' }} />
-                            </div>
-                            <h1 className="font-sora text-2xl font-bold text-gray-900 dark:text-white">Contacts</h1>
-                        </div>
+                        <h1 className="font-sora text-2xl font-bold text-gray-900 dark:text-white">Contacts</h1>
                         <button className="w-10 h-10 bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center justify-center text-gray-600 dark:text-gray-400">
                             <i data-lucide="user-plus" className="w-5 h-5"></i>
                         </button>
@@ -1233,7 +1067,7 @@
             const [user, setUser] = useState(null);
             const [activeTab, setActiveTab] = useState('home');
             const [selectedJob, setSelectedJob] = useState(null);
-            const [isMobileView, setIsMobileView] = useState(false);
+            const [isMobileView, setIsMobileView] = useState(true);
             const [isDarkMode, setIsDarkMode] = useState(true);
             const [appliedJobs, setAppliedJobs] = useState([]);
 
