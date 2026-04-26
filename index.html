@@ -1183,6 +1183,35 @@
             const [selectedLanguage, setSelectedLanguage] = useState('Python 3.10');
             const [executionResult, setExecutionResult] = useState(null);
             const [isExecuting, setIsExecuting] = useState(false);
+            const [isSEBMode, setIsSEBMode] = useState(false);
+            const [violationCount, setViolationCount] = useState(0);
+
+            // SEB Mode Security Listeners
+            useEffect(() => {
+                if (isSEBMode) {
+                    const handleVisibilityChange = () => {
+                        if (document.visibilityState === 'hidden') {
+                            setViolationCount(prev => prev + 1);
+                            alert("SECURITY VIOLATION: Tab switching is not allowed during this exam!");
+                        }
+                    };
+                    const handleBlur = () => {
+                        setViolationCount(prev => prev + 1);
+                        setTimeout(() => {
+                            if (isSEBMode) alert("SECURITY VIOLATION: You have lost focus on the exam window!");
+                        }, 500);
+                    };
+                    document.addEventListener('visibilitychange', handleVisibilityChange);
+                    window.addEventListener('blur', handleBlur);
+                    const elem = document.documentElement;
+                    if (elem.requestFullscreen) elem.requestFullscreen().catch(() => {});
+                    return () => {
+                        document.removeEventListener('visibilitychange', handleVisibilityChange);
+                        window.removeEventListener('blur', handleBlur);
+                        if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+                    };
+                }
+            }, [isSEBMode]);
 
             const content = {
                 'company': {
@@ -1349,14 +1378,35 @@
                 if (selectedCategory === 'coding') {
                     return (
                         <div className="flex-1 flex flex-col bg-saas-bg h-full overflow-hidden animate-fade-in relative">
-                            <div className="bg-saas-card border-b border-saas-border px-5 py-3 flex justify-between items-center">
+                            <div className={`bg-saas-card border-b border-saas-border px-5 py-3 flex justify-between items-center ${isSEBMode ? 'border-t-4 border-t-red-600' : ''}`}>
                                 <div className="flex items-center gap-4">
                                     <button onClick={handleBack} className="w-8 h-8 rounded-lg bg-saas-bg border border-saas-border flex items-center justify-center text-saas-text hover:bg-saas-hover transition-colors">
                                         <i data-lucide="chevron-left" className="w-4 h-4"></i>
                                     </button>
-                                    <h2 className="font-sora font-bold text-sm text-saas-text">Coding Practice: {selectedItem.name}</h2>
+                                    <div className="flex flex-col">
+                                        <h2 className="font-sora font-bold text-sm text-saas-text flex items-center gap-2">
+                                            Coding Practice: {selectedItem.name}
+                                            {isSEBMode && (
+                                                <span className="bg-red-600 text-white text-[9px] px-2 py-0.5 rounded-full animate-pulse flex items-center gap-1">
+                                                    <i data-lucide="shield-alert" className="w-3 h-3"></i> LOCKDOWN ACTIVE
+                                                </span>
+                                            )}
+                                        </h2>
+                                        {isSEBMode && (
+                                            <span className="text-[9px] text-red-600 font-bold uppercase tracking-wider">
+                                                Violations Detected: {violationCount}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
                                 <div className="flex items-center gap-2">
+                                    <button 
+                                        onClick={() => setIsSEBMode(!isSEBMode)}
+                                        className={`text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-2 transition-all ${isSEBMode ? 'bg-red-100 text-red-600 border border-red-200' : 'bg-gray-100 text-gray-600 border border-gray-200'}`}
+                                    >
+                                        <i data-lucide={isSEBMode ? "shield-check" : "shield"} className="w-3.5 h-3.5"></i>
+                                        {isSEBMode ? 'Exit SEB' : 'Enable SEB'}
+                                    </button>
                                     <select 
                                         value={selectedLanguage}
                                         onChange={(e) => setSelectedLanguage(e.target.value)}
