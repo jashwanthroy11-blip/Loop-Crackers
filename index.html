@@ -597,9 +597,12 @@
                                                         {(isCompleted || isRejectedStage) && <i data-lucide={isRejectedStage ? "x" : "check"} className="w-3.5 h-3.5"></i>}
                                                         {isCurrent && !isRejectedStage && <div className="w-2 h-2 rounded-full bg-saas-primary"></div>}
                                                     </div>
-                                                    <div className="flex-1">
-                                                        <p className={`font-medium text-sm transition-all ${(isCurrent && !isRejectedStage) || isCompleted ? 'text-saas-text' : isRejectedStage ? 'text-saas-error' : 'text-saas-muted'}`}>{isRejectedStage ? 'Rejected' : stage}</p>
-                                                        {isCurrent && !app.rejected && <p className="text-xs text-saas-secondary mt-0.5">In Progress</p>}
+                                                    <div className="flex-1 cursor-pointer" onClick={() => alert(`Expected Time for ${stage}: 2-3 business days`)}>
+                                                        <div className="flex justify-between items-center">
+                                                            <p className={`font-medium text-sm transition-all ${(isCurrent && !isRejectedStage) || isCompleted ? 'text-saas-text' : isRejectedStage ? 'text-saas-error' : 'text-saas-muted'}`}>{isRejectedStage ? 'Rejected' : stage}</p>
+                                                            {(isCurrent && !app.rejected) && <span className="text-[9px] font-bold text-saas-primary bg-saas-primary-light px-1.5 py-0.5 rounded uppercase tracking-wider">Est: 2d</span>}
+                                                        </div>
+                                                        {isCurrent && !app.rejected && <p className="text-xs text-saas-secondary mt-0.5">In Progress · Due: Oct 28</p>}
                                                     </div>
                                                 </div>
                                             )
@@ -637,7 +640,10 @@
                 return (
                     <div className="flex-1 flex flex-col bg-saas-bg absolute inset-0 z-50">
                         <div className="px-5 py-4 border-b border-saas-border flex items-center gap-4 bg-saas-bg sticky top-0 z-10">
-                            <button onClick={() => setSelectedChat(null)} className="text-saas-muted hover:text-saas-text"><i data-lucide="arrow-left" className="w-5 h-5"></i></button>
+                            <button onClick={() => setSelectedChat(null)} className="flex items-center gap-2 text-saas-primary font-bold hover:opacity-80 transition-opacity">
+                                <i data-lucide="arrow-left" className="w-5 h-5"></i>
+                                <span className="text-sm">Back</span>
+                            </button>
                             <div className="flex items-center gap-3">
                                 <div className="w-9 h-9 bg-saas-primary/20 rounded-full flex items-center justify-center font-bold text-saas-primary font-sora">{chat.initial}</div>
                                 <div>
@@ -711,16 +717,32 @@
 
         // Screen 7: Activities
         const Activities = () => {
+            const [selectedActivity, setSelectedActivity] = useState(null);
             const activityItems = [
-                { id: 1, type: 'application', title: 'New Application', details: 'You applied for Senior Product Designer at Spotify', time: '2 hours ago', icon: 'briefcase', color: 'bg-blue-500' },
-                { id: 2, type: 'message', title: 'Message Received', details: 'Sarah from Spotify sent you a new message', time: '5 hours ago', icon: 'mail', color: 'bg-indigo-500' },
-                { id: 3, type: 'status', title: 'Status Updated', details: 'Your application for Google is now in "Interview" stage', time: 'Yesterday', icon: 'check-circle', color: 'bg-teal-500' },
-                { id: 4, type: 'profile', title: 'Profile View', details: 'A recruiter from Amazon viewed your profile', time: '2 days ago', icon: 'eye', color: 'bg-pink-500' },
-                { id: 5, type: 'application', title: 'New Application', details: 'You applied for UX Researcher at Amazon', time: '3 days ago', icon: 'briefcase', color: 'bg-blue-500' },
+                { id: 1, type: 'application', title: 'New Application', details: 'You applied for Senior Product Designer at Spotify', time: '2 hours ago', icon: 'briefcase', color: 'bg-blue-500', longDesc: 'Your application has been successfully submitted to the Spotify hiring team. You can expect a response within 5-7 business days.' },
+                { id: 2, type: 'message', title: 'Message Received', details: 'Sarah from Spotify sent you a new message', time: '5 hours ago', icon: 'mail', color: 'bg-indigo-500', longDesc: 'Recruiter Sarah is requesting a portfolio review. Please check your mailbox for the full conversation.' },
+                { id: 3, type: 'status', title: 'Status Updated', details: 'Your application for Google is now in "Interview" stage', time: 'Yesterday', icon: 'check-circle', color: 'bg-teal-500', longDesc: 'Congratulations! Google has moved you to the interview phase. Check your calendar for scheduled invites.' },
+                { id: 4, type: 'profile', title: 'Profile View', details: 'A recruiter from Amazon viewed your profile', time: '2 days ago', icon: 'eye', color: 'bg-pink-500', longDesc: 'A hiring manager from the Amazon Devices team looked at your profile recently.' },
+                { id: 5, type: 'application', title: 'New Application', details: 'You applied for UX Researcher at Amazon', time: '3 days ago', icon: 'briefcase', color: 'bg-blue-500', longDesc: 'Your application for the Hyderabad role is under screening.' },
             ];
 
             return (
-                <div className="flex-1 flex flex-col bg-saas-bg">
+                <div className="flex-1 flex flex-col bg-saas-bg relative">
+                    {selectedActivity && (
+                        <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-5" onClick={() => setSelectedActivity(null)}>
+                            <div className="bg-saas-card w-full max-w-sm rounded-2xl p-6 border border-saas-border animate-slide-up" onClick={e => e.stopPropagation()}>
+                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white mb-4 ${selectedActivity.color}`}>
+                                    <i data-lucide={selectedActivity.icon} className="w-6 h-6"></i>
+                                </div>
+                                <h3 className="font-sora font-bold text-lg text-saas-text mb-2">{selectedActivity.title}</h3>
+                                <p className="text-xs text-saas-muted mb-4">{selectedActivity.time}</p>
+                                <div className="bg-saas-bg p-4 rounded-xl border border-saas-border text-sm text-saas-text leading-relaxed mb-6">
+                                    {selectedActivity.longDesc}
+                                </div>
+                                <button onClick={() => setSelectedActivity(null)} className="w-full py-3 bg-saas-primary text-white font-bold rounded-xl shadow-lg shadow-saas-primary/20 hover:opacity-90 transition-opacity">Close</button>
+                            </div>
+                        </div>
+                    )}
                     <div className="px-5 pt-8 pb-4 border-b border-saas-border flex justify-between items-center sticky top-0 bg-saas-bg z-10">
                         <h1 className="font-sora text-xl font-bold text-saas-text">Activities</h1>
                         <button className="text-saas-secondary text-xs font-semibold hover:opacity-80 transition-opacity">Mark all as read</button>
@@ -730,11 +752,11 @@
                             <div className="absolute left-[18px] top-2 bottom-2 w-0.5 bg-saas-border"></div>
                             <div className="flex flex-col gap-6">
                                 {activityItems.map((item, idx) => (
-                                    <div key={item.id} className="flex gap-4 relative animate-slide-up" style={{ animationDelay: `${idx * 80}ms` }}>
-                                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-white z-10 flex-shrink-0 ${item.color}`}>
+                                    <div key={item.id} onClick={() => setSelectedActivity(item)} className="flex gap-4 relative animate-slide-up cursor-pointer group" style={{ animationDelay: `${idx * 80}ms` }}>
+                                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-white z-10 flex-shrink-0 transition-transform group-hover:scale-110 ${item.color}`}>
                                             <i data-lucide={item.icon} className="w-4 h-4"></i>
                                         </div>
-                                        <div className="flex-1 bg-[#FFF5EB] p-3 rounded-xl border border-orange-200">
+                                        <div className="flex-1 bg-[#FFF5EB] p-3 rounded-xl border border-orange-200 group-hover:border-orange-400 transition-all shadow-sm group-hover:shadow-md">
                                             <div className="flex justify-between items-center mb-1">
                                                 <h3 className="font-sora font-bold text-xs text-gray-900">{item.title}</h3>
                                                 <span className="text-[10px] text-gray-500">{item.time}</span>
