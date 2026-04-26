@@ -1493,8 +1493,6 @@
                 }
 
                 if (selectedCategory === 'mock') {
-
-                if (selectedCategory === 'mock') {
                     return (
                         <div className="flex-1 overflow-y-auto bg-saas-bg p-5 animate-fade-in">
                             <div className="max-w-2xl mx-auto mt-10">
@@ -1531,6 +1529,9 @@
                         </div>
                     );
                 }
+                
+                // Fallback if no specific category return is hit while selectedItem is true
+                return null;
             }
 
             if (selectedCategory) {
