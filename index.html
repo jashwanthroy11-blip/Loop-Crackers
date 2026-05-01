@@ -192,6 +192,8 @@
                 { id: 'activities', icon: 'activity', label: 'Activities' },
                 { id: 'performance', icon: 'bar-chart-2', label: 'Performance' },
                 { id: 'messages', icon: 'mail', label: 'Mailbox' },
+                { id: 'settings', icon: 'settings', label: 'Settings' },
+                { id: 'service', icon: 'briefcase', label: 'Services' },
             ];
 
             return (
@@ -220,18 +222,12 @@
                             </button>
                         ))}
                     </div>
-                    <div className="px-6 mt-auto">
-                        <div className="bg-saas-primary-light border border-saas-primary/30 p-4 rounded-2xl">
-                            <p className="text-xs text-saas-primary font-semibold mb-1">Upgrade your plan</p>
-                            <p className="text-[10px] text-saas-muted leading-relaxed">Get access to more features and data.</p>
-                        </div>
-                    </div>
                 </div>
             );
         };
 
         // Desktop TopBar Component
-        const TopBar = () => {
+        const TopBar = ({ setActiveTab }) => {
             return (
                 <div className="h-16 bg-saas-card border-b border-saas-border flex items-center justify-between px-8">
                     <div className="relative w-96">
@@ -240,7 +236,7 @@
                     </div>
                     <div className="flex items-center gap-4">
                         <button className="text-saas-muted hover:text-saas-secondary transition-colors"><i data-lucide="bell" className="w-5 h-5"></i></button>
-                        <button className="text-saas-muted hover:text-saas-secondary transition-colors"><i data-lucide="settings" className="w-5 h-5"></i></button>
+                        <button onClick={() => setActiveTab('settings')} className="text-saas-muted hover:text-saas-secondary transition-colors"><i data-lucide="settings" className="w-5 h-5"></i></button>
                     </div>
                 </div>
             );
@@ -254,8 +250,8 @@
                 { id: 'performance', icon: 'bar-chart-2', label: 'Profile Performance', tab: 'performance' },
                 { id: 'display', icon: 'monitor', label: 'Display Performance', tab: 'performance' },
                 { id: 'help', icon: 'help-circle', label: 'Chat for Help', tab: 'messages' },
-                { id: 'settings', icon: 'settings', label: 'profile' },
-                { id: 'service', icon: 'briefcase', label: 'Jobseeker Service', tab: 'home' },
+                { id: 'settings', icon: 'settings', label: 'Settings', tab: 'settings' },
+                { id: 'service', icon: 'briefcase', label: 'Services', tab: 'service' },
                 { id: 'how-it-works', icon: 'info', label: 'How App Works', tab: 'home' },
             ];
 
@@ -287,8 +283,7 @@
                                 <button 
                                     key={item.id}
                                     onClick={() => { 
-                                        if (item.id === 'settings') setActiveTab('profile');
-                                        else setActiveTab(item.tab);
+                                        setActiveTab(item.tab);
                                         onClose(); 
                                     }}
                                     className="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-saas-hover transition-all text-left group"
@@ -299,14 +294,6 @@
                                     <span className="font-medium text-sm text-saas-muted group-hover:text-saas-text transition-colors">{item.label}</span>
                                 </button>
                             ))}
-                        </div>
-                        <div className="mt-4 px-4 pb-8">
-                            <div className="p-5 bg-gradient-to-br from-saas-primary to-[#7C3AED] rounded-2xl text-white relative overflow-hidden">
-                                <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
-                                <h4 className="font-sora font-bold text-sm mb-1 relative z-10">Jobseeker Service</h4>
-                                <p className="text-[10px] text-indigo-100 leading-relaxed mb-4 relative z-10">Get a professionally written resume that passes ATS filters.</p>
-                                <button className="bg-white text-saas-primary text-[10px] font-bold py-2 px-4 rounded-lg relative z-10 hover:opacity-90 transition-opacity">Upgrade Now</button>
-                            </div>
                         </div>
                     </div>
                 </>
@@ -1938,6 +1925,102 @@
                 </div>
             );
         };
+        const ServicesPage = () => {
+            return (
+                <div className="flex-1 overflow-y-auto bg-saas-bg p-5 animate-fade-in">
+                    <h1 className="font-sora text-xl font-bold text-saas-text mb-6">Services</h1>
+                    
+                    <div className="space-y-6 max-w-2xl">
+                        <div className="bg-gradient-to-br from-saas-primary to-[#7C3AED] rounded-2xl text-white p-6 relative overflow-hidden">
+                            <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                            <h2 className="font-sora font-bold text-lg mb-2 relative z-10">Jobseeker Service</h2>
+                            <p className="text-sm text-indigo-100 leading-relaxed mb-6 relative z-10">Get a professionally written resume that passes ATS filters. Our experts will craft a personalized narrative to help you land your dream job.</p>
+                            <button className="bg-white text-saas-primary text-sm font-bold py-3 px-6 rounded-xl shadow-lg hover:opacity-90 transition-opacity relative z-10">Upgrade Now</button>
+                        </div>
+                        
+                        <div className="bg-saas-card p-6 rounded-xl border border-saas-border">
+                            <h2 className="font-sora font-bold text-sm text-saas-text mb-4">Other Services</h2>
+                            <div className="space-y-4">
+                                <div className="p-4 border border-saas-border rounded-lg hover:border-saas-primary/50 transition-colors cursor-pointer">
+                                    <h3 className="font-semibold text-sm text-saas-text mb-1">Mock Interview</h3>
+                                    <p className="text-xs text-saas-muted">Practice with industry experts and get actionable feedback.</p>
+                                </div>
+                                <div className="p-4 border border-saas-border rounded-lg hover:border-saas-primary/50 transition-colors cursor-pointer">
+                                    <h3 className="font-semibold text-sm text-saas-text mb-1">Career Coaching</h3>
+                                    <p className="text-xs text-saas-muted">1-on-1 guidance to plan your career trajectory.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const SettingsPage = ({ isDarkMode, setIsDarkMode, isMobileView, setIsMobileView, onLogout, setActiveTab }) => {
+            return (
+                <div className="flex-1 overflow-y-auto bg-saas-bg p-5 animate-fade-in">
+                    <h1 className="font-sora text-xl font-bold text-saas-text mb-6">Settings</h1>
+                    
+                    <div className="space-y-6 max-w-2xl">
+                        {/* Account Settings */}
+                        <div className="bg-saas-card p-6 rounded-xl border border-saas-border">
+                            <h2 className="font-sora font-bold text-sm text-saas-text mb-4">Account Settings</h2>
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="text-xs text-saas-muted font-semibold block mb-1">Email</label>
+                                    <input type="text" disabled value="alex@example.com" className="w-full bg-saas-bg border border-saas-border rounded-lg px-3 py-2 text-sm text-saas-muted cursor-not-allowed" />
+                                </div>
+                                <div className="flex items-center gap-4">
+                                    <button className="text-xs font-bold text-saas-primary hover:text-saas-primary-hover transition-colors">Change Password</button>
+                                    <button onClick={() => setActiveTab('profile')} className="text-xs font-bold text-saas-secondary hover:opacity-80 transition-opacity">View Profile</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Preferences */}
+                        <div className="bg-saas-card p-6 rounded-xl border border-saas-border">
+                            <h2 className="font-sora font-bold text-sm text-saas-text mb-4">Preferences</h2>
+                            <div className="space-y-4">
+                                <div className="flex justify-between items-center">
+                                    <div>
+                                        <p className="font-semibold text-sm text-saas-text">Dark Mode</p>
+                                        <p className="text-xs text-saas-muted">Switch between light and dark themes.</p>
+                                    </div>
+                                    <button 
+                                        onClick={() => setIsDarkMode(!isDarkMode)}
+                                        className={`w-11 h-6 rounded-full relative transition-colors duration-300 ${isDarkMode ? 'bg-saas-primary' : 'bg-saas-border'}`}
+                                    >
+                                        <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform duration-300 ${isDarkMode ? 'translate-x-6' : 'translate-x-1'}`}></div>
+                                    </button>
+                                </div>
+                                <div className="flex justify-between items-center border-t border-saas-border pt-4">
+                                    <div>
+                                        <p className="font-semibold text-sm text-saas-text">Mobile View Simulation</p>
+                                        <p className="text-xs text-saas-muted">Preview how the app looks on a mobile device.</p>
+                                    </div>
+                                    <button 
+                                        onClick={() => setIsMobileView(!isMobileView)}
+                                        className={`w-11 h-6 rounded-full relative transition-colors duration-300 ${isMobileView ? 'bg-saas-primary' : 'bg-saas-border'}`}
+                                    >
+                                        <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform duration-300 ${isMobileView ? 'translate-x-6' : 'translate-x-1'}`}></div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Danger Zone */}
+                        <div className="bg-saas-card p-6 rounded-xl border border-saas-error/20">
+                            <h2 className="font-sora font-bold text-sm text-saas-error mb-4">Danger Zone</h2>
+                            <div className="flex flex-col gap-3">
+                                <button onClick={onLogout} className="text-left text-sm font-semibold text-saas-text hover:text-saas-error transition-colors">Log Out</button>
+                                <button className="text-left text-sm font-semibold text-saas-error hover:text-red-600 transition-colors">Delete Account</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
 
         // Main App Component
         const App = () => {
@@ -1979,7 +2062,7 @@
                             
                             <div className={`flex-1 flex flex-col h-full overflow-hidden relative ${isMobileView ? 'max-w-[430px] mx-auto bg-saas-bg shadow-2xl shadow-black/50' : ''}`}>
                                 <CustomCursor />
-                                {!isMobileView && <TopBar />}
+                                {!isMobileView && <TopBar setActiveTab={setActiveTab} />}
                                 
                                 <div className="flex-1 overflow-y-auto relative">
                                     {activeTab === 'home' && <HomeFeed navigateToJob={setSelectedJob} isMobileView={isMobileView} />}
@@ -1992,6 +2075,8 @@
                                     {activeTab === 'performance' && <Performance />}
                                     {activeTab === 'messages' && <Messages />}
                                     {activeTab === 'profile' && <UserProfile isMobileView={isMobileView} setIsMobileView={setIsMobileView} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} onLogout={() => setIsLoggedIn(false)} />}
+                                    {activeTab === 'settings' && <SettingsPage isMobileView={isMobileView} setIsMobileView={setIsMobileView} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} onLogout={() => setIsLoggedIn(false)} setActiveTab={setActiveTab} />}
+                                    {activeTab === 'service' && <ServicesPage />}
                                     
                                     {selectedJob && <JobDetail job={selectedJob} goBack={() => setSelectedJob(null)} hasApplied={appliedJobs.includes(selectedJob.id)} onApply={(id) => setAppliedJobs([...appliedJobs, id])} />}
                                 </div>
